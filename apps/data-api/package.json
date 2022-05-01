@@ -1,0 +1,32 @@
+{
+  "name": "bb-data-receiver",
+  "version": "1.0.0",
+  "description": "Application for receiving data from babyboxes storing + storing them.",
+  "main": "index.js",
+  "scripts": {
+    "watch": "tsc -w",
+    "dev": "nodemon src/server.ts",
+    "start": "node dist/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zbyju/bb-data-receiver.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zbyju/bb-data-receiver/issues"
+  },
+  "homepage": "https://github.com/zbyju/bb-data-receiver#readme",
+  "devDependencies": {
+    "tsconfig": "workspace:*",
+    "config": "workspace:*",
+    "shared": "workspace:*",
+    "@types/node": "^17.0.30",
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.4"
+  },
+  "dependencies": {
+  }
+}
