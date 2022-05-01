@@ -11,5 +11,8 @@ module.exports = {
     ecmaVersion: 12,
     sourceType: "module"
   },
-  extends: ["prettier"]
+  extends: [
+    "eslint:recommended",
+    "prettier"
+  ]
 };
