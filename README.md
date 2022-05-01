@@ -14,7 +14,6 @@ These are the individual microservices in this app:
 
 - `data-receiver`: a Node.js backend application that receives data from babyboxes and sends them to various middlewares
 - `data-api`: a GraphQL API for accessing data from the database
-- `ui`: a stub React component library shared by both `web` and `docs` applications
 
 ### Packages
 
@@ -30,7 +29,7 @@ These are the shared packages for this monorepo:
 
 All of the dependecies for individual apps/packages can be found in the `package.json` file. Generally this project uses:
 
-- ** TypeScript **
+- **TypeScript**
 - Node.js
 - Vue 3
 - InfluxDB
