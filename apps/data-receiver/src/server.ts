@@ -1,24 +1,28 @@
-import cors from "@fastify/cors"
-import Fastify from "fastify"
-import baseRoute from "./routes/base.route"
+import cors from "@fastify/cors";
+import Fastify from "fastify";
+import baseRoute from "./routes/base.route";
+import dotenv from "dotenv";
 
-import { __base_prefix__ } from "./constants"
+import { __base_prefix__ } from "./constants";
 
 const main = () => {
-    const fastify = Fastify({ logger: true })
+  // Load .env variables
+  dotenv.config({ path: "../../packages/config/.env" });
 
-    // Enable cors
-    fastify.register(cors)
+  const fastify = Fastify({ logger: true });
 
-    // Enable all routes
-    fastify.register(baseRoute, { prefix: __base_prefix__ })
+  // Enable cors
+  fastify.register(cors);
 
-    fastify.listen(3000, (err) => {
-        if(err) {
-            fastify.log.error(err)
-            process.exit(1)
-        }
-    })
-}
+  // Enable all routes
+  fastify.register(baseRoute, { prefix: __base_prefix__ });
 
-main()
+  fastify.listen(3000, (err) => {
+    if (err) {
+      fastify.log.error(err);
+      process.exit(1);
+    }
+  });
+};
+
+main();
