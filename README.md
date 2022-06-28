@@ -13,7 +13,7 @@ This turborepo uses [pnpm](https://pnpm.io) as a packages manager. It includes t
 These are the individual microservices in this app:
 
 - `data-receiver`: a Node.js backend application that receives data from babyboxes and sends them to various middlewares
-- `data-api`: a GraphQL API for accessing data from the database
+- `dashboard-api`: a GraphQL API for accessing data from the database
 
 ### Packages
 
