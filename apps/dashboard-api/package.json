@@ -1,5 +1,5 @@
 {
-  "name": "bb-data-receiver",
+  "name": "dashboard-api",
   "version": "1.0.0",
   "description": "Application for receiving data from babyboxes storing + storing them.",
   "main": "index.js",

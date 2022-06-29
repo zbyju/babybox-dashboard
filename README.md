@@ -57,3 +57,22 @@ To develop all apps and packages, run the following command:
 ```
 pnpm dev
 ```
+
+To generate the migrations and Prisma Client:
+
+```
+prisma generate
+prisma db push
+```
+
+or
+
+```
+prisma migrate dev
+```
+
+To browse the data:
+
+```
+prisma studio
+```

@@ -1,0 +1,85 @@
+datasource db {
+    provider = "mongodb"
+    url      = env("MONGODB_URL")
+}
+
+generator client {
+    provider      = "prisma-client-js"
+    binaryTargets = ["debian-openssl-1.1.x"]
+}
+
+model Babybox {
+    id       String           @id @default(auto()) @map("_id") @db.ObjectId
+    metadata BabyboxMetadata?
+
+    name   String @unique
+    handle String @unique
+}
+
+model BabyboxMetadata {
+    id        String  @id @default(auto()) @map("_id") @db.ObjectId
+    babybox   Babybox @relation(fields: [babyboxId], references: [id])
+    babyboxId String  @unique @db.ObjectId
+
+    installDate    DateTime?
+    lastServisDate DateTime?
+    active         Boolean?
+    notes          String?
+
+    address BabyboxAddress?
+
+    network BabyboxNetwork?
+
+    components BabyboxComponents?
+
+    contact BabyboxContact[]
+}
+
+model BabyboxAddress {
+    id         String          @id @default(auto()) @map("_id") @db.ObjectId
+    metadata   BabyboxMetadata @relation(fields: [metadataId], references: [id])
+    metadataId String          @unique @db.ObjectId
+
+    hospitalName String
+    street       String
+    city         String
+    postcode     String
+}
+
+model BabyboxNetwork {
+    id         String          @id @default(auto()) @map("_id") @db.ObjectId
+    metadata   BabyboxMetadata @relation(fields: [metadataId], references: [id])
+    metadataId String          @unique @db.ObjectId
+
+    type Int
+
+    pc            String
+    pcMask        String
+    pcGateway     String
+    routerLAN     String
+    routerWAN     String
+    routerGateway String
+    SDSMotory     String
+    SDSTopeni     String
+    camera        String
+
+    notes String
+}
+
+model BabyboxComponents {
+    id         String          @id @default(auto()) @map("_id") @db.ObjectId
+    metadata   BabyboxMetadata @relation(fields: [metadataId], references: [id])
+    metadataId String          @unique @db.ObjectId
+
+    camera            String
+    OS                String
+    PC                String
+    panelVersion      String
+    babyboxMetadataId String? @db.ObjectId
+}
+
+model BabyboxContact {
+    id         String          @id @default(auto()) @map("_id") @db.ObjectId
+    metadata   BabyboxMetadata @relation(fields: [metadataId], references: [id])
+    metadataId String          @unique @db.ObjectId
+}
