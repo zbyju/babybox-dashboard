@@ -20,13 +20,18 @@
   },
   "homepage": "https://github.com/zbyju/bb-data-receiver#readme",
   "devDependencies": {
-    "tsconfig": "workspace:*",
+    "@types/node": "^17.0.30",
     "config": "workspace:*",
     "shared": "workspace:*",
-    "@types/node": "^17.0.30",
     "ts-node": "^10.7.0",
+    "tsconfig": "workspace:*",
     "typescript": "^4.6.4"
   },
   "dependencies": {
+    "apollo-server-core": "^3.9.0",
+    "apollo-server-fastify": "^3.9.0",
+    "apollo-server-plugin-base": "^3.6.1",
+    "fastify": "^3.29.0",
+    "graphql": "^16.5.0"
   }
 }
