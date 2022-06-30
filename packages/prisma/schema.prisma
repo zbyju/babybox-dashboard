@@ -8,22 +8,45 @@ generator client {
     binaryTargets = ["debian-openssl-1.1.x"]
 }
 
-model Babybox {
-    id       String           @id @default(auto()) @map("_id") @db.ObjectId
-    metadata BabyboxMetadata?
-
-    name   String @unique
-    handle String @unique
-}
-
-model BabyboxMetadata {
+model Snapshot {
     id        String  @id @default(auto()) @map("_id") @db.ObjectId
     babybox   Babybox @relation(fields: [babyboxId], references: [id])
-    babyboxId String  @unique @db.ObjectId
+    babyboxId String  @db.ObjectId
 
+    status  Int
+    time    DateTime @default(now())
+    version String?
+
+    temperature SnapshotTemperatures?
+    voltage     SnapshotVoltages?
+}
+
+type SnapshotTemperatures {
+    outside Int
+    inner   Int
+    top     Int
+    bottom  Int
+    casing  Int
+}
+
+type SnapshotVoltages {
+    in      Int
+    battery Int
+}
+
+model Babybox {
+    id       String          @id @default(auto()) @map("_id") @db.ObjectId
+    metadata BabyboxMetadata
+
+    name      String     @unique
+    handle    String     @unique
+    snapshots Snapshot[]
+}
+
+type BabyboxMetadata {
     installDate    DateTime?
     lastServisDate DateTime?
-    active         Boolean?
+    active         Boolean   @default(true)
     notes          String?
 
     address BabyboxAddress?
@@ -35,51 +58,48 @@ model BabyboxMetadata {
     contact BabyboxContact[]
 }
 
-model BabyboxAddress {
-    id         String          @id @default(auto()) @map("_id") @db.ObjectId
-    metadata   BabyboxMetadata @relation(fields: [metadataId], references: [id])
-    metadataId String          @unique @db.ObjectId
-
-    hospitalName String
-    street       String
-    city         String
-    postcode     String
+type BabyboxAddress {
+    hospitalName String?
+    street       String?
+    city         String?
+    postcode     String?
 }
 
-model BabyboxNetwork {
-    id         String          @id @default(auto()) @map("_id") @db.ObjectId
-    metadata   BabyboxMetadata @relation(fields: [metadataId], references: [id])
-    metadataId String          @unique @db.ObjectId
-
-    type Int
-
-    pc            String
-    pcMask        String
-    pcGateway     String
-    routerLAN     String
-    routerWAN     String
-    routerGateway String
-    SDSMotory     String
-    SDSTopeni     String
-    camera        String
-
-    notes String
+enum NetworkType {
+    Undefined
+    VLAN
+    Routing
+    HospitalNetwork
+    Other
 }
 
-model BabyboxComponents {
-    id         String          @id @default(auto()) @map("_id") @db.ObjectId
-    metadata   BabyboxMetadata @relation(fields: [metadataId], references: [id])
-    metadataId String          @unique @db.ObjectId
+type BabyboxNetwork {
+    type NetworkType @default(Undefined)
 
-    camera            String
-    OS                String
-    PC                String
-    panelVersion      String
-    babyboxMetadataId String? @db.ObjectId
+    pc            String?
+    pcMask        String?
+    pcGateway     String?
+    routerLAN     String?
+    routerWAN     String?
+    routerGateway String?
+    SDSMotory     String?
+    SDSTopeni     String?
+    camera        String?
+
+    notes String?
 }
 
-model BabyboxContact {
-    id         String          @id @default(auto()) @map("_id") @db.ObjectId
-    metadata   BabyboxMetadata @relation(fields: [metadataId], references: [id])
-    metadataId String          @unique @db.ObjectId
+type BabyboxComponents {
+    camera       String?
+    OS           String?
+    PC           String?
+    panelVersion String?
+}
+
+type BabyboxContact {
+    firstname String
+    lastname  String
+    phone     String?
+    email     String?
+    note      String?
 }
