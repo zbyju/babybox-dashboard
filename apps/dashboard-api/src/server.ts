@@ -1,5 +1,7 @@
-const main = () => {};
+import { startApolloServer } from "./apollo";
 
-console.log(process.env.MONGODB_URL);
+const main = () => {
+  startApolloServer();
+};
 
 main();
