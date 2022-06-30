@@ -6,7 +6,7 @@ import { PrismaClient } from "@prisma/client";
 
 import { __base_prefix__ } from "./constants";
 
-const prisma = new PrismaClient();
+export const prisma = new PrismaClient();
 
 const main = async () => {
   // Load .env variables
