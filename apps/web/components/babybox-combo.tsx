@@ -1,9 +1,7 @@
 "use client"
 
-import * as React from "react"
-import { Check, ChevronsUpDown } from "lucide-react"
+import { ChevronsUpDown } from "lucide-react"
 
-import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
   Command,
@@ -17,16 +15,14 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { useContext, useState } from "react"
+import { BabyboxesContext } from "./babyboxes-context"
+import Link from "next/link"
 
-const frameworks = [
-  {
-    value: "praha",
-    label: "Praha",
-  },
-]
 
 export function BabyboxCombo() {
-  const [open, setOpen] = React.useState(false)
+  const [open, setOpen] = useState(false)
+  const babyboxes = useContext(BabyboxesContext)
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -45,18 +41,21 @@ export function BabyboxCombo() {
         <Command>
           <CommandInput placeholder="Vyhledejte Babybox" />
           <CommandEmpty>Žádny babybox nenalezen.</CommandEmpty>
-          <CommandGroup>
-            {frameworks.map((framework) => (
-              <CommandItem
-                key={framework.value}
-                value={framework.value}
-                onSelect={() => {
-                  setOpen(false)
-                }}
-              >
-                {framework.label}
-              </CommandItem>
-            ))}
+          <CommandGroup className="max-h-[300px] overflow-y-auto">
+            {babyboxes.map((babybox) => (
+              <Link className="cursor-pointer" key={babybox.slug} href={"/babybox/" + babybox.slug}>
+                <CommandItem
+                  value={babybox.slug}
+                  onSelect={() => {
+                    setOpen(false)
+                  }}
+                  className="cursor-pointer"
+                >
+                  {babybox.name}
+                </CommandItem>
+              </Link>
+            )
+            )}
           </CommandGroup>
         </Command>
       </PopoverContent>
