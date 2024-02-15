@@ -5,9 +5,9 @@ import { BabyboxCombo } from "./babybox-combo";
 export default function Navbar() {
 
   const links = [
-    { href: "/", name: "Domů" },
-    { href: "/maintenance", name: "Servisy" },
-    { href: "/help", name: "Nápověda" }
+    { href: "/app/babybox", name: "Domů" },
+    { href: "/app/babybox/maintenance", name: "Servisy" },
+    { href: "/app/help", name: "Nápověda" }
   ]
 
   const linkClass = "text-accent-foreground hover:text-primary transition-all duration-500"
