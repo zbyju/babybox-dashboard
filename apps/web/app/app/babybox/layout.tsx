@@ -1,12 +1,16 @@
-import { useContext } from "react";
-import { BabyboxesProvider } from "../../../components/babyboxes-context"
+"use client"
+
+import { useAuth } from "@/components/contexts/auth-context";
+import { BabyboxesProvider } from "../../../components/contexts/babyboxes-context"
 import Navbar from "@/components/navbar";
 
-export default function RootLayout({
+export default function BabyboxLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const x = useAuth()
+
   return (
     <div>
       <BabyboxesProvider>

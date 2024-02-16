@@ -1,6 +1,6 @@
 "use client"
 
-import { babyboxes } from "../data/babyboxes"
+import { babyboxes } from "../../data/babyboxes"
 import { createContext } from "react";
 
 export const BabyboxesContext = createContext([] as any[])

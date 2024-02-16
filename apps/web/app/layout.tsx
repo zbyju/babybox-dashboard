@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 import { Noto_Sans as FontSans } from "next/font/google"
-import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeProvider } from "@/components/contexts/theme-provider";
 import { cookies } from "next/headers";
+import { AuthProvider } from "@/components/contexts/auth-context";
 
 const fontSans = FontSans({
   subsets: ["latin", "latin-ext"],
@@ -35,15 +36,19 @@ export default function RootLayout({
       <body
         className={fontSans.className}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          storageKey="theme"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-        </ThemeProvider>
+        <div className="max-w-full w-screen overflow-x-hidden">
+          <AuthProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              storageKey="theme"
+              enableSystem
+              disableTransitionOnChange
+            >
+              {children}
+            </ThemeProvider>
+          </AuthProvider>
+        </div>
       </body>
     </html>
   );

@@ -1,5 +1,4 @@
-import GoBack from "@/components/go_back";
-import Navbar from "@/components/navbar";
+import GoBack from "@/components/buttons/go_back";
 import Link from "next/link";
 
 export default function Custom404() {

@@ -16,7 +16,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { useContext, useState } from "react"
-import { BabyboxesContext } from "./babyboxes-context"
+import { BabyboxesContext } from "./contexts/babyboxes-context"
 import Link from "next/link"
 
 
@@ -43,7 +43,7 @@ export function BabyboxCombo() {
           <CommandEmpty>Žádny babybox nenalezen.</CommandEmpty>
           <CommandGroup className="max-h-[300px] overflow-y-auto">
             {babyboxes.map((babybox) => (
-              <Link className="cursor-pointer" key={babybox.slug} href={"/babybox/" + babybox.slug}>
+              <Link className="cursor-pointer" key={babybox.slug} href={"/app/babybox/" + babybox.slug}>
                 <CommandItem
                   value={babybox.slug}
                   onSelect={() => {

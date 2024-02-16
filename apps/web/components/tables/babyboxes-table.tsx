@@ -1,5 +1,5 @@
 import { ColumnDef, Row } from "@tanstack/react-table"
-import { BabyboxesContext } from "../babyboxes-context"
+import { BabyboxesContext } from "../contexts/babyboxes-context"
 import { DataTable } from "../ui/data-table"
 import { useContext } from "react"
 import { Button } from "../ui/button"
@@ -158,7 +158,7 @@ export default function BabyboxesTable() {
   }
 
   function onRowClick(row: Row<Babybox>) {
-    router.push("/babybox/" + row.getValue("slug"))
+    router.push("/app/babybox/" + row.getValue("slug"))
   }
 
   return (<DataTable columns={columns} data={babyboxes} sorting={[{ id: "name", desc: false }]} rowClassNameAccessor={setRowClassName} rowClickAccessor={onRowClick} hideColumns={["slug"]} filterColumnName="name" />)
