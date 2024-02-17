@@ -64,6 +64,12 @@
   }
 }
 
+@layer utilities {
+  .ml-main {
+    margin-left: max(16%, 195px);
+  }
+}
+
 
 @keyframes fadeIn {
   from {
@@ -72,4 +78,35 @@
   to {
     opacity: 1;
   }
+}
+
+.apexcharts-menu-icon svg, .apexcharts-reset-icon svg, .apexcharts-zoom-icon svg, .apexcharts-zoomin-icon svg, .apexcharts-zoomout-icon svg {
+  fill: none !important
+}
+
+
+.apexcharts-canvas .apexcharts-reset-zoom-icon.apexcharts-selected svg, .apexcharts-canvas .apexcharts-selection-icon.apexcharts-selected svg, .apexcharts-canvas .apexcharts-zoom-icon.apexcharts-selected svg {
+  fill: hsl(var(--primary)) !important;
+  stroke: hsl(var(--primary))
+}
+
+.apexcharts-toolbar {
+  gap: 5px;
+}
+
+.apexcharts-menu {
+  background-color: hsl(var(--background)) !important; /* Custom background */
+  border: 1px solid hsl(var(--border)) !important; /* Custom border color */
+  padding: 0 !important;
+  min-width: 0 !important;
+  border-radius: 0.55rem !important;
+}
+
+.apexcharts-menu-item {
+  color: hsl(var(--foreground)) !important; /* Custom text color */
+  transition: 0.3s all;
+  &:hover {
+    background-color: hsl(var(--secondary)) !important; /* Custom hover background */
+  }
+  border-radius: 0.5rem;
 }
