@@ -1,7 +1,6 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
- 
 
 @layer base {
   :root {
@@ -27,6 +26,14 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 221.2 83.2% 53.3%;
     --radius: 1rem;
+
+    --inside: 221.2 83.2% 53.3%;
+    --outside: 138 70.8% 40.6%;
+    --casing: 20 76% 53%;
+    --heating: 0 73.2% 54.2%;
+    --cooling: 191 76% 53%;
+    --in: 259 29% 58%;
+    --battery: 87 29% 58%;
   }
 
   .dark {
@@ -54,7 +61,6 @@
   }
 }
 
- 
 @layer base {
   * {
     @apply border-border;
@@ -70,7 +76,6 @@
   }
 }
 
-
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -80,14 +85,19 @@
   }
 }
 
-.apexcharts-menu-icon svg, .apexcharts-reset-icon svg, .apexcharts-zoom-icon svg, .apexcharts-zoomin-icon svg, .apexcharts-zoomout-icon svg {
-  fill: none !important
+.apexcharts-menu-icon svg,
+.apexcharts-reset-icon svg,
+.apexcharts-zoom-icon svg,
+.apexcharts-zoomin-icon svg,
+.apexcharts-zoomout-icon svg {
+  fill: none !important;
 }
 
-
-.apexcharts-canvas .apexcharts-reset-zoom-icon.apexcharts-selected svg, .apexcharts-canvas .apexcharts-selection-icon.apexcharts-selected svg, .apexcharts-canvas .apexcharts-zoom-icon.apexcharts-selected svg {
+.apexcharts-canvas .apexcharts-reset-zoom-icon.apexcharts-selected svg,
+.apexcharts-canvas .apexcharts-selection-icon.apexcharts-selected svg,
+.apexcharts-canvas .apexcharts-zoom-icon.apexcharts-selected svg {
   fill: hsl(var(--primary)) !important;
-  stroke: hsl(var(--primary))
+  stroke: hsl(var(--primary));
 }
 
 .apexcharts-toolbar {
@@ -106,7 +116,22 @@
   color: hsl(var(--foreground)) !important; /* Custom text color */
   transition: 0.3s all;
   &:hover {
-    background-color: hsl(var(--secondary)) !important; /* Custom hover background */
+    background-color: hsl(
+      var(--secondary)
+    ) !important; /* Custom hover background */
   }
   border-radius: 0.5rem;
+}
+
+div.ghost {
+  border: 0;
+}
+
+div.ghost thead tr th {
+  height: 30px;
+}
+
+div.ghost tbody tr td {
+  padding-top: 4px;
+  padding-bottom: 4px;
 }
