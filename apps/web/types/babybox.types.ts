@@ -1,4 +1,4 @@
 export type BabyboxBase = {
-  slug: string
-  name: string
-}
+  slug: string;
+  name: string;
+};
