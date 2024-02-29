@@ -1,28 +1,27 @@
-"use client"
+"use client";
 
-import { ChevronsUpDown } from "lucide-react"
+import { ChevronsUpDown } from "lucide-react";
 
-import { Button } from "@/components/ui/button"
 import {
   Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
-} from "@/components/ui/command"
+} from "@/components/ui/command";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
-import { useContext, useState } from "react"
-import { BabyboxesContext } from "./contexts/babyboxes-context"
-import Link from "next/link"
-
+} from "@/components/ui/popover";
+import { BabyboxesContext } from "./contexts/babyboxes-context";
+import { Button } from "@/components/ui/button";
+import { useContext, useState } from "react";
+import Link from "next/link";
 
 export function BabyboxCombo() {
-  const [open, setOpen] = useState(false)
-  const babyboxes = useContext(BabyboxesContext)
+  const [open, setOpen] = useState(false);
+  const babyboxes = useContext(BabyboxesContext);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -43,23 +42,25 @@ export function BabyboxCombo() {
           <CommandEmpty>Žádny babybox nenalezen.</CommandEmpty>
           <CommandGroup className="max-h-[300px] overflow-y-auto">
             {babyboxes.map((babybox) => (
-              <Link className="cursor-pointer" key={babybox.slug} href={"/app/babybox/" + babybox.slug}>
+              <Link
+                className="cursor-pointer"
+                key={babybox.slug}
+                href={"/app/babybox/" + babybox.slug}
+              >
                 <CommandItem
                   value={babybox.slug}
                   onSelect={() => {
-                    setOpen(false)
+                    setOpen(false);
                   }}
                   className="cursor-pointer"
                 >
                   {babybox.name}
                 </CommandItem>
               </Link>
-            )
-            )}
+            ))}
           </CommandGroup>
         </Command>
       </PopoverContent>
     </Popover>
-  )
+  );
 }
-

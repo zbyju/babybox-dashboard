@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
-import { Noto_Sans as FontSans } from "next/font/google"
 import { ThemeProvider } from "@/components/contexts/theme-provider";
-import { cookies } from "next/headers";
 import { AuthProvider } from "@/components/contexts/auth-context";
+import { Noto_Sans as FontSans } from "next/font/google";
+import { cookies } from "next/headers";
 
 const fontSans = FontSans({
   subsets: ["latin", "latin-ext"],
   variable: "--font-sans",
-})
+});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -17,10 +17,10 @@ export const metadata: Metadata = {
 };
 
 function getTheme() {
-  const cookieStore = cookies()
-  const themeCookie = cookieStore.get("theme")
-  const theme = themeCookie ? themeCookie.value : "dark"
-  return theme
+  const cookieStore = cookies();
+  const themeCookie = cookieStore.get("theme");
+  const theme = themeCookie ? themeCookie.value : "dark";
+  return theme;
 }
 
 export default function RootLayout({
@@ -28,15 +28,12 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
-  const theme = getTheme() as string
+  const theme = getTheme() as string;
 
   return (
     <html lang="en" className={theme} style={{ colorScheme: theme }}>
-      <body
-        className={fontSans.className}
-      >
-        <div className="max-w-full w-screen overflow-x-hidden">
+      <body className={fontSans.className}>
+        <div className="w-screen max-w-full overflow-x-hidden">
           <AuthProvider>
             <ThemeProvider
               attribute="class"

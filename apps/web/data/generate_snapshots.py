@@ -57,8 +57,12 @@ while current_time < end_time:
     current_time += timedelta(minutes=5)
 
 # Save the data to JSON files
-with open('./snapshots.json', 'w') as f:
-    json.dump(snapshots, f)
+with open('./snapshots.js', 'w') as f:
+    f.write("export const snapshots = ")
+    f.write(str(snapshots))
+    f.write(";")
 
-with open('./heating_cooling_events.json', 'w') as f:
-    json.dump(events, f)
+with open('./heating_cooling_events.js', 'w') as f:
+    f.write("export const events = ")
+    f.write(str(events))
+    f.write(";")

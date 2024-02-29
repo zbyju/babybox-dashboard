@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect } from "react";
 
 interface AuthContextType {
   user: string | null;
@@ -15,30 +15,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     // Check local storage for user info on initial load
-    const storedUser = localStorage.getItem('username');
+    const storedUser = localStorage.getItem("username");
     if (storedUser) {
       setUser(storedUser);
     }
   }, []);
 
   const login = (username: string) => {
-    localStorage.setItem('username', username);
+    localStorage.setItem("username", username);
     setUser(username);
   };
 
   const logout = () => {
-    localStorage.removeItem('username');
+    localStorage.removeItem("username");
     setUser(null);
   };
 
-  return <AuthContext.Provider value={{ user, login, logout }}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ user, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 }
-

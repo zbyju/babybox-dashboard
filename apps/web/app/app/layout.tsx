@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { ProtectedRoute } from "@/components/protected-route";
 
@@ -7,11 +7,5 @@ export default function AppLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <ProtectedRoute>
-      {children}
-    </ProtectedRoute>
-  );
+  return <ProtectedRoute>{children}</ProtectedRoute>;
 }
-
-

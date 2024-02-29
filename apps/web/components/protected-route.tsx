@@ -1,7 +1,7 @@
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
-import { useAuth } from './contexts/auth-context';
-import Loading from '@/app/loading';
+import { useAuth } from "./contexts/auth-context";
+import { useRouter } from "next/navigation";
+import Loading from "@/app/loading";
+import { useEffect } from "react";
 
 export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user } = useAuth();
@@ -9,15 +9,14 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     if (!user) {
-      return
-      router.push('/auth/login');
+      return;
+      router.push("/auth/login");
     }
   }, [user, router]);
 
   if (!user) {
-    return <Loading />
+    return <Loading />;
   }
 
   return children;
 };
-
