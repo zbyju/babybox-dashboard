@@ -1,13 +1,13 @@
-const { fontFamily } = require("tailwindcss/defaultTheme")
-import type { Config } from "tailwindcss"
+const { fontFamily } = require("tailwindcss/defaultTheme");
+import type { Config } from "tailwindcss";
 
 const config = {
   darkMode: ["class"],
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
   ],
   prefix: "",
   theme: {
@@ -60,6 +60,35 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+
+        inside: {
+          DEFAULT: "hsl(var(--inside))",
+          foreground: "hsl(var(--inside))",
+        },
+        outside: {
+          DEFAULT: "hsl(var(--outside))",
+          foreground: "hsl(var(--outside))",
+        },
+        casing: {
+          DEFAULT: "hsl(var(--casing))",
+          foreground: "hsl(var(--casing))",
+        },
+        heating: {
+          DEFAULT: "hsl(var(--heating))",
+          foreground: "hsl(var(--heating))",
+        },
+        cooling: {
+          DEFAULT: "hsl(var(--cooling))",
+          foreground: "hsl(var(--cooling))",
+        },
+        in: {
+          DEFAULT: "hsl(var(--in))",
+          foreground: "hsl(var(--in))",
+        },
+        battery: {
+          DEFAULT: "hsl(var(--battery))",
+          foreground: "hsl(var(--battery))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -83,6 +112,6 @@ const config = {
     },
   },
   plugins: [require("tailwindcss-animate")],
-} satisfies Config
+} satisfies Config;
 
-export default config
+export default config;
