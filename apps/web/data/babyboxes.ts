@@ -1,1 +1,752 @@
-export const babyboxes = [{'slug': 'louny', 'name': 'Louny', 'lastData': {'timestamp': '12:42:24 15-02-2024', 'voltage': {'in': 14.68, 'battery': 12.18}, 'temperature': {'inside': 20.73, 'outside': 33.17, 'casing': 23.47, 'top': 29.23, 'bottom': 16.78}}}, {'slug': 'liberec', 'name': 'Liberec', 'lastData': {'timestamp': '22:36:24 15-02-2024', 'voltage': {'in': 14.59, 'battery': 12.06}, 'temperature': {'inside': 24.82, 'outside': 34.1, 'casing': 23.09, 'top': 46.56, 'bottom': 21.35}}}, {'slug': 'opava', 'name': 'Opava', 'lastData': {'timestamp': '22:39:24 15-02-2024', 'voltage': {'in': 14.9, 'battery': 12.45}, 'temperature': {'inside': 24.81, 'outside': 26.02, 'casing': 21.48, 'top': 20.65, 'bottom': 31.22}}}, {'slug': 'teplice', 'name': 'Teplice', 'lastData': {'timestamp': '22:40:24 15-02-2024', 'voltage': {'in': 14.3, 'battery': 12.43}, 'temperature': {'inside': 22.6, 'outside': 27.73, 'casing': 23.66, 'top': 49.63, 'bottom': 25.37}}}, {'slug': 'novy-jicin', 'name': 'Nový Jičín', 'lastData': {'timestamp': '22:38:24 15-02-2024', 'voltage': {'in': 14.36, 'battery': 12.41}, 'temperature': {'inside': 20.37, 'outside': 30.52, 'casing': 27.94, 'top': 49.15, 'bottom': 16.53}}}, {'slug': 'plzen', 'name': 'Plzeň', 'lastData': {'timestamp': '22:41:24 15-02-2024', 'voltage': {'in': 14.04, 'battery': 11.86}, 'temperature': {'inside': 26.68, 'outside': 27.68, 'casing': 28.44, 'top': 25.65, 'bottom': 30.81}}}, {'slug': 'prerov', 'name': 'Přerov', 'lastData': {'timestamp': '22:40:24 15-02-2024', 'voltage': {'in': 14.76, 'battery': 11.78}, 'temperature': {'inside': 24.19, 'outside': 29.1, 'casing': 25.36, 'top': 36.72, 'bottom': 24.31}}}, {'slug': 'klatovy', 'name': 'Klatovy', 'lastData': {'timestamp': '22:34:24 15-02-2024', 'voltage': {'in': 14.36, 'battery': 12.36}, 'temperature': {'inside': 22.18, 'outside': 25.15, 'casing': 27.99, 'top': 20.56, 'bottom': 19.71}}}, {'slug': 'usti-nad-labem', 'name': 'Ústí nad Labem', 'lastData': {'timestamp': '22:39:24 15-02-2024', 'voltage': {'in': 14.12, 'battery': 12.33}, 'temperature': {'inside': 22.68, 'outside': 31.18, 'casing': 29.84, 'top': 17.69, 'bottom': 22.13}}}, {'slug': 'kutna-hora', 'name': 'Kutná Hora', 'lastData': {'timestamp': '22:35:24 15-02-2024', 'voltage': {'in': 14.46, 'battery': 12.21}, 'temperature': {'inside': 23.49, 'outside': 21.67, 'casing': 24.19, 'top': 32.15, 'bottom': 34.95}}}, {'slug': 'jirkov', 'name': 'Jirkov', 'lastData': {'timestamp': '09:42:24 15-02-2024', 'voltage': {'in': 14.58, 'battery': 12.49}, 'temperature': {'inside': 28.57, 'outside': 22.16, 'casing': 20.59, 'top': 48.46, 'bottom': 32.96}}}, {'slug': 'ostrava', 'name': 'Ostrava', 'lastData': {'timestamp': '22:38:24 15-02-2024', 'voltage': {'in': 14.58, 'battery': 11.61}, 'temperature': {'inside': 21.37, 'outside': 22.05, 'casing': 20.24, 'top': 44.29, 'bottom': 17.41}}}, {'slug': 'hodonin', 'name': 'Hodonín', 'lastData': {'timestamp': '22:39:24 15-02-2024', 'voltage': {'in': 14.25, 'battery': 12.27}, 'temperature': {'inside': 20.8, 'outside': 23.46, 'casing': 26.77, 'top': 21.86, 'bottom': 32.48}}}, {'slug': 'frydek-mistek', 'name': 'Frýdek-Místek', 'lastData': {'timestamp': '12:42:24 15-02-2024', 'voltage': {'in': 14.58, 'battery': 11.82}, 'temperature': {'inside': 21.19, 'outside': 25.23, 'casing': 26.44, 'top': 22.9, 'bottom': 27.15}}}, {'slug': 'havirov', 'name': 'Havířov', 'lastData': {'timestamp': '22:32:24 15-02-2024', 'voltage': {'in': 14.09, 'battery': 11.78}, 'temperature': {'inside': 20.3, 'outside': 31.91, 'casing': 20.73, 'top': 26.86, 'bottom': 39.68}}}, {'slug': 'litvinov', 'name': 'Litvínov', 'lastData': {'timestamp': '22:33:24 15-02-2024', 'voltage': {'in': 14.93, 'battery': 11.99}, 'temperature': {'inside': 28.58, 'outside': 33.16, 'casing': 22.91, 'top': 37.7, 'bottom': 21.52}}}, {'slug': 'jihlava', 'name': 'Jihlava', 'lastData': {'timestamp': '22:35:24 15-02-2024', 'voltage': {'in': 15.0, 'battery': 11.87}, 'temperature': {'inside': 22.96, 'outside': 34.72, 'casing': 20.72, 'top': 45.84, 'bottom': 35.1}}}, {'slug': 'brno', 'name': 'Brno', 'lastData': {'timestamp': '22:34:24 15-02-2024', 'voltage': {'in': 14.96, 'battery': 12.4}, 'temperature': {'inside': 28.23, 'outside': 26.17, 'casing': 23.44, 'top': 16.08, 'bottom': 36.65}}}, {'slug': 'trebic', 'name': 'Třebíč', 'lastData': {'timestamp': '22:36:24 15-02-2024', 'voltage': {'in': 14.29, 'battery': 12.49}, 'temperature': {'inside': 29.42, 'outside': 34.23, 'casing': 21.24, 'top': 16.86, 'bottom': 16.93}}}, {'slug': 'praha', 'name': 'Praha', 'lastData': {'timestamp': '22:39:24 15-02-2024', 'voltage': {'in': 14.89, 'battery': 11.82}, 'temperature': {'inside': 28.43, 'outside': 33.17, 'casing': 22.31, 'top': 20.21, 'bottom': 27.96}}}, {'slug': 'zlin', 'name': 'Zlín', 'lastData': {'timestamp': '22:34:24 15-02-2024', 'voltage': {'in': 14.28, 'battery': 11.62}, 'temperature': {'inside': 22.44, 'outside': 32.64, 'casing': 23.96, 'top': 32.35, 'bottom': 21.13}}}, {'slug': 'krnov', 'name': 'Krnov', 'lastData': {'timestamp': '22:35:24 15-02-2024', 'voltage': {'in': 14.39, 'battery': 12.5}, 'temperature': {'inside': 26.79, 'outside': 31.04, 'casing': 23.95, 'top': 32.27, 'bottom': 15.79}}}, {'slug': 'znojmo', 'name': 'Znojmo', 'lastData': {'timestamp': '22:39:24 15-02-2024', 'voltage': {'in': 14.3, 'battery': 12.23}, 'temperature': {'inside': 21.54, 'outside': 23.64, 'casing': 28.29, 'top': 36.06, 'bottom': 34.18}}}, {'slug': 'cesky-tesin', 'name': 'Český Těšín', 'lastData': {'timestamp': '22:40:24 15-02-2024', 'voltage': {'in': 14.17, 'battery': 11.56}, 'temperature': {'inside': 22.76, 'outside': 20.09, 'casing': 27.45, 'top': 19.66, 'bottom': 27.5}}}, {'slug': 'jablonec-nad-nisou', 'name': 'Jablonec nad Nisou', 'lastData': {'timestamp': '22:41:24 15-02-2024', 'voltage': {'in': 14.22, 'battery': 11.88}, 'temperature': {'inside': 22.24, 'outside': 20.59, 'casing': 28.78, 'top': 46.07, 'bottom': 36.24}}}, {'slug': 'hradec-kralove', 'name': 'Hradec Králové', 'lastData': {'timestamp': '22:36:24 15-02-2024', 'voltage': {'in': 14.78, 'battery': 12.19}, 'temperature': {'inside': 22.22, 'outside': 30.13, 'casing': 24.37, 'top': 43.73, 'bottom': 36.32}}}, {'slug': 'ceske-budejovice', 'name': 'České Budějovice', 'lastData': {'timestamp': '22:40:24 15-02-2024', 'voltage': {'in': 14.21, 'battery': 12.13}, 'temperature': {'inside': 23.49, 'outside': 21.65, 'casing': 25.79, 'top': 35.59, 'bottom': 18.51}}}, {'slug': 'valasske-mezirici', 'name': 'Valašské Meziříčí', 'lastData': {'timestamp': '22:41:24 15-02-2024', 'voltage': {'in': 14.68, 'battery': 12.0}, 'temperature': {'inside': 29.98, 'outside': 24.63, 'casing': 27.26, 'top': 45.67, 'bottom': 18.74}}}, {'slug': 'ceska-lipa', 'name': 'Česká Lípa', 'lastData': {'timestamp': '22:32:24 15-02-2024', 'voltage': {'in': 14.62, 'battery': 12.12}, 'temperature': {'inside': 21.44, 'outside': 29.83, 'casing': 23.52, 'top': 45.97, 'bottom': 31.81}}}, {'slug': 'prostejov', 'name': 'Prostějov', 'lastData': {'timestamp': '22:35:24 15-02-2024', 'voltage': {'in': 14.11, 'battery': 12.03}, 'temperature': {'inside': 28.37, 'outside': 24.1, 'casing': 26.91, 'top': 49.42, 'bottom': 38.72}}}, {'slug': 'karvina', 'name': 'Karviná', 'lastData': {'timestamp': '22:36:24 15-02-2024', 'voltage': {'in': 14.42, 'battery': 11.63}, 'temperature': {'inside': 28.54, 'outside': 21.58, 'casing': 29.58, 'top': 27.53, 'bottom': 21.59}}}, {'slug': 'mlada-boleslav', 'name': 'Mladá Boleslav', 'lastData': {'timestamp': '04:42:24 15-02-2024', 'voltage': {'in': 14.01, 'battery': 12.49}, 'temperature': {'inside': 26.17, 'outside': 23.48, 'casing': 24.33, 'top': 34.75, 'bottom': 34.08}}}, {'slug': 'svitavy', 'name': 'Svitavy', 'lastData': {'timestamp': '16:42:24 15-02-2024', 'voltage': {'in': 14.47, 'battery': 12.49}, 'temperature': {'inside': 23.0, 'outside': 21.72, 'casing': 21.54, 'top': 26.8, 'bottom': 22.5}}}, {'slug': 'cheb', 'name': 'Cheb', 'lastData': {'timestamp': '22:39:24 15-02-2024', 'voltage': {'in': 14.23, 'battery': 12.35}, 'temperature': {'inside': 22.73, 'outside': 33.98, 'casing': 22.21, 'top': 40.06, 'bottom': 24.61}}}, {'slug': 'litomerice', 'name': 'Litoměřice', 'lastData': {'timestamp': '22:41:24 15-02-2024', 'voltage': {'in': 14.1, 'battery': 12.32}, 'temperature': {'inside': 25.84, 'outside': 21.31, 'casing': 25.68, 'top': 42.16, 'bottom': 16.49}}}, {'slug': 'zdar-nad-sazavou', 'name': 'Žďár nad Sázavou', 'lastData': {'timestamp': '22:34:24 15-02-2024', 'voltage': {'in': 14.07, 'battery': 11.51}, 'temperature': {'inside': 25.35, 'outside': 29.45, 'casing': 25.61, 'top': 16.2, 'bottom': 36.53}}}, {'slug': 'usti-nad-orlici', 'name': 'Ústí nad Orlicí', 'lastData': {'timestamp': '22:37:24 15-02-2024', 'voltage': {'in': 14.75, 'battery': 11.88}, 'temperature': {'inside': 24.51, 'outside': 26.93, 'casing': 20.54, 'top': 43.11, 'bottom': 26.23}}}, {'slug': 'kladno', 'name': 'Kladno', 'lastData': {'timestamp': '22:37:24 15-02-2024', 'voltage': {'in': 14.4, 'battery': 12.48}, 'temperature': {'inside': 26.16, 'outside': 33.64, 'casing': 27.8, 'top': 47.58, 'bottom': 36.48}}}, {'slug': 'nachod', 'name': 'Náchod', 'lastData': {'timestamp': '22:38:24 15-02-2024', 'voltage': {'in': 14.56, 'battery': 12.17}, 'temperature': {'inside': 28.0, 'outside': 20.37, 'casing': 21.93, 'top': 17.32, 'bottom': 24.58}}}, {'slug': 'uherske-hradiste', 'name': 'Uherské Hradiště', 'lastData': {'timestamp': '22:36:24 15-02-2024', 'voltage': {'in': 14.21, 'battery': 12.47}, 'temperature': {'inside': 23.8, 'outside': 24.85, 'casing': 21.18, 'top': 17.95, 'bottom': 25.27}}}, {'slug': 'beroun', 'name': 'Beroun', 'lastData': {'timestamp': '22:33:24 15-02-2024', 'voltage': {'in': 14.42, 'battery': 12.0}, 'temperature': {'inside': 22.51, 'outside': 20.97, 'casing': 27.72, 'top': 17.04, 'bottom': 35.33}}}, {'slug': 'most', 'name': 'Most', 'lastData': {'timestamp': '22:40:24 15-02-2024', 'voltage': {'in': 14.7, 'battery': 12.44}, 'temperature': {'inside': 21.27, 'outside': 20.89, 'casing': 25.68, 'top': 30.39, 'bottom': 39.64}}}, {'slug': 'olomouc', 'name': 'Olomouc', 'lastData': {'timestamp': '22:37:24 15-02-2024', 'voltage': {'in': 14.17, 'battery': 11.73}, 'temperature': {'inside': 20.95, 'outside': 21.95, 'casing': 20.78, 'top': 26.92, 'bottom': 29.65}}}, {'slug': 'orlova', 'name': 'Orlová', 'lastData': {'timestamp': '22:38:24 15-02-2024', 'voltage': {'in': 14.25, 'battery': 12.18}, 'temperature': {'inside': 29.23, 'outside': 22.18, 'casing': 25.16, 'top': 38.63, 'bottom': 37.24}}}, {'slug': 'vsetin', 'name': 'Vsetín', 'lastData': {'timestamp': '22:39:24 15-02-2024', 'voltage': {'in': 14.37, 'battery': 12.47}, 'temperature': {'inside': 21.4, 'outside': 20.07, 'casing': 26.69, 'top': 33.3, 'bottom': 21.95}}}, {'slug': 'chomutov', 'name': 'Chomutov', 'lastData': {'timestamp': '22:40:24 15-02-2024', 'voltage': {'in': 14.6, 'battery': 12.31}, 'temperature': {'inside': 24.88, 'outside': 30.59, 'casing': 26.72, 'top': 40.86, 'bottom': 17.05}}}, {'slug': 'decin', 'name': 'Děčín', 'lastData': {'timestamp': '22:40:24 15-02-2024', 'voltage': {'in': 14.45, 'battery': 11.9}, 'temperature': {'inside': 21.36, 'outside': 21.27, 'casing': 22.56, 'top': 38.49, 'bottom': 20.82}}}, {'slug': 'melnik', 'name': 'Mělník', 'lastData': {'timestamp': '22:35:24 15-02-2024', 'voltage': {'in': 14.21, 'battery': 11.63}, 'temperature': {'inside': 25.87, 'outside': 21.46, 'casing': 25.87, 'top': 24.4, 'bottom': 24.35}}}, {'slug': 'pardubice', 'name': 'Pardubice', 'lastData': {'timestamp': '22:35:24 15-02-2024', 'voltage': {'in': 14.36, 'battery': 11.65}, 'temperature': {'inside': 26.97, 'outside': 21.75, 'casing': 22.67, 'top': 49.3, 'bottom': 26.07}}}, {'slug': 'blansko', 'name': 'Blansko', 'lastData': {'timestamp': '22:41:24 15-02-2024', 'voltage': {'in': 14.85, 'battery': 11.73}, 'temperature': {'inside': 24.09, 'outside': 29.14, 'casing': 21.47, 'top': 42.01, 'bottom': 24.39}}}];
+export const babyboxes = [
+  {
+    slug: "krnov",
+    name: "Krnov",
+    lastData: {
+      timestamp: "21:26:36 15-02-2024",
+      voltage: { in: 14.52, battery: 12.17 },
+      temperature: {
+        inside: 25.05,
+        outside: 27.97,
+        casing: 29.66,
+        top: 49.92,
+        bottom: 19.56,
+      },
+    },
+  },
+  {
+    slug: "karvina",
+    name: "Karviná",
+    lastData: {
+      timestamp: "21:23:36 16-02-2024",
+      voltage: { in: 14.81, battery: 12.08 },
+      temperature: {
+        inside: 25.18,
+        outside: 22.21,
+        casing: 21.48,
+        top: 32.96,
+        bottom: 35.92,
+      },
+    },
+  },
+  {
+    slug: "znojmo",
+    name: "Znojmo",
+    lastData: {
+      timestamp: "21:16:36 16-02-2024",
+      voltage: { in: 14.46, battery: 11.59 },
+      temperature: {
+        inside: 24.66,
+        outside: 24.8,
+        casing: 23.41,
+        top: 33.98,
+        bottom: 32.7,
+      },
+    },
+  },
+  {
+    slug: "trebic",
+    name: "Třebíč",
+    lastData: {
+      timestamp: "21:18:36 16-02-2024",
+      voltage: { in: 14.58, battery: 12.16 },
+      temperature: {
+        inside: 24.51,
+        outside: 24.17,
+        casing: 29.49,
+        top: 48.34,
+        bottom: 37.96,
+      },
+    },
+  },
+  {
+    slug: "mlada-boleslav",
+    name: "Mladá Boleslav",
+    lastData: {
+      timestamp: "21:17:36 16-02-2024",
+      voltage: { in: 14.33, battery: 11.91 },
+      temperature: {
+        inside: 29.78,
+        outside: 20.85,
+        casing: 24.75,
+        top: 49.87,
+        bottom: 30.84,
+      },
+    },
+  },
+  {
+    slug: "uherske-hradiste",
+    name: "Uherské Hradiště",
+    lastData: {
+      timestamp: "21:17:36 16-02-2024",
+      voltage: { in: 14.6, battery: 11.72 },
+      temperature: {
+        inside: 29.12,
+        outside: 28.86,
+        casing: 23.97,
+        top: 20.73,
+        bottom: 30.97,
+      },
+    },
+  },
+  {
+    slug: "jablonec-nad-nisou",
+    name: "Jablonec nad Nisou",
+    lastData: {
+      timestamp: "10:26:36 16-02-2024",
+      voltage: { in: 14.36, battery: 12.1 },
+      temperature: {
+        inside: 25.67,
+        outside: 28.26,
+        casing: 28.37,
+        top: 46.44,
+        bottom: 20.77,
+      },
+    },
+  },
+  {
+    slug: "litomerice",
+    name: "Litoměřice",
+    lastData: {
+      timestamp: "21:24:36 16-02-2024",
+      voltage: { in: 14.7, battery: 12.4 },
+      temperature: {
+        inside: 20.26,
+        outside: 27.56,
+        casing: 23.66,
+        top: 28.7,
+        bottom: 29.35,
+      },
+    },
+  },
+  {
+    slug: "nachod",
+    name: "Náchod",
+    lastData: {
+      timestamp: "21:16:36 16-02-2024",
+      voltage: { in: 14.45, battery: 11.92 },
+      temperature: {
+        inside: 21.74,
+        outside: 23.47,
+        casing: 23.77,
+        top: 35.77,
+        bottom: 29.98,
+      },
+    },
+  },
+  {
+    slug: "brno",
+    name: "Brno",
+    lastData: {
+      timestamp: "21:23:36 16-02-2024",
+      voltage: { in: 14.18, battery: 12.44 },
+      temperature: {
+        inside: 21.86,
+        outside: 20.63,
+        casing: 23.89,
+        top: 33.84,
+        bottom: 28.53,
+      },
+    },
+  },
+  {
+    slug: "vsetin",
+    name: "Vsetín",
+    lastData: {
+      timestamp: "21:18:36 16-02-2024",
+      voltage: { in: 14.47, battery: 12.5 },
+      temperature: {
+        inside: 26.41,
+        outside: 20.54,
+        casing: 21.56,
+        top: 37.19,
+        bottom: 31.49,
+      },
+    },
+  },
+  {
+    slug: "hodonin",
+    name: "Hodonín",
+    lastData: {
+      timestamp: "21:24:36 16-02-2024",
+      voltage: { in: 14.19, battery: 12.35 },
+      temperature: {
+        inside: 25.81,
+        outside: 34.12,
+        casing: 20.51,
+        top: 48.69,
+        bottom: 35.76,
+      },
+    },
+  },
+  {
+    slug: "zdar-nad-sazavou",
+    name: "Žďár nad Sázavou",
+    lastData: {
+      timestamp: "21:19:36 16-02-2024",
+      voltage: { in: 14.71, battery: 12.09 },
+      temperature: {
+        inside: 29.13,
+        outside: 26.33,
+        casing: 29.9,
+        top: 19.25,
+        bottom: 32.92,
+      },
+    },
+  },
+  {
+    slug: "zlin",
+    name: "Zlín",
+    lastData: {
+      timestamp: "21:25:36 16-02-2024",
+      voltage: { in: 14.09, battery: 11.88 },
+      temperature: {
+        inside: 26.53,
+        outside: 30.43,
+        casing: 23.53,
+        top: 18.48,
+        bottom: 21.72,
+      },
+    },
+  },
+  {
+    slug: "louny",
+    name: "Louny",
+    lastData: {
+      timestamp: "12:26:36 16-02-2024",
+      voltage: { in: 14.19, battery: 12.38 },
+      temperature: {
+        inside: 29.49,
+        outside: 33.13,
+        casing: 20.3,
+        top: 32.03,
+        bottom: 30.03,
+      },
+    },
+  },
+  {
+    slug: "ceske-budejovice",
+    name: "České Budějovice",
+    lastData: {
+      timestamp: "21:17:36 16-02-2024",
+      voltage: { in: 14.61, battery: 12.21 },
+      temperature: {
+        inside: 21.79,
+        outside: 23.08,
+        casing: 25.22,
+        top: 44.55,
+        bottom: 33.4,
+      },
+    },
+  },
+  {
+    slug: "most",
+    name: "Most",
+    lastData: {
+      timestamp: "21:21:36 16-02-2024",
+      voltage: { in: 14.48, battery: 12.39 },
+      temperature: {
+        inside: 22.41,
+        outside: 20.84,
+        casing: 24.84,
+        top: 34.13,
+        bottom: 39.97,
+      },
+    },
+  },
+  {
+    slug: "teplice",
+    name: "Teplice",
+    lastData: {
+      timestamp: "03:26:36 16-02-2024",
+      voltage: { in: 14.07, battery: 11.93 },
+      temperature: {
+        inside: 24.79,
+        outside: 25.72,
+        casing: 25.64,
+        top: 47.48,
+        bottom: 30.02,
+      },
+    },
+  },
+  {
+    slug: "orlova",
+    name: "Orlová",
+    lastData: {
+      timestamp: "21:21:36 16-02-2024",
+      voltage: { in: 14.06, battery: 11.83 },
+      temperature: {
+        inside: 23.45,
+        outside: 21.39,
+        casing: 29.62,
+        top: 31.9,
+        bottom: 23.96,
+      },
+    },
+  },
+  {
+    slug: "frydek-mistek",
+    name: "Frýdek-Místek",
+    lastData: {
+      timestamp: "21:17:36 16-02-2024",
+      voltage: { in: 14.05, battery: 12.12 },
+      temperature: {
+        inside: 25.26,
+        outside: 34.23,
+        casing: 29.3,
+        top: 37.9,
+        bottom: 25.95,
+      },
+    },
+  },
+  {
+    slug: "decin",
+    name: "Děčín",
+    lastData: {
+      timestamp: "21:25:36 16-02-2024",
+      voltage: { in: 14.36, battery: 11.83 },
+      temperature: {
+        inside: 22.59,
+        outside: 20.77,
+        casing: 20.09,
+        top: 41.58,
+        bottom: 16.82,
+      },
+    },
+  },
+  {
+    slug: "usti-nad-labem",
+    name: "Ústí nad Labem",
+    lastData: {
+      timestamp: "21:25:36 16-02-2024",
+      voltage: { in: 14.19, battery: 12.35 },
+      temperature: {
+        inside: 25.54,
+        outside: 20.19,
+        casing: 25.24,
+        top: 31.38,
+        bottom: 30.13,
+      },
+    },
+  },
+  {
+    slug: "opava",
+    name: "Opava",
+    lastData: {
+      timestamp: "21:24:36 16-02-2024",
+      voltage: { in: 14.36, battery: 11.93 },
+      temperature: {
+        inside: 29.93,
+        outside: 29.38,
+        casing: 28.51,
+        top: 48.87,
+        bottom: 20.09,
+      },
+    },
+  },
+  {
+    slug: "ostrava",
+    name: "Ostrava",
+    lastData: {
+      timestamp: "21:16:36 16-02-2024",
+      voltage: { in: 14.13, battery: 12.49 },
+      temperature: {
+        inside: 27.93,
+        outside: 33.1,
+        casing: 28.78,
+        top: 16.95,
+        bottom: 22.76,
+      },
+    },
+  },
+  {
+    slug: "cheb",
+    name: "Cheb",
+    lastData: {
+      timestamp: "21:25:36 16-02-2024",
+      voltage: { in: 14.08, battery: 11.53 },
+      temperature: {
+        inside: 20.34,
+        outside: 31.9,
+        casing: 26.12,
+        top: 43.95,
+        bottom: 31.25,
+      },
+    },
+  },
+  {
+    slug: "svitavy",
+    name: "Svitavy",
+    lastData: {
+      timestamp: "21:19:36 16-02-2024",
+      voltage: { in: 14.9, battery: 11.99 },
+      temperature: {
+        inside: 24.12,
+        outside: 32.45,
+        casing: 23.37,
+        top: 33.48,
+        bottom: 35.36,
+      },
+    },
+  },
+  {
+    slug: "prerov",
+    name: "Přerov",
+    lastData: {
+      timestamp: "21:18:36 16-02-2024",
+      voltage: { in: 14.36, battery: 12.49 },
+      temperature: {
+        inside: 25.7,
+        outside: 25.16,
+        casing: 28.7,
+        top: 33.26,
+        bottom: 37.78,
+      },
+    },
+  },
+  {
+    slug: "kladno",
+    name: "Kladno",
+    lastData: {
+      timestamp: "21:16:36 16-02-2024",
+      voltage: { in: 14.17, battery: 11.95 },
+      temperature: {
+        inside: 24.97,
+        outside: 20.13,
+        casing: 21.47,
+        top: 46.76,
+        bottom: 35.49,
+      },
+    },
+  },
+  {
+    slug: "beroun",
+    name: "Beroun",
+    lastData: {
+      timestamp: "21:16:36 16-02-2024",
+      voltage: { in: 14.74, battery: 11.71 },
+      temperature: {
+        inside: 29.5,
+        outside: 22.58,
+        casing: 25.26,
+        top: 23.64,
+        bottom: 16.16,
+      },
+    },
+  },
+  {
+    slug: "hradec-kralove",
+    name: "Hradec Králové",
+    lastData: {
+      timestamp: "08:26:36 16-02-2024",
+      voltage: { in: 14.38, battery: 12.39 },
+      temperature: {
+        inside: 28.73,
+        outside: 21.17,
+        casing: 25.79,
+        top: 44.71,
+        bottom: 36.14,
+      },
+    },
+  },
+  {
+    slug: "pardubice",
+    name: "Pardubice",
+    lastData: {
+      timestamp: "21:22:36 16-02-2024",
+      voltage: { in: 14.8, battery: 12.1 },
+      temperature: {
+        inside: 21.71,
+        outside: 27.05,
+        casing: 25.79,
+        top: 36.4,
+        bottom: 28.48,
+      },
+    },
+  },
+  {
+    slug: "chomutov",
+    name: "Chomutov",
+    lastData: {
+      timestamp: "21:22:36 16-02-2024",
+      voltage: { in: 14.31, battery: 11.83 },
+      temperature: {
+        inside: 24.3,
+        outside: 34.47,
+        casing: 25.41,
+        top: 38.0,
+        bottom: 26.87,
+      },
+    },
+  },
+  {
+    slug: "usti-nad-orlici",
+    name: "Ústí nad Orlicí",
+    lastData: {
+      timestamp: "21:18:36 16-02-2024",
+      voltage: { in: 14.74, battery: 12.16 },
+      temperature: {
+        inside: 22.32,
+        outside: 25.03,
+        casing: 25.45,
+        top: 16.78,
+        bottom: 39.46,
+      },
+    },
+  },
+  {
+    slug: "klatovy",
+    name: "Klatovy",
+    lastData: {
+      timestamp: "15:26:36 16-02-2024",
+      voltage: { in: 14.23, battery: 12.14 },
+      temperature: {
+        inside: 29.02,
+        outside: 30.6,
+        casing: 20.55,
+        top: 49.77,
+        bottom: 17.2,
+      },
+    },
+  },
+  {
+    slug: "olomouc",
+    name: "Olomouc",
+    lastData: {
+      timestamp: "21:20:36 16-02-2024",
+      voltage: { in: 14.12, battery: 11.8 },
+      temperature: {
+        inside: 21.31,
+        outside: 33.72,
+        casing: 22.94,
+        top: 46.36,
+        bottom: 29.36,
+      },
+    },
+  },
+  {
+    slug: "novy-jicin",
+    name: "Nový Jičín",
+    lastData: {
+      timestamp: "21:18:36 16-02-2024",
+      voltage: { in: 14.35, battery: 11.56 },
+      temperature: {
+        inside: 24.57,
+        outside: 23.26,
+        casing: 26.15,
+        top: 30.95,
+        bottom: 28.67,
+      },
+    },
+  },
+  {
+    slug: "jihlava",
+    name: "Jihlava",
+    lastData: {
+      timestamp: "21:25:36 16-02-2024",
+      voltage: { in: 14.33, battery: 11.85 },
+      temperature: {
+        inside: 24.23,
+        outside: 25.56,
+        casing: 24.53,
+        top: 40.16,
+        bottom: 26.66,
+      },
+    },
+  },
+  {
+    slug: "kutna-hora",
+    name: "Kutná Hora",
+    lastData: {
+      timestamp: "21:20:36 16-02-2024",
+      voltage: { in: 14.31, battery: 12.22 },
+      temperature: {
+        inside: 20.69,
+        outside: 34.26,
+        casing: 28.97,
+        top: 31.08,
+        bottom: 22.14,
+      },
+    },
+  },
+  {
+    slug: "praha",
+    name: "Praha",
+    lastData: {
+      timestamp: "21:21:36 16-02-2024",
+      voltage: { in: 14.56, battery: 12.08 },
+      temperature: {
+        inside: 28.13,
+        outside: 29.56,
+        casing: 27.83,
+        top: 37.08,
+        bottom: 21.13,
+      },
+    },
+  },
+  {
+    slug: "blansko",
+    name: "Blansko",
+    lastData: {
+      timestamp: "21:25:36 16-02-2024",
+      voltage: { in: 14.58, battery: 11.83 },
+      temperature: {
+        inside: 29.03,
+        outside: 30.95,
+        casing: 27.26,
+        top: 30.55,
+        bottom: 24.27,
+      },
+    },
+  },
+  {
+    slug: "liberec",
+    name: "Liberec",
+    lastData: {
+      timestamp: "21:21:36 16-02-2024",
+      voltage: { in: 14.21, battery: 12.26 },
+      temperature: {
+        inside: 21.78,
+        outside: 22.81,
+        casing: 24.25,
+        top: 44.39,
+        bottom: 38.27,
+      },
+    },
+  },
+  {
+    slug: "valasske-mezirici",
+    name: "Valašské Meziříčí",
+    lastData: {
+      timestamp: "21:24:36 16-02-2024",
+      voltage: { in: 14.67, battery: 11.91 },
+      temperature: {
+        inside: 25.73,
+        outside: 31.06,
+        casing: 26.04,
+        top: 27.46,
+        bottom: 23.24,
+      },
+    },
+  },
+  {
+    slug: "plzen",
+    name: "Plzeň",
+    lastData: {
+      timestamp: "21:23:36 16-02-2024",
+      voltage: { in: 14.79, battery: 12.46 },
+      temperature: {
+        inside: 22.99,
+        outside: 20.96,
+        casing: 20.98,
+        top: 17.97,
+        bottom: 15.16,
+      },
+    },
+  },
+  {
+    slug: "litvinov",
+    name: "Litvínov",
+    lastData: {
+      timestamp: "21:19:36 16-02-2024",
+      voltage: { in: 14.92, battery: 11.79 },
+      temperature: {
+        inside: 22.04,
+        outside: 31.84,
+        casing: 25.72,
+        top: 27.44,
+        bottom: 26.21,
+      },
+    },
+  },
+  {
+    slug: "prostejov",
+    name: "Prostějov",
+    lastData: {
+      timestamp: "21:19:36 16-02-2024",
+      voltage: { in: 14.46, battery: 11.77 },
+      temperature: {
+        inside: 29.1,
+        outside: 32.6,
+        casing: 22.24,
+        top: 42.69,
+        bottom: 16.06,
+      },
+    },
+  },
+  {
+    slug: "ceska-lipa",
+    name: "Česká Lípa",
+    lastData: {
+      timestamp: "18:26:36 16-02-2024",
+      voltage: { in: 14.7, battery: 12.48 },
+      temperature: {
+        inside: 26.25,
+        outside: 29.4,
+        casing: 24.38,
+        top: 17.47,
+        bottom: 20.34,
+      },
+    },
+  },
+  {
+    slug: "melnik",
+    name: "Mělník",
+    lastData: {
+      timestamp: "21:16:36 16-02-2024",
+      voltage: { in: 14.71, battery: 11.65 },
+      temperature: {
+        inside: 21.75,
+        outside: 34.3,
+        casing: 22.2,
+        top: 26.6,
+        bottom: 16.99,
+      },
+    },
+  },
+  {
+    slug: "havirov",
+    name: "Havířov",
+    lastData: {
+      timestamp: "21:17:36 16-02-2024",
+      voltage: { in: 14.52, battery: 11.65 },
+      temperature: {
+        inside: 26.62,
+        outside: 32.35,
+        casing: 25.38,
+        top: 27.21,
+        bottom: 25.31,
+      },
+    },
+  },
+  {
+    slug: "cesky-tesin",
+    name: "Český Těšín",
+    lastData: {
+      timestamp: "21:19:36 16-02-2024",
+      voltage: { in: 14.33, battery: 11.69 },
+      temperature: {
+        inside: 20.36,
+        outside: 27.67,
+        casing: 27.89,
+        top: 35.03,
+        bottom: 25.13,
+      },
+    },
+  },
+  {
+    slug: "jirkov",
+    name: "Jirkov",
+    lastData: {
+      timestamp: "21:22:36 16-02-2024",
+      voltage: { in: 14.23, battery: 12.43 },
+      temperature: {
+        inside: 29.25,
+        outside: 26.09,
+        casing: 21.53,
+        top: 16.64,
+        bottom: 28.23,
+      },
+    },
+  },
+];
