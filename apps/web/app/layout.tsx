@@ -3,8 +3,9 @@ import "./globals.css";
 
 import { ThemeProvider } from "@/components/contexts/theme-provider";
 import { AuthProvider } from "@/components/contexts/auth-context";
-import { Noto_Sans as FontSans } from "next/font/google";
+import { Nunito as FontSans } from "next/font/google";
 import { cookies } from "next/headers";
+import { Toaster } from "sonner";
 
 const fontSans = FontSans({
   subsets: ["latin", "latin-ext"],
@@ -43,6 +44,7 @@ export default function RootLayout({
               disableTransitionOnChange
             >
               {children}
+              <Toaster />
             </ThemeProvider>
           </AuthProvider>
         </div>
