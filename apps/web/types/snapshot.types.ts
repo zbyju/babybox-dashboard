@@ -28,13 +28,17 @@ export interface SnapshotNumeric {
 }
 
 export interface SnapshotGroupNumeric {
-  [key: string]: number;
+  [key: string]: SnapshotVariableNumeric;
 }
 
 export type SnapshotVariableNumeric = number;
 
 export interface SnapshotStats {
-  [key: string]: SnapshotGroupNumeric | SnapshotVariableStat;
+  [key: string]: SnapshotGroupStat | SnapshotVariableStat;
+}
+
+export interface SnapshotGroupStat {
+  [key: string]: SnapshotVariableStat;
 }
 
 export interface SnapshotVariableStat {
