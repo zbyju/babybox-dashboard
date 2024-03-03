@@ -14,15 +14,31 @@ def generate_snapshot(timestamp):
     return {
         "timestamp": timestamp.strftime("%Y-%m-%d %H:%M:%S"),
         "temperature": {
-            "inside": random.uniform(18, 24),
-            "outside": random.uniform(5, 15),
+            "inside": random.uniform(24, 32),
+            "outside": random.uniform(10, 35),
             "casing": random.uniform(10, 20),
             "bottom": random.uniform(15, 25),
             "top": random.uniform(15, 25)
         },
         "voltage": {
-            "in": random.uniform(220, 240),
-            "battery": random.uniform(3.5, 4.2)
+            "in": random.uniform(12, 14),
+            "battery": random.uniform(10, 12)
+        }
+    }
+
+def generate_snapshot_next(timestamp, previous):
+    return {
+        "timestamp": timestamp.strftime("%Y-%m-%d %H:%M:%S"),
+        "temperature": {
+            "inside": previous['temperature']['inside'] + random.gauss(0, 0.3),
+            "outside": previous['temperature']['outside'] + random.gauss(0, 0.8),
+            "casing": previous['temperature']['casing'] + random.gauss(0, 0.5),
+            "bottom": previous['temperature']['bottom'] + random.gauss(0, 0.5),
+            "top": previous['temperature']['top'] + random.gauss(0, 0.5),
+        },
+        "voltage": {
+            "in": previous['voltage']['in'] + random.gauss(0, 0.1),
+            "battery": previous['voltage']['battery'] + random.gauss(0, 0.1),
         }
     }
 
@@ -41,7 +57,8 @@ event_duration = timedelta(hours=1)  # Approximate duration of each event
 
 while current_time < end_time:
     # Generate snapshot
-    snapshots.append(generate_snapshot(current_time))
+    new_snapshot = generate_snapshot_next(current_time, snapshots[-1]) if(len(snapshots) > 0) else generate_snapshot(current_time)
+    snapshots.append(new_snapshot)
     
     # Check if it's time to log an event (every ~1 hour)
     if event_toggle:
