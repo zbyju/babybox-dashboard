@@ -1,6 +1,6 @@
 "use client";
 
-import { Snapshot } from "@/types/snapshot";
+import { Snapshot } from "@/types/snapshot.types";
 import { DataTable } from "../ui/data-table";
 import {
   Tooltip,
@@ -11,6 +11,62 @@ import {
 import { Badge } from "../ui/badge";
 import { differenceInMinutes, format, parse } from "date-fns";
 import { ColumnDef } from "@tanstack/react-table";
+import {
+  ArrowDown,
+  ArrowDownRight,
+  ArrowUp,
+  ArrowUpRight,
+  Minus,
+} from "lucide-react";
+
+const columnVars = [
+  { key: "temperature.inside", label: "Vnitřní", key2: "temperature_inside" },
+  {
+    key: "temperature.outside",
+    label: "Venkovní",
+    key2: "temperature_outside",
+  },
+  { key: "temperature.casing", label: "Plášť", key2: "temperature_casing" },
+  { key: "temperature.top", label: "Horní", key2: "temperature_top" },
+  { key: "temperature.bottom", label: "Dolní", key2: "temperature_bottom" },
+  { key: "voltage.in", label: "Vstupní", key2: "voltage_in" },
+  { key: "voltage.battery", label: "Baterie", key2: "voltage_battery" },
+].map((c) => ({
+  accessorKey: c.key,
+  header: () => <div className="">{c.label}</div>,
+  cell: ({ getValue, table, row }: any) => {
+    const val = getValue();
+    const str = typeof val === "number" ? val.toFixed(2) : val;
+
+    const currentIndex = row.index;
+    const currentValue = row.getValue(c.key2) as number;
+    const previousValue =
+      currentIndex > 0
+        ? (table
+            .getRowModel()
+            .rows[currentIndex - 1].getValue(c.key2) as number)
+        : undefined;
+
+    const arrow =
+      !previousValue || !currentValue ? undefined : currentValue >
+        previousValue ? (
+        <ArrowUpRight size={16} className="text-red-600 dark:text-red-700" />
+      ) : currentValue < previousValue ? (
+        <ArrowDownRight
+          size={16}
+          className="text-blue-600 dark:text-blue-700"
+        />
+      ) : (
+        <Minus size={16} />
+      );
+
+    return (
+      <div className="flex flex-row flex-wrap items-center gap-0">
+        {str as string} {arrow || ""}
+      </div>
+    );
+  },
+}));
 
 export const columns: ColumnDef<Snapshot>[] = [
   {
@@ -24,42 +80,7 @@ export const columns: ColumnDef<Snapshot>[] = [
       return <div className="">{timestamp}</div>;
     },
   },
-  {
-    accessorKey: "temperature.inside",
-    header: () => <div className="text-right">Vnitřní</div>,
-    cell: ({ getValue }) => {
-      const val = getValue();
-      const str = typeof val === "number" ? val.toFixed(2) : val;
-      return <div className="text-right">{str as string}</div>;
-    },
-  },
-  {
-    accessorKey: "temperature.outside",
-    header: () => <div className="text-right">Venkovní</div>,
-    cell: ({ getValue }) => {
-      const val = getValue();
-      const str = typeof val === "number" ? val.toFixed(2) : val;
-      return <div className="text-right">{str as string}</div>;
-    },
-  },
-  {
-    accessorKey: "voltage.in",
-    header: () => <div className="text-right">Vstup</div>,
-    cell: ({ getValue }) => {
-      const val = getValue();
-      const str = typeof val === "number" ? val.toFixed(2) : val;
-      return <div className="text-right">{str as string}</div>;
-    },
-  },
-  {
-    accessorKey: "voltage.battery",
-    header: () => <div className="text-right">Baterie</div>,
-    cell: ({ getValue }) => {
-      const val = getValue();
-      const str = typeof val === "number" ? val.toFixed(2) : val;
-      return <div className="text-right">{str as string}</div>;
-    },
-  },
+  ...columnVars,
   {
     accessorKey: "status",
     header: () => <div className="text-center">Status</div>,
