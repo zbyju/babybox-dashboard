@@ -8,6 +8,16 @@ export default function TestChart() {
 
   const state = {
     options: {
+      fill: {
+        type: "gradient",
+        gradient: {
+          type: "vertical",
+          shadeIntensity: 0,
+          opacityFrom: 0.9,
+          opacityTo: 0.9,
+          stops: [0, 90, 100],
+        },
+      },
       chart: {
         id: "basic-bar",
         zoom: false,
@@ -144,6 +154,7 @@ export default function TestChart() {
     series: [
       {
         name: "Vnitrni",
+        type: "area",
         data: [
           { x: 0, y: 34 },
           { x: 1, y: 31 },
@@ -154,6 +165,7 @@ export default function TestChart() {
       },
       {
         name: "Venkovni",
+        type: "area",
         data: [
           { x: 0, y: 12 },
           { x: 1, y: 14 },
@@ -164,6 +176,7 @@ export default function TestChart() {
       },
       {
         name: "Plast",
+        type: "area",
         data: [
           { x: 0, y: 16 },
           { x: 1, y: 19 },
@@ -174,6 +187,7 @@ export default function TestChart() {
       },
       {
         name: "Horni",
+        type: "area",
         data: [
           { x: 0, y: 34 },
           { x: 1, y: 48 },
@@ -184,6 +198,7 @@ export default function TestChart() {
       },
       {
         name: "Spodni",
+        type: "area",
         data: [
           { x: 0, y: 17 },
           { x: 1, y: 9 },
@@ -194,6 +209,7 @@ export default function TestChart() {
       },
       {
         name: "Vstup",
+        type: "area",
         data: [
           { x: 0, y: 12 },
           { x: 1, y: 12 },
@@ -204,6 +220,7 @@ export default function TestChart() {
       },
       {
         name: "Baterie",
+        type: "area",
         data: [
           { x: 0, y: 11 },
           { x: 1, y: 11 },
