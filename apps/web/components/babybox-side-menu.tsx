@@ -35,14 +35,22 @@ export default function BabyboxSideMenu(props: Props) {
     {
       group: "Obecné",
       links: [
-        { href: "/app/babybox", text: "Informace", icon: <Info /> },
+        {
+          href: "/app/babybox/" + props.babybox.slug + "/detail",
+          text: "Informace",
+          icon: <Info />,
+        },
         { href: "/app/babybox", text: "Editovat", icon: <FilePenLine /> },
       ],
     },
     {
-      group: "Vizualizace",
+      group: "Grafy",
       links: [
-        { href: "/app/babybox", text: "Vše", icon: <LineChart /> },
+        {
+          href: "/app/babybox/" + props.babybox.slug + "/chart",
+          text: "Vše",
+          icon: <LineChart />,
+        },
         { href: "/app/babybox", text: "Teploty", icon: <Thermometer /> },
         { href: "/app/babybox", text: "Napětí", icon: <Cable /> },
       ],
@@ -51,7 +59,7 @@ export default function BabyboxSideMenu(props: Props) {
       group: "Analýza",
       links: [
         { href: "/app/babybox", text: "Akumulátor", icon: <BatteryCharging /> },
-        { href: "/app/babybox", text: "Větřáky", icon: <Fan /> },
+        { href: "/app/babybox", text: "Větráky", icon: <Fan /> },
       ],
     },
     {
@@ -77,7 +85,7 @@ export default function BabyboxSideMenu(props: Props) {
     <nav className="fixed left-0 z-0 flex w-[16%] min-w-[195px] flex-col overflow-y-auto rounded-r-xl border border-border bg-background pb-3">
       <div className="sticky top-0 mt-2 flex flex-col items-start justify-start gap-2">
         <h2 className="ml-2 mt-1 text-wrap text-xl font-bold capitalize">
-          <span className="text-pink-600 dark:text-pink-700">Babybox</span>{" "}
+          <span className="text-pink-600 dark:text-pink-700">Babybox </span>
           {props.babybox.name}
         </h2>
         <Separator className="my-1" />
