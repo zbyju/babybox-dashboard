@@ -6,16 +6,11 @@ import Widget from "@/components/ui/widget";
 import { events } from "../../../../data/heating_cooling_events.js";
 import { snapshots } from "../../../../data/snapshots.js";
 import LatestSnapshots from "@/components/widgets/latest-snapshots";
-import {
-  Snapshot,
-  SnapshotGroupNumeric,
-  SnapshotGroupStat,
-} from "@/types/snapshot.types";
+import { Snapshot, SnapshotGroupStat } from "@/types/snapshot.types";
 import { Event } from "@/types/event.types";
 import LatestEvents from "@/components/widgets/latest-events";
 import VariableStats from "@/components/widgets/variable-stats";
 import { calculateSnapshotStats } from "@/utils/stats";
-import { Sticky, StickyContainer } from "react-sticky";
 
 export default function BabyboxPage({ params }: { params: { slug: string } }) {
   const slug = params.slug;
@@ -33,11 +28,10 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
               Minimum, Průměr, Maximum
             </h5>
 
-            <div className="mb-4 flex flex-row flex-wrap gap-4">
+            <div className="mb-4 flex flex-row flex-wrap justify-center justify-items-center gap-4 md:justify-start">
               <Widget
                 title="Vnitřní"
                 subtitle="Poslední týden"
-                className="mx-auto"
                 classNameInner="border-b-4 border-b-inside"
               >
                 <VariableStats
@@ -47,7 +41,6 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
               <Widget
                 title="Venkovní"
                 subtitle="Poslední týden"
-                className="mx-auto"
                 classNameInner="border-b-4 border-b-outside"
               >
                 <VariableStats
@@ -57,7 +50,6 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
               <Widget
                 title="Plášť"
                 subtitle="Poslední týden"
-                className="mx-auto"
                 classNameInner="border-b-4 border-b-casing"
               >
                 <VariableStats
@@ -67,7 +59,6 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
               <Widget
                 title="Horní"
                 subtitle="Poslední týden"
-                className="mx-auto"
                 classNameInner="border-b-4 border-b-heating"
               >
                 <VariableStats
@@ -77,7 +68,6 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
               <Widget
                 title="Spodní"
                 subtitle="Poslední týden"
-                className="mx-auto"
                 classNameInner="border-b-4 border-b-cooling"
               >
                 <VariableStats
@@ -93,11 +83,10 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
               Minimum, Průměr, Maximum
             </h5>
 
-            <div className="mb-4 flex flex-row flex-wrap gap-4">
+            <div className="mb-4 flex flex-row flex-wrap justify-center justify-items-center gap-4 md:justify-start">
               <Widget
                 title="Vstup"
                 subtitle="Poslední týden"
-                className="mx-auto"
                 classNameInner="border-b-4 border-b-in"
               >
                 <VariableStats
@@ -107,7 +96,6 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
               <Widget
                 title="Akumulátor"
                 subtitle="Poslední týden"
-                className="mx-auto"
                 classNameInner="border-b-4 border-b-battery"
               >
                 <VariableStats
@@ -118,7 +106,7 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
           </div>
 
           <h4 className="mb-3 ml-1 text-3xl font-black">Data</h4>
-          <div className="mb-4 flex flex-row flex-wrap gap-4">
+          <div className="mb-4 flex flex-row flex-wrap justify-center justify-items-center gap-4 md:justify-start">
             <Widget title="Nejnovější data">
               <LatestSnapshots snapshots={snapshots as Snapshot[]} take={11} />
             </Widget>

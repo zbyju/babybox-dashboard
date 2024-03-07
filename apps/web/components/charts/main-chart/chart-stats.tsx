@@ -11,7 +11,7 @@ export default function ChartStats(props: Props) {
   const stats = calculateSnapshotStats(props.data);
 
   return (
-    <div className="flex flex-row flex-wrap gap-4">
+    <div className="flex flex-row flex-wrap justify-center justify-items-center gap-4 md:justify-start">
       <Widget
         title="Vnitřní teplota"
         className="mx-auto"
