@@ -9,7 +9,6 @@ interface Props {
   series: ApexAxisChartSeries;
   xaxisType: "category" | "datetime" | "numeric";
   title?: string;
-  colors?: string[];
   zoom?: boolean;
   showToolbar?: boolean;
   showGrid?: boolean;
@@ -33,15 +32,6 @@ export default function LineChart(props: Props) {
   }
 
   const defaultConfig = {
-    colors: [
-      "hsl(var(--inside))",
-      "hsl(var(--outside))",
-      "hsl(var(--casing))",
-      "hsl(var(--heating))",
-      "hsl(var(--cooling))",
-      "hsl(var(--in))",
-      "hsl(var(--battery))",
-    ],
     zoom: false,
     showToolbar: true,
     showGrid: false,
@@ -93,9 +83,6 @@ export default function LineChart(props: Props) {
       xaxis: {
         type: config.xaxisType,
         labels: {
-          style: {
-            colors: "hsl(var(--muted-foreground))",
-          },
           format: "dd.MM hh:mm",
         },
         axisBorder: {
@@ -135,7 +122,6 @@ export default function LineChart(props: Props) {
         curve: config.strokeType,
         width: config.strokeWidth,
       },
-      colors: config.colors,
       title: {
         text: config.title,
         style: {
@@ -143,7 +129,6 @@ export default function LineChart(props: Props) {
         },
       },
       markers: {
-        colors: config.colors,
         strokeColors: "hsl(var(--border))",
       },
       forecastDataPoints: {

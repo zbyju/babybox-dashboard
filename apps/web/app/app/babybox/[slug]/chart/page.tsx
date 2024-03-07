@@ -7,71 +7,128 @@ import LineChart from "@/components/charts/line-chart";
 import ChartStats from "@/components/charts/main-chart/chart-stats";
 import LatestSnapshots from "@/components/widgets/latest-snapshots";
 import { Snapshot } from "@/types/snapshot.types";
-import { parse } from "date-fns";
-import { useState } from "react";
+import { addDays, format, parse } from "date-fns";
+import { useEffect, useState } from "react";
 import { ChartSourcesObject } from "@/components/charts/main-chart/chart-sources";
 import { ChartSettingsObject } from "@/components/charts/main-chart/chart-settings";
+import { useRouter, useSearchParams } from "next/navigation";
+import {
+  DateRange,
+  dateToStringDate,
+} from "@/components/charts/main-chart/time-filter";
 
-export default function Home({ params }: { params: { slug: string } }) {
-  function calculateStrokeWidth(series: ApexAxisChartSeries): number {
-    const n = series.length > 0 ? series[0].data.length : 0;
-    if (n > 1000) {
-      return 1;
-    } else if (n > 500) {
-      return 2;
-    } else if (n > 250) {
-      return 3;
-    } else if (n > 100) {
-      return 4;
-    } else if (n > 50) {
-      return 5;
-    } else {
-      return 6;
-    }
+function calculateStrokeWidth(series: ApexAxisChartSeries): number {
+  const n = series.length > 0 ? series[0].data.length : 0;
+  if (n > 1000) {
+    return 1;
+  } else if (n > 144) {
+    return 2;
+  } else if (n > 70) {
+    return 3;
   }
+  return 4;
+}
 
-  function transformData(
-    originalData: Snapshot[],
-    fieldsToExtract: { group: string; variable: string; name: string }[],
-  ): ApexAxisChartSeries {
-    const series: ApexAxisChartSeries = [];
-    fieldsToExtract.forEach(({ group, variable, name }) => {
-      series.push({
-        name: name,
-        data: originalData.map((item) => {
-          return {
-            x: parse(
-              item.timestamp,
-              "yyyy-MM-dd HH:mm:ss",
-              new Date(),
-            ).getTime(),
-            y: (item[group] as any)[variable],
-          };
-        }),
-      });
+function calculateStrokeType(
+  series: ApexAxisChartSeries,
+): "straight" | "smooth" | "monotoneCubic" {
+  const n = series.length > 0 ? series[0].data.length : 0;
+  if (n > 144) {
+    return "straight";
+  } else if (n > 50) {
+    return "smooth";
+  }
+  return "monotoneCubic";
+}
+
+function transformData(
+  originalData: Snapshot[],
+  fieldsToExtract: {
+    group: string;
+    variable: string;
+    name: string;
+    color: string;
+  }[],
+): ApexAxisChartSeries {
+  const series: ApexAxisChartSeries = [];
+  fieldsToExtract.forEach(({ group, variable, name, color }) => {
+    series.push({
+      name,
+      color,
+      data: originalData.map((item) => {
+        return {
+          x: parse(item.timestamp, "yyyy-MM-dd HH:mm:ss", new Date()).getTime(),
+          y: (item[group] as any)[variable],
+        };
+      }),
     });
-
-    return series;
-  }
-
-  const [sources, setSources] = useState<ChartSourcesObject>({
-    temperature: true,
-    voltage: true,
-    heating: true,
-    doors: false,
-    temperatureSetting: false,
-    sun: false,
   });
 
+  return series;
+}
+
+function convertObjectToString(obj: any) {
+  const keys = Object.keys(obj).filter((key) => obj[key] === true);
+  return keys.join(",");
+}
+
+export default function Home({ params }: { params: { slug: string } }) {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const [sources, setSources] = useState<ChartSourcesObject>({
+    temperature: searchParams.get("sources")?.includes("temperature") ?? false,
+    voltage: searchParams.get("sources")?.includes("voltage") ?? false,
+    heating: searchParams.get("sources")?.includes("heating") ?? false,
+    doors: searchParams.get("sources")?.includes("doors") ?? false,
+    temperatureSetting:
+      searchParams.get("sources")?.includes("temperatureSetting") ?? false,
+    sun: searchParams.get("sources")?.includes("sun") ?? false,
+  });
   const sourcesFiltered = [
-    { group: "temperature", variable: "inside", name: "Vnitřní teplota" },
-    { group: "temperature", variable: "outside", name: "Venkovní teplota" },
-    { group: "temperature", variable: "casing", name: "Teplota pláště" },
-    { group: "temperature", variable: "top", name: "Horní teplota" },
-    { group: "temperature", variable: "bottom", name: "Spodní teplota" },
-    { group: "voltage", variable: "in", name: "Vstupní napětí" },
-    { group: "voltage", variable: "battery", name: "Napětí baterie" },
-  ].filter((x) => {
+    {
+      group: "temperature",
+      variable: "inside",
+      name: "Vnitřní teplota",
+      color: "hsl(var(--inside))",
+    },
+    {
+      group: "temperature",
+      variable: "outside",
+      name: "Venkovní teplota",
+      color: "hsl(var(--outside))",
+    },
+    {
+      group: "temperature",
+      variable: "casing",
+      name: "Teplota pláště",
+      color: "hsl(var(--casing))",
+    },
+    {
+      group: "temperature",
+      variable: "top",
+      name: "Horní teplota",
+      color: "hsl(var(--heating))",
+    },
+    {
+      group: "temperature",
+      variable: "bottom",
+      name: "Spodní teplota",
+      color: "hsl(var(--cooling))",
+    },
+    {
+      group: "voltage",
+      variable: "in",
+      name: "Vstupní napětí",
+      color: "hsl(var(--in))",
+    },
+    {
+      group: "voltage",
+      variable: "battery",
+      name: "Napětí baterie",
+      color: "hsl(var(--battery))",
+    },
+  ].filter((x, i) => {
     if (x.group === "temperature") {
       return sources.temperature;
     }
@@ -80,13 +137,69 @@ export default function Home({ params }: { params: { slug: string } }) {
     }
     return true;
   });
-
   const series = transformData(snapshots, sourcesFiltered);
+
+  const [dateRange, setDateRange] = useState<DateRange>({
+    from: dateToStringDate(addDays(new Date(), -7)),
+    to: dateToStringDate(new Date()),
+  });
 
   const [chartSettings, setChartSettings] = useState<ChartSettingsObject>({
     strokeWidth: calculateStrokeWidth(series),
-    strokeType: "smooth",
+    strokeType: calculateStrokeType(series),
   });
+
+  function onSourcesChange(sources: ChartSourcesObject) {
+    const existing = Object.fromEntries(searchParams.entries());
+    router.push(
+      `?${new URLSearchParams({
+        ...existing,
+        sources: convertObjectToString(sources),
+      })}`,
+    );
+    setSources(sources);
+  }
+
+  function onDateChange(dateRange: DateRange) {
+    const existing = Object.fromEntries(searchParams.entries());
+    router.push(
+      `?${new URLSearchParams({
+        ...existing,
+        from: dateRange.from,
+        to: dateRange.to,
+      })}`,
+    );
+    setDateRange(dateRange);
+  }
+
+  useEffect(() => {
+    if (searchParams === null) return;
+    const from = searchParams.get("from");
+    const to = searchParams.get("to");
+    const sources = searchParams.get("sources");
+
+    const newSources = {
+      temperature: sources?.includes("temperature") ?? false,
+      voltage: sources?.includes("voltage") ?? false,
+      heating: sources?.includes("heating") ?? false,
+      doors: sources?.includes("doors") ?? false,
+      temperatureSetting: sources?.includes("temperatureSetting") ?? false,
+      sun: sources?.includes("sun") ?? false,
+    };
+
+    const newVal = {
+      ...dateRange,
+    };
+    if (from !== null) {
+      newVal.from = from;
+    }
+    if (to !== null) {
+      newVal.to = to;
+    }
+
+    setDateRange(newVal);
+    setSources(newSources);
+  }, [searchParams]);
 
   return (
     <div className="h-[92vh] min-h-[400px]">
@@ -106,9 +219,11 @@ export default function Home({ params }: { params: { slug: string } }) {
         <div className="px-4 pb-2">
           <ChartControl
             sources={sources}
-            onSourcesChange={setSources}
+            onSourcesChange={onSourcesChange}
             chartSettings={chartSettings}
             onSettingsChange={setChartSettings}
+            dateRange={dateRange}
+            onDateRangeChange={onDateChange}
             slug={params.slug}
           />
         </div>

@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import ChartSettings, { ChartSettingsObject } from "./chart-settings";
 import Link from "next/link";
-import TimeFilter from "./time-filter";
+import TimeFilter, { DateRange } from "./time-filter";
 import { ArrowLeft } from "lucide-react";
 import ChartSources, { ChartSourcesObject } from "./chart-sources";
 
@@ -13,12 +13,18 @@ interface Props {
 
   chartSettings: ChartSettingsObject;
   onSettingsChange: (val: ChartSettingsObject) => any;
+
+  dateRange: DateRange;
+  onDateRangeChange: (val: DateRange) => any;
 }
 
 export default function ChartControl(props: Props) {
   return (
     <div className="flex flex-row flex-wrap gap-4">
-      <TimeFilter />
+      <TimeFilter
+        dateRange={props.dateRange}
+        onChange={props.onDateRangeChange}
+      />
       <ChartSources sources={props.sources} onChange={props.onSourcesChange} />
       <ChartSettings
         settings={props.chartSettings}

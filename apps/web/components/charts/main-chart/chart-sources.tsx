@@ -130,7 +130,7 @@ export default function ChartSources(props: Props) {
           <DrawerFooter>
             <div className="flex flex-row flex-wrap justify-center gap-4">
               <DrawerClose asChild>
-                <div>
+                <div className="flex flex-row flex-wrap gap-4">
                   <Button onClick={() => props.onChange(sources)}>
                     Načíst
                   </Button>

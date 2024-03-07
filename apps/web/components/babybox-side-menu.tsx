@@ -47,12 +47,24 @@ export default function BabyboxSideMenu(props: Props) {
       group: "Grafy",
       links: [
         {
-          href: "/app/babybox/" + props.babybox.slug + "/chart",
+          href:
+            "/app/babybox/" +
+            props.babybox.slug +
+            "/chart?sources=temperature,voltage",
           text: "Vše",
           icon: <LineChart />,
         },
-        { href: "/app/babybox", text: "Teploty", icon: <Thermometer /> },
-        { href: "/app/babybox", text: "Napětí", icon: <Cable /> },
+        {
+          href:
+            "/app/babybox/" + props.babybox.slug + "/chart?sources=temperature",
+          text: "Teploty",
+          icon: <Thermometer />,
+        },
+        {
+          href: "/app/babybox/" + props.babybox.slug + "/chart?sources=voltage",
+          text: "Napětí",
+          icon: <Cable />,
+        },
       ],
     },
     {

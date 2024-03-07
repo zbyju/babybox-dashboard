@@ -14,44 +14,24 @@ import {
 } from "@/components/ui/drawer";
 import { addDays, format, parse } from "date-fns";
 import { CalendarRange } from "lucide-react";
-import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
-import { DateRange } from "react-day-picker";
+import { useState } from "react";
 
-export default function TimeFilter() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
+export type DateRange = {
+  from: string;
+  to: string;
+};
 
-  const [dateRange, setDateRange] = useState<{
-    from: string;
-    to: string;
-  }>({
-    from: dateToStringDate(addDays(new Date(), -3)),
-    to: dateToStringDate(new Date()),
-  });
+interface Props {
+  dateRange: DateRange;
+  onChange: (dateRange: DateRange) => any;
+}
 
-  function dateToStringDate(str: Date): string {
-    return format(str, "dd-MM-yyyy");
-  }
+export function dateToStringDate(str: Date): string {
+  return format(str, "dd-MM-yyyy");
+}
 
-  useEffect(() => {
-    if (searchParams === null) return;
-    const from = searchParams.get("from");
-    const to = searchParams.get("to");
-
-    let newVal = {
-      ...dateRange,
-    };
-    if (from !== null) {
-      newVal.from = from;
-    }
-    if (to !== null) {
-      newVal.to = to;
-    }
-
-    setDateRange(newVal);
-  }, [searchParams]);
+export default function TimeFilter(props: Props) {
+  const [dateRange, setDateRange] = useState<DateRange>(props.dateRange);
 
   return (
     <Drawer>
@@ -110,20 +90,67 @@ export default function TimeFilter() {
             />
           </div>
 
+          <div className="mx-auto mt-2 flex flex-row flex-wrap justify-center gap-2">
+            {/* TODO: Check if buttons set the correct date based on backend implementation */}
+            <Button
+              size="sm"
+              className="text-xs"
+              variant="secondary"
+              onClick={() =>
+                setDateRange({
+                  from: dateToStringDate(addDays(new Date(), -0)),
+                  to: dateToStringDate(new Date()),
+                })
+              }
+            >
+              Poslední den
+            </Button>
+            <Button
+              size="sm"
+              className="text-xs"
+              variant="secondary"
+              onClick={() =>
+                setDateRange({
+                  from: dateToStringDate(addDays(new Date(), -2)),
+                  to: dateToStringDate(new Date()),
+                })
+              }
+            >
+              Poslední 3 dny
+            </Button>
+            <Button
+              size="sm"
+              className="text-xs"
+              variant="secondary"
+              onClick={() =>
+                setDateRange({
+                  from: dateToStringDate(addDays(new Date(), -7)),
+                  to: dateToStringDate(new Date()),
+                })
+              }
+            >
+              Poslední týden
+            </Button>
+            <Button
+              size="sm"
+              className="text-xs"
+              variant="secondary"
+              onClick={() =>
+                setDateRange({
+                  from: dateToStringDate(addDays(new Date(), -14)),
+                  to: dateToStringDate(new Date()),
+                })
+              }
+            >
+              Poslední 2 týdny
+            </Button>
+          </div>
+
           <DrawerFooter>
             <div className="flex flex-row flex-wrap justify-center gap-4">
               <DrawerClose asChild>
-                <div>
-                  <Button
-                    onClick={() => {
-                      router.push(
-                        `?${new URLSearchParams({
-                          from: dateRange.from,
-                          to: dateRange.to,
-                        })}`,
-                      );
-                    }}
-                  >
+                <div className="flex flex-row flex-wrap gap-4">
+                  <Button onClick={() => props.onChange(dateRange)}>
                     Načíst data
                   </Button>
                   <Button variant="outline">Storno</Button>
