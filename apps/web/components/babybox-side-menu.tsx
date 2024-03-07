@@ -94,8 +94,8 @@ export default function BabyboxSideMenu(props: Props) {
   ];
 
   return (
-    <nav className="fixed left-0 z-0 flex w-[16%] min-w-[195px] flex-col overflow-y-auto rounded-r-xl border border-border bg-background pb-3">
-      <div className="sticky top-0 mt-2 flex flex-col items-start justify-start gap-2">
+    <nav className="z-10 mx-auto block w-full min-w-[200px] flex-col overflow-y-auto rounded-r-xl border border-border bg-background pb-3 lg:fixed lg:left-0 lg:max-h-[75vh] lg:w-[16%]">
+      <div className="sticky mt-2 flex flex-col items-start justify-start gap-2">
         <h2 className="ml-2 mt-1 text-wrap text-xl font-bold capitalize">
           <span className="text-pink-600 dark:text-pink-700">Babybox </span>
           {props.babybox.name}
@@ -126,9 +126,7 @@ export default function BabyboxSideMenu(props: Props) {
           {navigationLinks.map((link) => (
             <Link
               key={link.text}
-              className={
-                "flex flex-grow items-center gap-2 rounded px-8 py-1 text-sm transition-all duration-500 hover:bg-secondary hover:text-secondary-foreground"
-              }
+              className="flex flex-grow items-center gap-2 rounded px-8 py-1 text-sm transition-all duration-500 hover:bg-secondary hover:text-secondary-foreground"
               href={link.href}
             >
               {link.icon}

@@ -15,17 +15,17 @@ import { Event } from "@/types/event.types";
 import LatestEvents from "@/components/widgets/latest-events";
 import VariableStats from "@/components/widgets/variable-stats";
 import { calculateSnapshotStats } from "@/utils/stats";
+import { Sticky, StickyContainer } from "react-sticky";
 
 export default function BabyboxPage({ params }: { params: { slug: string } }) {
   const slug = params.slug;
 
   const stats = calculateSnapshotStats(snapshots);
-  console.log(stats);
 
   return (
-    <div className="flex w-screen pb-24 pr-5">
+    <div className="w-screen lg:pb-24 lg:pr-5">
       <BabyboxSideMenu babybox={{ slug, name: slug }} />
-      <div className="ml-main mb-1 mt-5 flex-grow">
+      <div className="lg:ml-main mb-1 mt-5 flex-grow">
         <div className="mx-auto flex w-11/12 flex-col">
           <div className="mb-4">
             <h4 className="ml-1 text-3xl font-black leading-6">Teploty</h4>
@@ -37,6 +37,7 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
               <Widget
                 title="Vnitřní"
                 subtitle="Poslední týden"
+                className="mx-auto"
                 classNameInner="border-b-4 border-b-inside"
               >
                 <VariableStats
@@ -46,6 +47,7 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
               <Widget
                 title="Venkovní"
                 subtitle="Poslední týden"
+                className="mx-auto"
                 classNameInner="border-b-4 border-b-outside"
               >
                 <VariableStats
@@ -55,6 +57,7 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
               <Widget
                 title="Plášť"
                 subtitle="Poslední týden"
+                className="mx-auto"
                 classNameInner="border-b-4 border-b-casing"
               >
                 <VariableStats
@@ -64,6 +67,7 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
               <Widget
                 title="Horní"
                 subtitle="Poslední týden"
+                className="mx-auto"
                 classNameInner="border-b-4 border-b-heating"
               >
                 <VariableStats
@@ -73,6 +77,7 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
               <Widget
                 title="Spodní"
                 subtitle="Poslední týden"
+                className="mx-auto"
                 classNameInner="border-b-4 border-b-cooling"
               >
                 <VariableStats
@@ -92,6 +97,7 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
               <Widget
                 title="Vstup"
                 subtitle="Poslední týden"
+                className="mx-auto"
                 classNameInner="border-b-4 border-b-in"
               >
                 <VariableStats
@@ -101,6 +107,7 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
               <Widget
                 title="Akumulátor"
                 subtitle="Poslední týden"
+                className="mx-auto"
                 classNameInner="border-b-4 border-b-battery"
               >
                 <VariableStats

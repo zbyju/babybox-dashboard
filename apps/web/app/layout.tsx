@@ -34,7 +34,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={theme} style={{ colorScheme: theme }}>
       <body className={fontSans.className}>
-        <div className="w-screen max-w-full overflow-x-hidden">
+        <div className="mb-12 w-screen max-w-full overflow-x-hidden">
           <AuthProvider>
             <ThemeProvider
               attribute="class"

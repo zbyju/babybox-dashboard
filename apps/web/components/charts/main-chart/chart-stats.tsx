@@ -12,37 +12,65 @@ export default function ChartStats(props: Props) {
 
   return (
     <div className="flex flex-row flex-wrap gap-4">
-      <Widget title="Vnitřní teplota">
+      <Widget
+        title="Vnitřní teplota"
+        className="mx-auto"
+        classNameInner="border-b-4 border-b-inside"
+      >
         <VariableStats
           stats={(stats.temperature as SnapshotGroupStat).inside}
         />
       </Widget>
-      <Widget title="Venkovní teplota">
+      <Widget
+        title="Venkovní teplota"
+        className="mx-auto"
+        classNameInner="border-b-4 border-b-outside"
+      >
         <VariableStats
           stats={(stats.temperature as SnapshotGroupStat).inside}
         />
       </Widget>
-      <Widget title="Teplota Pláště">
+      <Widget
+        title="Teplota Pláště"
+        className="mx-auto"
+        classNameInner="border-b-4 border-b-casing"
+      >
         <VariableStats
           stats={(stats.temperature as SnapshotGroupStat).inside}
         />
       </Widget>
-      <Widget title="Horní teplota">
+      <Widget
+        title="Horní teplota"
+        className="mx-auto"
+        classNameInner="border-b-4 border-b-heating"
+      >
         <VariableStats
           stats={(stats.temperature as SnapshotGroupStat).inside}
         />
       </Widget>
-      <Widget title="Spodní teplota">
+      <Widget
+        title="Spodní teplota"
+        className="mx-auto"
+        classNameInner="border-b-4 border-b-cooling"
+      >
         <VariableStats
           stats={(stats.temperature as SnapshotGroupStat).inside}
         />
       </Widget>
-      <Widget title="Vstupní napětí">
+      <Widget
+        title="Vstupní napětí"
+        className="mx-auto"
+        classNameInner="border-b-4 border-b-in"
+      >
         <VariableStats
           stats={(stats.temperature as SnapshotGroupStat).inside}
         />
       </Widget>
-      <Widget title="Napětí akumulátor">
+      <Widget
+        title="Napětí akumulátor"
+        className="mx-auto"
+        classNameInner="border-b-4 border-b-battery"
+      >
         <VariableStats
           stats={(stats.temperature as SnapshotGroupStat).inside}
         />
