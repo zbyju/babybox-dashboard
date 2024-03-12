@@ -40,7 +40,11 @@ export default function BabyboxSideMenu(props: Props) {
           text: "Informace",
           icon: <Info />,
         },
-        { href: "/app/babybox", text: "Editovat", icon: <FilePenLine /> },
+        {
+          href: "/app/babybox/" + props.babybox.slug + "/edit",
+          text: "Editovat",
+          icon: <FilePenLine />,
+        },
       ],
     },
     {
@@ -101,24 +105,6 @@ export default function BabyboxSideMenu(props: Props) {
           {props.babybox.name}
         </h2>
         <Separator className="my-1" />
-        {linkGroups.map((group) => (
-          <div key={group.group} className="w-full">
-            <h3 className="my-1 ml-2 text-lg font-semibold">{group.group}</h3>
-            {group.links.map((link) => (
-              <Link
-                key={link.text}
-                className="flex w-full flex-row items-center gap-2 rounded px-8 py-2 text-sm transition-all duration-500 hover:bg-secondary hover:text-secondary-foreground"
-                href={link.href}
-              >
-                {link.icon}
-                {link.text}
-              </Link>
-            ))}
-          </div>
-        ))}
-
-        <Separator className="my-1" />
-
         <h3 className="mb-1 ml-2 text-lg font-semibold">
           Navigace mezi Babyboxy
         </h3>
@@ -134,6 +120,24 @@ export default function BabyboxSideMenu(props: Props) {
             </Link>
           ))}
         </div>
+
+        <Separator className="my-1" />
+
+        {linkGroups.map((group) => (
+          <div key={group.group} className="w-full">
+            <h3 className="my-1 ml-2 text-lg font-semibold">{group.group}</h3>
+            {group.links.map((link) => (
+              <Link
+                key={link.text}
+                className="flex w-full flex-row items-center gap-2 rounded px-8 py-2 text-sm transition-all duration-500 hover:bg-secondary hover:text-secondary-foreground"
+                href={link.href}
+              >
+                {link.icon}
+                {link.text}
+              </Link>
+            ))}
+          </div>
+        ))}
       </div>
     </nav>
   );
