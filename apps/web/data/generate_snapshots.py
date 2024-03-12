@@ -10,6 +10,8 @@ snapshots = []
 events = []
 
 # Define helper function to generate random temperature and voltage
+
+
 def generate_snapshot(timestamp):
     return {
         "timestamp": timestamp.strftime("%Y-%m-%d %H:%M:%S"),
@@ -25,6 +27,7 @@ def generate_snapshot(timestamp):
             "battery": random.uniform(10, 12)
         }
     }
+
 
 def generate_snapshot_next(timestamp, previous):
     return {
@@ -43,33 +46,45 @@ def generate_snapshot_next(timestamp, previous):
     }
 
 # Function to simulate event generation
+
+
 def generate_event(timestamp, event_type):
     return {
         "timestamp": timestamp.strftime("%Y-%m-%d %H:%M:%S"),
         "event": event_type
     }
 
+
 # Simulate one week of data
 end_time = start_time + timedelta(days=7)
 current_time = start_time
 event_toggle = True  # Toggle for turning heating/cooling on and off
 event_duration = timedelta(hours=1)  # Approximate duration of each event
+last_event_time = start_time - timedelta(hours=2)
 
 while current_time < end_time:
     # Generate snapshot
-    new_snapshot = generate_snapshot_next(current_time, snapshots[-1]) if(len(snapshots) > 0) else generate_snapshot(current_time)
+    new_snapshot = generate_snapshot_next(
+        current_time, snapshots[-1]) if(len(snapshots) > 0) else generate_snapshot(current_time)
     snapshots.append(new_snapshot)
-    
+
     # Check if it's time to log an event (every ~1 hour)
-    if event_toggle:
-        event_type = "Heating On" if random.choice([True, False]) else "Cooling On"
+    time_since_last_event = current_time - last_event_time
+    # Roughly once every 10 hours
+    if time_since_last_event > timedelta(hours=1) and random.random() < 0.1:
+        event_type = random.choice(
+            ["Heating On", "Cooling On", "Doors Opening"])
         events.append(generate_event(current_time, event_type))
-        event_toggle = False
-    elif current_time - datetime.strptime(events[-1]["timestamp"], "%Y-%m-%d %H:%M:%S") >= event_duration:
-        event_type = "Heating Off" if "Heating On" in events[-1]["event"] else "Cooling Off"
-        events.append(generate_event(current_time, event_type))
-        event_toggle = True
-    
+        last_event_time = current_time  # Update the last event time
+        # Logic to turn off heating/cooling or close door after some time
+        if event_type in ["Heating On", "Cooling On"]:
+            off_event = "Heating Off" if event_type == "Heating On" else "Cooling Off"
+            events.append(generate_event(
+                current_time + timedelta(minutes=30), off_event))
+        elif event_type == "Doors Opening":
+            events.append(generate_event(
+                current_time + timedelta(minutes=10), "Doors Closing"))
+
     # Increment current_time by 5 minutes for the next snapshot
     current_time += timedelta(minutes=5)
 
