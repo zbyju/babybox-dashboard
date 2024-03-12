@@ -1,14 +1,14 @@
-import LocationInformation from "@/components/location-information";
-import NetworkConfiguration from "@/components/network-configuration";
-import ContactInformationTable from "@/components/tables/contact-information-table";
-import MaintenanceTable from "@/components/tables/maintenance-table";
+import LocationInformationEdit from "@/components/location-information-edit";
+import NetworkConfigurationEdit from "@/components/network-configuration-edit";
+import ContactInformationTableEdit from "@/components/tables/contact-information-table-edit";
+import MaintenanceTableEdit from "@/components/tables/maintenance-table-edit";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, FilePenLine, Pencil } from "lucide-react";
+import { ArrowLeft, Pencil } from "lucide-react";
 import Link from "next/link";
 
 export default function Home({ params }: { params: { slug: string } }) {
   return (
-    <div className="mt-4 px-[16%]">
+    <div className="mt-4 px-[5%] lg:px-[16%]">
       <div className="flex flex-row flex-wrap justify-between gap-4">
         <h2 className="ml-1 inline-flex flex-row items-center gap-3 text-3xl font-semibold">
           <Pencil />
@@ -28,8 +28,8 @@ export default function Home({ params }: { params: { slug: string } }) {
         </div>
       </div>
 
-      <div className="mt-6 flex flex-row gap-6">
-        <LocationInformation
+      <div className="mt-6 flex flex-row flex-wrap justify-center justify-items-center gap-6 lg:justify-start">
+        <LocationInformationEdit
           address={{
             hospital: "Nemocnice Hello",
             city: "Praha",
@@ -42,7 +42,7 @@ export default function Home({ params }: { params: { slug: string } }) {
           }}
         />
 
-        <NetworkConfiguration
+        <NetworkConfigurationEdit
           networkConfiguration={{
             type: "vlan",
             ip: {
@@ -57,19 +57,27 @@ export default function Home({ params }: { params: { slug: string } }) {
         />
       </div>
 
-      <div className="mt-6 flex flex-row gap-6">
-        <ContactInformationTable
+      <div className="mt-6 flex flex-row flex-wrap  justify-start gap-6">
+        <ContactInformationTableEdit
           contacts={[
             {
+              id: "1",
               name: "Jana Joe",
               email: "test@test.com",
               phone: "600 500 400",
               note: "Poznamka",
             },
+            {
+              id: "2",
+              name: "Joe Jester",
+              email: "joe@test.com",
+              phone: "123 456 789",
+              note: "Note",
+            },
           ]}
         />
 
-        <MaintenanceTable
+        <MaintenanceTableEdit
           maintenances={[{ timestamp: new Date(), note: "Poznamka" }]}
         />
       </div>
