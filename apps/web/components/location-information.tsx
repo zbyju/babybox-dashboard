@@ -98,7 +98,7 @@ export default function LocationInformation(props: Props) {
                   target="_blank"
                   href={`https://www.google.com/maps/place/${props.address.coordinates?.latitude},${props.address.coordinates?.longitude}`}
                 >
-                  <Button className="bg-green-500 dark:bg-green-600">
+                  <Button className="bg-green-500 transition duration-500 hover:bg-green-400 dark:bg-green-600 dark:hover:bg-green-500">
                     Google Maps
                   </Button>
                 </a>
@@ -106,7 +106,7 @@ export default function LocationInformation(props: Props) {
                   target="_blank"
                   href={`https://en.mapy.cz/zakladni?y=${props.address.coordinates?.latitude}&x=${props.address.coordinates?.longitude}&z=18`}
                 >
-                  <Button className="bg-lime-500 dark:bg-lime-600">
+                  <Button className="bg-lime-500 transition duration-500 hover:bg-lime-400 dark:bg-lime-600 dark:hover:bg-lime-500">
                     Mapy.cz
                   </Button>
                 </a>
