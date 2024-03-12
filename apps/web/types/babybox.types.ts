@@ -16,6 +16,7 @@ export type BabyboxAddress = {
 };
 
 export type BabyboxContact = {
+  id: string;
   name: string;
   email?: string;
   phone?: string;
@@ -23,7 +24,7 @@ export type BabyboxContact = {
 };
 
 export type BabyboxNetworkConfiguration = {
-  type: "vlan" | "network" | "routing" | "custom";
+  type: "vlan" | "lan" | "routing" | "custom";
   ip: {
     router: string;
     engineUnit: string;
