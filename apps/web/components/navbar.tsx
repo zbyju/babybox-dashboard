@@ -1,4 +1,11 @@
-import { Construction, HelpCircle, Home, LogIn, LogOut } from "lucide-react";
+import {
+  Bell,
+  Construction,
+  HelpCircle,
+  Home,
+  LogIn,
+  LogOut,
+} from "lucide-react";
 import { ModeToggle } from "./buttons/darkmode-toggle";
 import { BabyboxCombo } from "./babybox-combo";
 import Link from "next/link";
@@ -12,6 +19,7 @@ export default function Navbar() {
       name: "Servisy",
       icon: <Construction />,
     },
+    { href: "/app/notifications", name: "Notifikace", icon: <Bell /> },
     { href: "/app/help", name: "Nápověda", icon: <HelpCircle /> },
   ];
 
@@ -22,7 +30,6 @@ export default function Navbar() {
     <>
       <nav className="hidden w-screen border-collapse border-b border-b-slate-100 dark:border-b-slate-800 lg:block">
         <div className="flex flex-row items-center justify-start gap-10 py-2 md:px-4 lg:px-[16%]">
-          <h1 className="h-full text-xl font-bold">Babybox Dashboard</h1>
           <div className="flex flex-grow flex-row justify-start gap-8">
             {links.map((l) => (
               <Link className={linkClass} key={l.href} href={l.href}>
