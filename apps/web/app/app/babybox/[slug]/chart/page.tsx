@@ -7,7 +7,7 @@ import LineChart from "@/components/charts/line-chart";
 import ChartStats from "@/components/charts/main-chart/chart-stats";
 import LatestSnapshots from "@/components/widgets/latest-snapshots";
 import { Snapshot } from "@/types/snapshot.types";
-import { addDays, format, parse } from "date-fns";
+import { addDays, parse } from "date-fns";
 import { useEffect, useState } from "react";
 import { ChartSourcesObject } from "@/components/charts/main-chart/chart-sources";
 import { ChartSettingsObject } from "@/components/charts/main-chart/chart-settings";
@@ -16,6 +16,8 @@ import {
   DateRange,
   dateToStringDate,
 } from "@/components/charts/main-chart/time-filter";
+import { Interval } from "@/types/event.types";
+import { combineIntervals, generateIntervals } from "@/utils/events";
 
 function calculateStrokeWidth(series: ApexAxisChartSeries): number {
   const n = series.length > 0 ? series[0].data.length : 0;
@@ -149,6 +151,56 @@ export default function Home({ params }: { params: { slug: string } }) {
     strokeType: calculateStrokeType(series),
   });
 
+  const eventColors: {
+    [key: string]: { borderColor: string; fillColor: string };
+  } = {
+    Heating: {
+      borderColor: "hsl(var(--heating))",
+      fillColor: "hsl(var(--heating))",
+    },
+    Cooling: {
+      borderColor: "hsl(var(--cooling))",
+      fillColor: "hsl(var(--cooling))",
+    },
+    Doors: {
+      borderColor: "hsl(var(--outside))",
+      fillColor: "hsl(var(--outside))",
+    },
+  };
+
+  function convertIntervalsToAnnotations(
+    intervals: Interval[],
+  ): XAxisAnnotations[] {
+    return intervals.map((interval) => ({
+      x: interval.from.getTime(),
+      x2: interval.to.getTime(),
+      label: {
+        text: interval.type,
+        borderColor: eventColors[interval.type].borderColor,
+        style: {
+          fontSize: "8px",
+        },
+      },
+      borderColor: eventColors[interval.type].borderColor,
+      fillColor: eventColors[interval.type].fillColor,
+    }));
+  }
+
+  const intervals = combineIntervals(generateIntervals(events));
+  const filteredIntervals = intervals.filter((i) => {
+    if (["heating", "cooling"].includes(i.type.toLowerCase())) {
+      return sources.heating;
+    }
+    if (["doors"].includes(i.type.toLowerCase())) {
+      return sources.doors;
+    }
+    return false;
+  });
+
+  const annotations = {
+    xaxis: [...convertIntervalsToAnnotations(filteredIntervals)],
+  };
+
   function onSourcesChange(sources: ChartSourcesObject) {
     const existing = Object.fromEntries(searchParams.entries());
     router.push(
@@ -207,7 +259,7 @@ export default function Home({ params }: { params: { slug: string } }) {
         <LineChart
           id="main-chart"
           series={series}
-          annotations={{} as ApexAnnotations}
+          annotations={annotations}
           xaxisType="datetime"
           showGrid
           showToolbar
