@@ -11,11 +11,16 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { CalendarDays } from "lucide-react";
-import { useState } from "react";
+import { SelectSingleEventHandler } from "react-day-picker";
+import { cs } from "date-fns/locale";
 
-export function DatePicker() {
-  const [date, setDate] = useState<Date>();
-
+export function DatePicker({
+  date,
+  onChange,
+}: {
+  onChange: SelectSingleEventHandler;
+  date: Date | undefined;
+}) {
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -27,14 +32,19 @@ export function DatePicker() {
           )}
         >
           <CalendarDays className="mr-2 h-4 w-4" />
-          {date ? format(date, "PPP") : <span>Pick a date</span>}
+          {date ? (
+            format(date, "PPP", { locale: cs })
+          ) : (
+            <span>Vyberte datum</span>
+          )}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
         <Calendar
+          locale={cs}
           mode="single"
           selected={date}
-          onSelect={setDate}
+          onSelect={onChange}
           initialFocus
         />
       </PopoverContent>
