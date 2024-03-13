@@ -25,7 +25,7 @@ export interface ChartSourcesObject {
 
 interface Props {
   sources: ChartSourcesObject;
-  onChange: (val: ChartSourcesObject) => any;
+  onChange: (val: ChartSourcesObject) => unknown;
 }
 
 export default function ChartSources(props: Props) {

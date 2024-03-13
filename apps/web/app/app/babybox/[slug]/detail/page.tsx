@@ -66,6 +66,7 @@ export default function Home({ params }: { params: { slug: string } }) {
         <ContactInformationTable
           contacts={[
             {
+              id: "1",
               name: "Jana Joe",
               email: "test@test.com",
               phone: "600 500 400",

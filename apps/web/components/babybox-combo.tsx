@@ -18,10 +18,11 @@ import { BabyboxesContext } from "./contexts/babyboxes-context";
 import { Button } from "@/components/ui/button";
 import { useContext, useState } from "react";
 import Link from "next/link";
+import { Babybox } from "./tables/babyboxes-table";
 
 export function BabyboxCombo() {
   const [open, setOpen] = useState(false);
-  const babyboxes = useContext(BabyboxesContext);
+  const babyboxes = useContext(BabyboxesContext) as Babybox[];
 
   return (
     <Popover open={open} onOpenChange={setOpen}>

@@ -30,7 +30,7 @@ interface DataTableProps<TData, TValue> {
   hideColumns?: string[];
   filterColumnName?: string;
   rowClassNameAccessor?: (row: Row<TData>) => string;
-  rowClickAccessor?: (row: Row<TData>) => any;
+  rowClickAccessor?: (row: Row<TData>) => unknown;
   className?: string;
 }
 

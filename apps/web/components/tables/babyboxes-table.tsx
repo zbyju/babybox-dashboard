@@ -72,10 +72,10 @@ export const columns: ColumnDef<Babybox>[] = [
     filterFn: (
       row: Row<Babybox>,
       columnId: string,
-      filterValue: any,
+      filterValue: unknown,
     ): boolean => {
       const a = toSlug(row.getValue(columnId) as string);
-      const b = toSlug(filterValue);
+      const b = toSlug(filterValue as string);
       return a.includes(b);
     },
   },
@@ -191,16 +191,16 @@ export const columns: ColumnDef<Babybox>[] = [
 ];
 
 export default function BabyboxesTable() {
-  const babyboxes = useContext(BabyboxesContext);
+  const babyboxes = useContext(BabyboxesContext) as Babybox[];
   const router = useRouter();
 
   function setRowClassName(row: Row<Babybox>): string {
-    const d = parse(
+    const _d = parse(
       row.getValue("lastData_timestamp"),
       "HH:mm:ss dd-MM-yyyy",
       new Date(),
     );
-    const now = new Date();
+    const _now = new Date();
     return "";
   }
 

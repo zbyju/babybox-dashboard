@@ -9,13 +9,13 @@ interface Props {
   slug: string;
 
   sources: ChartSourcesObject;
-  onSourcesChange: (val: ChartSourcesObject) => any;
+  onSourcesChange: (val: ChartSourcesObject) => unknown;
 
   chartSettings: ChartSettingsObject;
-  onSettingsChange: (val: ChartSettingsObject) => any;
+  onSettingsChange: (val: ChartSettingsObject) => unknown;
 
   dateRange: DateRange;
-  onDateRangeChange: (val: DateRange) => any;
+  onDateRangeChange: (val: DateRange) => unknown;
 }
 
 export default function ChartControl(props: Props) {

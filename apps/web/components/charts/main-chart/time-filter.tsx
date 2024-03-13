@@ -23,7 +23,7 @@ export type DateRange = {
 
 interface Props {
   dateRange: DateRange;
-  onChange: (dateRange: DateRange) => any;
+  onChange: (dateRange: DateRange) => unknown;
 }
 
 export function dateToStringDate(str: Date): string {
@@ -80,9 +80,9 @@ export default function TimeFilter(props: Props) {
                   });
                 } else {
                   setDateRange({
-                    // @ts-ignore
+                    // @ts-expect-error typescript is stupid
                     from: dateToStringDate(val.from),
-                    // @ts-ignore
+                    // @ts-expect-error typescript is stupid
                     to: dateToStringDate(val.to),
                   });
                 }

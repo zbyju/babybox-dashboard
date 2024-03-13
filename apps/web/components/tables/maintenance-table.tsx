@@ -14,8 +14,8 @@ export const columns: ColumnDef<BabyboxMaintenance>[] = [
   {
     accessorKey: "timestamp",
     header: () => <div className="">Datum</div>,
-    cell: ({ getValue }: any) => {
-      return format(getValue(), "dd.MM.yyyy");
+    cell: ({ getValue }: { getValue: () => unknown }) => {
+      return format(getValue() as Date, "dd.MM.yyyy");
     },
   },
   {

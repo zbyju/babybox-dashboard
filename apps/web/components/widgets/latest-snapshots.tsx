@@ -10,14 +10,8 @@ import {
 } from "../ui/tooltip";
 import { Badge } from "../ui/badge";
 import { differenceInMinutes, format, parse } from "date-fns";
-import { ColumnDef } from "@tanstack/react-table";
-import {
-  ArrowDown,
-  ArrowDownRight,
-  ArrowUp,
-  ArrowUpRight,
-  Minus,
-} from "lucide-react";
+import { ColumnDef, Row, Table } from "@tanstack/react-table";
+import { ArrowDownRight, ArrowUpRight, Minus } from "lucide-react";
 
 const columnVars = [
   { key: "temperature.inside", label: "Vnitřní", key2: "temperature_inside" },
@@ -34,7 +28,15 @@ const columnVars = [
 ].map((c) => ({
   accessorKey: c.key,
   header: () => <div className="">{c.label}</div>,
-  cell: ({ getValue, table, row }: any) => {
+  cell: ({
+    getValue,
+    table,
+    row,
+  }: {
+    getValue: () => unknown;
+    table: Table<Snapshot>;
+    row: Row<Snapshot>;
+  }) => {
     const val = getValue();
     const str = typeof val === "number" ? val.toFixed(2) : val;
 

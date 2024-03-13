@@ -2,14 +2,7 @@
 
 import { BabyboxAddress } from "@/types/babybox.types";
 import OptionalRender from "./optional-render";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "./ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Copy, MapPin } from "lucide-react";
 import { Button } from "./ui/button";
 import { toast } from "sonner";

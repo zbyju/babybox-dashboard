@@ -50,10 +50,6 @@ export default function RootLayout({
         <meta name="theme-color" content="#000000" />
 
         <link rel="shortcut icon" href="/favicon.ico" />
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css?family=Nunito:200,300,400,500,600,700,800,900"
-        />
       </head>
       <body className={fontSans.className}>
         <div className="mb-12 w-screen max-w-full overflow-x-hidden">

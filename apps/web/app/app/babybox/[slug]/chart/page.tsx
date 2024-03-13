@@ -60,7 +60,8 @@ function transformData(
       data: originalData.map((item) => {
         return {
           x: parse(item.timestamp, "yyyy-MM-dd HH:mm:ss", new Date()).getTime(),
-          y: (item[group] as any)[variable],
+          // @ts-expect-error apex
+          y: item[group][variable],
         };
       }),
     });
@@ -69,7 +70,8 @@ function transformData(
   return series;
 }
 
-function convertObjectToString(obj: any) {
+function convertObjectToString(obj: object) {
+  // @ts-expect-error wtf
   const keys = Object.keys(obj).filter((key) => obj[key] === true);
   return keys.join(",");
 }
@@ -79,13 +81,13 @@ export default function Home({ params }: { params: { slug: string } }) {
   const router = useRouter();
 
   const [sources, setSources] = useState<ChartSourcesObject>({
-    temperature: searchParams.get("sources")?.includes("temperature") ?? false,
-    voltage: searchParams.get("sources")?.includes("voltage") ?? false,
-    heating: searchParams.get("sources")?.includes("heating") ?? false,
-    doors: searchParams.get("sources")?.includes("doors") ?? false,
+    temperature: searchParams?.get("sources")?.includes("temperature") ?? false,
+    voltage: searchParams?.get("sources")?.includes("voltage") ?? false,
+    heating: searchParams?.get("sources")?.includes("heating") ?? false,
+    doors: searchParams?.get("sources")?.includes("doors") ?? false,
     temperatureSetting:
-      searchParams.get("sources")?.includes("temperatureSetting") ?? false,
-    sun: searchParams.get("sources")?.includes("sun") ?? false,
+      searchParams?.get("sources")?.includes("temperatureSetting") ?? false,
+    sun: searchParams?.get("sources")?.includes("sun") ?? false,
   });
   const sourcesFiltered = [
     {
@@ -130,7 +132,7 @@ export default function Home({ params }: { params: { slug: string } }) {
       name: "Napětí baterie",
       color: "hsl(var(--battery))",
     },
-  ].filter((x, i) => {
+  ].filter((x) => {
     if (x.group === "temperature") {
       return sources.temperature;
     }
@@ -202,7 +204,7 @@ export default function Home({ params }: { params: { slug: string } }) {
   };
 
   function onSourcesChange(sources: ChartSourcesObject) {
-    const existing = Object.fromEntries(searchParams.entries());
+    const existing = Object.fromEntries(searchParams?.entries() ?? []);
     router.push(
       `?${new URLSearchParams({
         ...existing,
@@ -213,7 +215,7 @@ export default function Home({ params }: { params: { slug: string } }) {
   }
 
   function onDateChange(dateRange: DateRange) {
-    const existing = Object.fromEntries(searchParams.entries());
+    const existing = Object.fromEntries(searchParams?.entries() ?? []);
     router.push(
       `?${new URLSearchParams({
         ...existing,
@@ -239,18 +241,19 @@ export default function Home({ params }: { params: { slug: string } }) {
       sun: sources?.includes("sun") ?? false,
     };
 
-    const newVal = {
+    const newDateRange = {
       ...dateRange,
     };
     if (from !== null) {
-      newVal.from = from;
+      newDateRange.from = from;
     }
     if (to !== null) {
-      newVal.to = to;
+      newDateRange.to = to;
     }
 
-    setDateRange(newVal);
+    setDateRange(newDateRange);
     setSources(newSources);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
   return (

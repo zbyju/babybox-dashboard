@@ -5,16 +5,18 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
+import { FormEvent } from "react";
 
 export default function Login() {
   const { login } = useAuth();
   const router = useRouter();
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const username = e.target.username.value;
-    const password = e.target.password.value;
 
-    console.log("test");
+    const formData = new FormData(e.currentTarget);
+    const username = (formData.get("username") as string) ?? "";
+    const _password = (formData.get("password") as string) ?? "";
+
     login(username);
     router.push("/app/babybox");
   };

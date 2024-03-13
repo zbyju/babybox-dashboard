@@ -1,17 +1,10 @@
 "use client";
 
-import { Snapshot } from "@/types/snapshot";
 import { DataTable } from "../ui/data-table";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "../ui/tooltip";
-import { Badge } from "../ui/badge";
-import { differenceInMinutes, format, parse } from "date-fns";
+import { format, parse } from "date-fns";
 import { ColumnDef } from "@tanstack/react-table";
 import { translateEvent } from "@/utils/events";
+import { Snapshot } from "@/types/snapshot.types";
 
 export const columns: ColumnDef<Snapshot>[] = [
   {
@@ -28,9 +21,10 @@ export const columns: ColumnDef<Snapshot>[] = [
   {
     accessorKey: "event",
     header: () => <div className="">Událost</div>,
-    cell: ({ getValue }: { getValue: any }) => {
+    cell: ({ getValue }: { getValue: () => unknown }) => {
       const val = getValue();
-      const label = translateEvent(val);
+      const valStr = typeof val === "string" ? val : "";
+      const label = translateEvent(valStr);
       return <div className="">{label as string}</div>;
     },
   },

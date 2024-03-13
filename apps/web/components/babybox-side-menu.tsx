@@ -19,13 +19,14 @@ import type { BabyboxBase } from "@/types/babybox.types";
 import { Separator } from "./ui/separator";
 import { useContext } from "react";
 import Link from "next/link";
+import { Babybox } from "./tables/babyboxes-table";
 
 interface Props {
   babybox: BabyboxBase;
 }
 
 export default function BabyboxSideMenu(props: Props) {
-  const babyboxes = useContext(BabyboxesContext);
+  const babyboxes = useContext(BabyboxesContext) as Babybox[];
   const currentIdx = babyboxes.findIndex((b) => b.slug === props.babybox.slug);
   const prevSlug =
     babyboxes[(currentIdx - 1 + babyboxes.length) % babyboxes.length].slug;

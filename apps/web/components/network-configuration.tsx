@@ -2,7 +2,7 @@
 
 import { BabyboxNetworkConfiguration } from "@/types/babybox.types";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { MapPin, Network } from "lucide-react";
+import { Network } from "lucide-react";
 import OptionalRender from "./optional-render";
 
 interface Props {

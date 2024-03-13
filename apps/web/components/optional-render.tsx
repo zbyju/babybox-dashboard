@@ -3,7 +3,7 @@ export default function OptionalRender({
   content,
 }: Readonly<{
   children: React.ReactNode;
-  content: any | undefined | null;
+  content: unknown | undefined | null;
 }>) {
   return content ? <>{children}</> : null;
 }

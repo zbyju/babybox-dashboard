@@ -54,9 +54,9 @@ export default function NetworkConfigurationEdit(props: Props) {
             </Label>
             <Select
               onValueChange={(val) =>
-                // @ts-ignore
                 setNetworkConfiguration({
                   ...networkConfiguration,
+                  // @ts-expect-error select types
                   type: val,
                 })
               }

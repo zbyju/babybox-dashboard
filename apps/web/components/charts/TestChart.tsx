@@ -235,6 +235,7 @@ export default function TestChart() {
   return (
     <div className="ml-[-10px] mt-[-20px] h-full max-h-full w-full overflow-x-hidden overflow-y-hidden">
       <Chart
+        // @ts-expect-error test
         options={state.options}
         series={state.series}
         type="line"

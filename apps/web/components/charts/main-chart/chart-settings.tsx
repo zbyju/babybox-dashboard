@@ -30,7 +30,7 @@ export interface ChartSettingsObject {
 
 interface Props {
   settings: ChartSettingsObject;
-  onChange: (val: ChartSettingsObject) => any;
+  onChange: (val: ChartSettingsObject) => unknown;
 }
 
 export default function ChartSettings(props: Props) {
@@ -74,7 +74,7 @@ export default function ChartSettings(props: Props) {
               <Select
                 value={settings.strokeType}
                 onValueChange={(val) =>
-                  //@ts-ignore
+                  //@ts-expect-error Select types
                   setSettings({ ...settings, strokeType: val })
                 }
               >
