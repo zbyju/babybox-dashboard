@@ -30,7 +30,7 @@ export default function ChartControl(props: Props) {
         settings={props.chartSettings}
         onChange={props.onSettingsChange}
       />
-      <Link href={"/app/babybox/" + props.slug}>
+      <Link href={"/dashboard/babybox/" + props.slug}>
         <Button
           variant="outline"
           size="lg"

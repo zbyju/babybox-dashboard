@@ -57,7 +57,7 @@ export default function NotificationsPage() {
     <div className="mb-10 mt-2 w-full px-4 lg:px-[16%]">
       <div className="mt-4 flex w-full flex-row items-center justify-between gap-4">
         <h2 className="text-3xl font-bold">Nová notifikační šablona</h2>
-        <Link href="/app/notifications">
+        <Link href="/dashboard/notifications">
           <Button
             className="flex flex-row items-center justify-between gap-1"
             variant="secondary"

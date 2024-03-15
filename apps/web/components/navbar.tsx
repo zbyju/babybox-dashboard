@@ -13,14 +13,14 @@ import { Button } from "./ui/button";
 
 export default function Navbar() {
   const links = [
-    { href: "/app/babybox", name: "Domů", icon: <Home /> },
+    { href: "/dashboard/babybox", name: "Domů", icon: <Home /> },
     {
-      href: "/app/babybox/maintenance",
+      href: "/dashboard/babybox/maintenance",
       name: "Servisy",
       icon: <Construction />,
     },
-    { href: "/app/notifications", name: "Notifikace", icon: <Bell /> },
-    { href: "/app/help", name: "Nápověda", icon: <HelpCircle /> },
+    { href: "/dashboard/notifications", name: "Notifikace", icon: <Bell /> },
+    { href: "/dashboard/help", name: "Nápověda", icon: <HelpCircle /> },
   ];
 
   const linkClass =

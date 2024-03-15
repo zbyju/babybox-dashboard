@@ -205,7 +205,7 @@ export default function BabyboxesTable() {
   }
 
   function onRowClick(row: Row<Babybox>) {
-    router.push("/app/babybox/" + row.getValue("slug"));
+    router.push("/dashboard/babybox/" + row.getValue("slug"));
   }
 
   return (

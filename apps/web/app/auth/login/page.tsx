@@ -18,7 +18,7 @@ export default function Login() {
     const _password = (formData.get("password") as string) ?? "";
 
     login(username);
-    router.push("/app/babybox");
+    router.push("/dashboard/babybox");
   };
 
   return (

@@ -15,13 +15,13 @@ export default function Home({ params }: { params: { slug: string } }) {
           <span className="capitalize">{params.slug}</span>
         </h2>
         <div className="flex flex-row flex-wrap gap-4">
-          <Link href={"/app/babybox/" + params.slug + "/edit"}>
+          <Link href={"/dashboard/babybox/" + params.slug + "/edit"}>
             <Button className="inline-flex flex-row items-center gap-2">
               <FilePenLine className="w-5" />
               Editovat
             </Button>
           </Link>
-          <Link href={"/app/babybox/" + params.slug}>
+          <Link href={"/dashboard/babybox/" + params.slug}>
             <Button
               variant="secondary"
               className="inline-flex flex-row items-center gap-2"

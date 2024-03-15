@@ -4,20 +4,20 @@ FROM node:18-alpine as builder
 WORKDIR /app
 
 # Copy dependencies
-COPY package.json yarn.lock ./
+COPY package* ./
 
 # Install dependencies 
-RUN yarn install
+RUN npm install
 
 # Copy the code
 COPY . .
 
 # Build for production 
-RUN yarn build
+RUN npm run build
 
 # Expose the port 
 EXPOSE 3000
 
 # Start the production server
-CMD ["yarn", "start"]
+CMD ["npm", "run", "start"]
 

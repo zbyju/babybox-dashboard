@@ -46,7 +46,7 @@ export function BabyboxCombo() {
               <Link
                 className="cursor-pointer"
                 key={babybox.slug}
-                href={"/app/babybox/" + babybox.slug}
+                href={"/dashboard/babybox/" + babybox.slug}
               >
                 <CommandItem
                   value={babybox.slug}

@@ -9,7 +9,7 @@ export default function Home() {
   const { user } = useAuth();
 
   if (user) {
-    router.push("/app/babybox");
+    router.push("/dashboard/babybox");
   }
 
   return (

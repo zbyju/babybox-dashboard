@@ -37,12 +37,12 @@ export default function BabyboxSideMenu(props: Props) {
       group: "Obecné",
       links: [
         {
-          href: "/app/babybox/" + props.babybox.slug + "/detail",
+          href: "/dashboard/babybox/" + props.babybox.slug + "/detail",
           text: "Informace",
           icon: <Info />,
         },
         {
-          href: "/app/babybox/" + props.babybox.slug + "/edit",
+          href: "/dashboard/babybox/" + props.babybox.slug + "/edit",
           text: "Editovat",
           icon: <FilePenLine />,
         },
@@ -53,7 +53,7 @@ export default function BabyboxSideMenu(props: Props) {
       links: [
         {
           href:
-            "/app/babybox/" +
+            "/dashboard/babybox/" +
             props.babybox.slug +
             "/chart?sources=temperature,voltage",
           text: "Vše",
@@ -61,12 +61,12 @@ export default function BabyboxSideMenu(props: Props) {
         },
         {
           href:
-            "/app/babybox/" + props.babybox.slug + "/chart?sources=temperature",
+            "/dashboard/babybox/" + props.babybox.slug + "/chart?sources=temperature",
           text: "Teploty",
           icon: <Thermometer />,
         },
         {
-          href: "/app/babybox/" + props.babybox.slug + "/chart?sources=voltage",
+          href: "/dashboard/babybox/" + props.babybox.slug + "/chart?sources=voltage",
           text: "Napětí",
           icon: <Cable />,
         },
@@ -75,27 +75,27 @@ export default function BabyboxSideMenu(props: Props) {
     {
       group: "Analýza",
       links: [
-        { href: "/app/babybox", text: "Akumulátor", icon: <BatteryCharging /> },
-        { href: "/app/babybox", text: "Větráky", icon: <Fan /> },
+        { href: "/dashboard/babybox", text: "Akumulátor", icon: <BatteryCharging /> },
+        { href: "/dashboard/babybox", text: "Větráky", icon: <Fan /> },
       ],
     },
     {
       group: "Notifikace",
       links: [
-        { href: "/app/babybox", text: "Přehled", icon: <Bell /> },
-        { href: "/app/babybox", text: "Nastavení", icon: <BellDot /> },
+        { href: "/dashboard/babybox", text: "Přehled", icon: <Bell /> },
+        { href: "/dashboard/babybox", text: "Nastavení", icon: <BellDot /> },
       ],
     },
   ];
 
   const navigationLinks = [
-    { href: "/app/babybox", text: "Seznam", icon: <List /> },
+    { href: "/dashboard/babybox", text: "Seznam", icon: <List /> },
     {
-      href: "/app/babybox/" + prevSlug,
+      href: "/dashboard/babybox/" + prevSlug,
       text: "Předchozí",
       icon: <ArrowLeft />,
     },
-    { href: "/app/babybox/" + nextSlug, text: "Další", icon: <ArrowRight /> },
+    { href: "/dashboard/babybox/" + nextSlug, text: "Další", icon: <ArrowRight /> },
   ];
 
   return (
