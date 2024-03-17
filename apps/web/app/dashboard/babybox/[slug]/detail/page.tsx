@@ -8,7 +8,7 @@ import Link from "next/link";
 
 export default function Home({ params }: { params: { slug: string } }) {
   return (
-    <div className="mt-4 px-[16%]">
+    <div className="mt-4 px-[5%] lg:px-[16%]">
       <div className="flex flex-row flex-wrap justify-between gap-4">
         <h2 className="ml-1 text-3xl font-semibold">
           <span className="font-bold text-pink-600">Babybox </span>
@@ -33,7 +33,7 @@ export default function Home({ params }: { params: { slug: string } }) {
         </div>
       </div>
 
-      <div className="mt-6 flex flex-row gap-6">
+      <div className="mt-6 flex flex-row flex-wrap gap-6">
         <LocationInformation
           address={{
             hospital: "Nemocnice Hello",
@@ -62,7 +62,7 @@ export default function Home({ params }: { params: { slug: string } }) {
         />
       </div>
 
-      <div className="mt-6 flex flex-row gap-6">
+      <div className="mt-6 flex flex-row flex-wrap gap-6">
         <ContactInformationTable
           contacts={[
             {
