@@ -135,3 +135,9 @@ div.ghost tbody tr td {
   padding-top: 4px;
   padding-bottom: 4px;
 }
+
+@media all and (display-mode: standalone) {
+  nav.mobile-nav {
+    padding-bottom: 25px;
+  }
+}

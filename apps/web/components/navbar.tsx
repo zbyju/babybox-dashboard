@@ -55,7 +55,7 @@ export default function Navbar() {
         </div>
       </nav>
 
-      <nav className="visible fixed bottom-0 z-50 w-screen border-collapse border border-slate-100 bg-background dark:border-slate-800 lg:hidden">
+      <nav className="mobile-nav visible fixed bottom-0 z-50 w-screen border-collapse border border-slate-100 bg-background dark:border-slate-800 lg:hidden">
         <div className="flex flex-row items-center justify-start gap-5 px-4 py-2">
           <div className="flex flex-grow flex-row justify-start gap-5">
             {links.map((l) => (
