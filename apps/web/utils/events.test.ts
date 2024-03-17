@@ -2,6 +2,8 @@ import { Event, Interval } from "@/types/event.types";
 import { parse } from "date-fns";
 
 import { combineIntervals, generateIntervals } from "./events";
+import { Snapshot } from "@/types/snapshot.types";
+import { calculateAverageSnapshotGap } from "./stats";
 
 describe("generateIntervals function", () => {
   it("should generate intervals for only heating events", () => {
@@ -276,6 +278,4 @@ describe("combineIntervals function", () => {
 
     expect(combinedIntervals).toEqual(intervals);
   });
-
-  // Add more test cases as needed
 });

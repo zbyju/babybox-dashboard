@@ -11,6 +11,10 @@ export function translateEvent(str: string): string {
       return "Zapnuto chlazení";
     case "Cooling Off":
       return "Vypnuto chlazení";
+    case "Doors Opening":
+      return "Dveře otevřeny";
+    case "Doors Closing":
+      return "Dveře zavřeny";
   }
   return "Neznámá událost";
 }

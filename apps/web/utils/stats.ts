@@ -5,8 +5,9 @@ import {
   SnapshotStats,
   isSnapshotGroup,
 } from "@/types/snapshot.types";
+import { differenceInSeconds, parse } from "date-fns";
 
-function isNumber(value: any): value is number {
+function isNumber(value: unknown): value is number {
   return typeof value === "number";
 }
 
@@ -40,6 +41,7 @@ export function transformToSnapshotsNumeric(snapshots: Snapshot[]) {
 
 export function calculateSnapshotStats(snapshots: Snapshot[]): SnapshotStats {
   const snapshotsNumeric = transformToSnapshotsNumeric(snapshots);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const stats: any = {};
 
   const updateStats = (key: string, value: number, groupKey?: string) => {
@@ -82,4 +84,38 @@ export function calculateSnapshotStats(snapshots: Snapshot[]): SnapshotStats {
   }
 
   return stats;
+}
+
+export function calculateAverageSnapshotGap(
+  snapshots: Snapshot[],
+): number | undefined {
+  if (snapshots.length < 2) return undefined;
+
+  const dates = snapshots.map((snapshot) =>
+    parse(snapshot.timestamp, "yyyy-MM-dd HH:mm:ss", new Date()),
+  );
+
+  // Calculate gaps (in seconds) between consecutive timestamps
+  const gapsInSeconds = [];
+  for (let i = 1; i < dates.length; i++) {
+    const gap = differenceInSeconds(dates[i], dates[i - 1]);
+    gapsInSeconds.push(gap);
+  }
+
+  // Calculate the average gap
+  const averageGapInSeconds =
+    gapsInSeconds.reduce((acc, cur) => acc + cur, 0) / gapsInSeconds.length;
+
+  return averageGapInSeconds;
+}
+
+export function calculatePercentageChange(
+  oldValue: number,
+  newValue: number,
+): number {
+  if (oldValue === 0) {
+    return newValue > oldValue ? 100 : -100;
+  }
+  const percentageChange = ((newValue - oldValue) / Math.abs(oldValue)) * 100;
+  return percentageChange;
 }

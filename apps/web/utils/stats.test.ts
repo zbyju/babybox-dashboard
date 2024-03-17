@@ -1,7 +1,9 @@
 // snapshotUtils.test.ts
+import { Snapshot } from "@/types/snapshot.types";
 import {
+  calculateAverageSnapshotGap,
+  calculatePercentageChange,
   calculateSnapshotStats,
-  transformToSnapshotNumeric,
   transformToSnapshotsNumeric,
 } from "./stats"; // Adjust the import path based on your project structure
 
@@ -52,5 +54,62 @@ describe("Snapshot utilities", () => {
       var1: { min: 100, max: 400, average: 250 },
       group1: { var2: { min: 200, max: 500, average: 350 } },
     });
+  });
+});
+
+describe("calculateAverageGap", () => {
+  test("calculates the average gap for timestamps with equal gaps", () => {
+    const snapshots = [
+      { timestamp: "2024-03-17 08:00:00" },
+      { timestamp: "2024-03-17 08:00:10" },
+      { timestamp: "2024-03-17 08:00:20" },
+    ];
+    const averageGap = calculateAverageSnapshotGap(snapshots);
+    expect(averageGap).toBe(10);
+  });
+
+  test("calculates the average gap for timestamps with varying gaps", () => {
+    const snapshots = [
+      { timestamp: "2024-03-17 08:00:00" },
+      { timestamp: "2024-03-17 08:00:10" },
+      { timestamp: "2024-03-17 08:00:30" },
+    ];
+    const averageGap = calculateAverageSnapshotGap(snapshots);
+    expect(averageGap).toBe(15);
+  });
+
+  test("returns undefined for a single timestamp", () => {
+    const snapshots = [{ timestamp: "2024-03-17 08:00:00" }];
+    const averageGap = calculateAverageSnapshotGap(snapshots);
+    expect(averageGap).toBe(undefined);
+  });
+
+  test("returns undefined for an empty array", () => {
+    const snapshots: Snapshot[] = [];
+    const averageGap = calculateAverageSnapshotGap(snapshots);
+    expect(averageGap).toBe(undefined);
+  });
+});
+
+// calculatePercentageChange.test.ts
+describe("calculatePercentageChange", () => {
+  test("calculates positive percentage change correctly", () => {
+    expect(calculatePercentageChange(100, 150)).toBe(50.0);
+  });
+
+  test("calculates negative percentage change correctly", () => {
+    expect(calculatePercentageChange(100, 50)).toBe(-50.0);
+  });
+
+  test("calculates zero percentage change correctly", () => {
+    expect(calculatePercentageChange(100, 100)).toBe(0.0);
+  });
+
+  test("calculates percentage change correctly with negative old value increasing", () => {
+    expect(calculatePercentageChange(-100, -50)).toBe(50.0);
+  });
+
+  test("calculates percentage change correctly with negative old value decreasing", () => {
+    expect(calculatePercentageChange(-100, -150)).toBe(-50.0);
   });
 });
