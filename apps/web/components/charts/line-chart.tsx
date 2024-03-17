@@ -13,6 +13,9 @@ interface Props {
   showToolbar?: boolean;
   showGrid?: boolean;
   showLegend?: boolean;
+  showTooltip?: boolean;
+  showXaxisLabels?: boolean;
+  showXaxisTicks?: boolean;
   strokeWidth?: number;
   strokeType?: "straight" | "smooth" | "monotoneCubic" | "stepline";
   forecastNumber?: number;
@@ -38,6 +41,9 @@ export default function LineChart(props: Props) {
     showLegend: true,
     strokeWidth: 1,
     strokeType: "smooth" as const,
+    showTooltip: true,
+    showXaxisLabels: true,
+    showXaxisTicks: true,
   };
 
   const config = { ...defaultConfig, ...props };
@@ -65,6 +71,7 @@ export default function LineChart(props: Props) {
         },
       },
       tooltip: {
+        enabled: config.showTooltip,
         theme: theme,
         x: {
           format: "dd.MM.yyyy hh:mm",
@@ -83,6 +90,7 @@ export default function LineChart(props: Props) {
       xaxis: {
         type: config.xaxisType,
         labels: {
+          show: config.showXaxisLabels,
           format: "dd.MM hh:mm",
         },
         axisBorder: {
@@ -90,6 +98,7 @@ export default function LineChart(props: Props) {
           color: "hsl(var(--primary))",
         },
         axisTicks: {
+          show: config.showXaxisTicks,
           offsetX: -1,
           color: "hsl(var(--primary))",
         },

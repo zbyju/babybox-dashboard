@@ -10,11 +10,63 @@ import { Event } from "@/types/event.types";
 import LatestEvents from "@/components/widgets/latest-events";
 import VariableStats from "@/components/widgets/variable-stats";
 import { calculateSnapshotStats } from "@/utils/stats";
+import TextualSnapshotStats from "@/components/misc/textual-snapshot-stats";
+import { Separator } from "@/components/ui/separator";
+import VariableOverview from "@/components/widgets/variable-overview";
 
 export default function BabyboxPage({ params }: { params: { slug: string } }) {
   const slug = params.slug;
 
   const stats = calculateSnapshotStats(snapshots);
+  const statsSmall = calculateSnapshotStats(
+    snapshots.slice(0, snapshots.length / 2),
+  );
+  const statsSmaller = calculateSnapshotStats(
+    snapshots.slice(0, snapshots.length / 4),
+  );
+
+  const temperatureVariableOverviews = [
+    { key: "inside", name: "Vnitřní teplota", color: "inside" },
+    { key: "outside", name: "Venkovní teplota", color: "outside" },
+    { key: "casing", name: "Teplota pláště", color: "casing" },
+    { key: "top", name: "Teplota horní", color: "heating" },
+    { key: "bottom", name: "Teplota spodní", color: "cooling" },
+  ].map((o) => (
+    <Widget key={o.key} title={o.name} subtitle="Přehled">
+      <VariableOverview
+        source={{
+          group: "temperature",
+          variable: o.key,
+          color: `hsl(var(--${o.color}))`,
+          name: o.name,
+        }}
+        lastWeek={(stats.temperature as SnapshotGroupStat)[o.key]}
+        last3Days={(statsSmall.temperature as SnapshotGroupStat)[o.key]}
+        lastDay={(statsSmaller.temperature as SnapshotGroupStat)[o.key]}
+        snapshots={snapshots}
+      />
+    </Widget>
+  ));
+
+  const voltageVariableOverviews = [
+    { key: "in", name: "Vstupní napětí", color: "in" },
+    { key: "battery", name: "Napětí akumulátoru", color: "battery" },
+  ].map((o) => (
+    <Widget key={o.key} title={o.name} subtitle="Přehled">
+      <VariableOverview
+        source={{
+          group: "voltage",
+          variable: o.key,
+          color: `hsl(var(--${o.color}))`,
+          name: o.name,
+        }}
+        lastWeek={(stats.voltage as SnapshotGroupStat)[o.key]}
+        last3Days={(statsSmall.voltage as SnapshotGroupStat)[o.key]}
+        lastDay={(statsSmaller.voltage as SnapshotGroupStat)[o.key]}
+        snapshots={snapshots}
+      />
+    </Widget>
+  ));
 
   return (
     <div className="w-screen lg:pb-24 lg:pr-5">
@@ -28,51 +80,7 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
             </h5>
 
             <div className="mb-4 flex flex-row flex-wrap justify-center justify-items-center gap-4 md:justify-start">
-              <Widget
-                title="Vnitřní"
-                subtitle="Poslední týden"
-                classNameInner="border-b-4 border-b-inside"
-              >
-                <VariableStats
-                  stats={(stats.temperature as SnapshotGroupStat).inside}
-                />
-              </Widget>
-              <Widget
-                title="Venkovní"
-                subtitle="Poslední týden"
-                classNameInner="border-b-4 border-b-outside"
-              >
-                <VariableStats
-                  stats={(stats.temperature as SnapshotGroupStat).outside}
-                />
-              </Widget>
-              <Widget
-                title="Plášť"
-                subtitle="Poslední týden"
-                classNameInner="border-b-4 border-b-casing"
-              >
-                <VariableStats
-                  stats={(stats.temperature as SnapshotGroupStat).casing}
-                />
-              </Widget>
-              <Widget
-                title="Horní"
-                subtitle="Poslední týden"
-                classNameInner="border-b-4 border-b-heating"
-              >
-                <VariableStats
-                  stats={(stats.temperature as SnapshotGroupStat).top}
-                />
-              </Widget>
-              <Widget
-                title="Spodní"
-                subtitle="Poslední týden"
-                classNameInner="border-b-4 border-b-cooling"
-              >
-                <VariableStats
-                  stats={(stats.temperature as SnapshotGroupStat).bottom}
-                />
-              </Widget>
+              {temperatureVariableOverviews}
             </div>
           </div>
 
@@ -83,24 +91,7 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
             </h5>
 
             <div className="mb-4 flex flex-row flex-wrap justify-center justify-items-center gap-4 md:justify-start">
-              <Widget
-                title="Vstup"
-                subtitle="Poslední týden"
-                classNameInner="border-b-4 border-b-in"
-              >
-                <VariableStats
-                  stats={(stats.voltage as SnapshotGroupStat).in}
-                />
-              </Widget>
-              <Widget
-                title="Akumulátor"
-                subtitle="Poslední týden"
-                classNameInner="border-b-4 border-b-battery"
-              >
-                <VariableStats
-                  stats={(stats.voltage as SnapshotGroupStat).battery}
-                />
-              </Widget>
+              {voltageVariableOverviews}
             </div>
           </div>
 
@@ -108,6 +99,11 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
           <div className="mb-4 flex flex-row flex-wrap justify-center justify-items-center gap-4 md:justify-start">
             <Widget title="Nejnovější data">
               <LatestSnapshots snapshots={snapshots as Snapshot[]} take={11} />
+              <Separator className="my-2" />
+              <TextualSnapshotStats
+                snapshots={snapshots as Snapshot[]}
+                take={11}
+              />
             </Widget>
             <Widget title="Nejnovější události">
               <LatestEvents events={events as Event[]} take={11} />

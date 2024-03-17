@@ -56,7 +56,7 @@ export function ModeToggle() {
           className="cursor-pointer"
           onClick={() => setTheme("system")}
         >
-          System
+          Systém
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

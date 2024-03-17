@@ -12,6 +12,7 @@ import { Badge } from "../ui/badge";
 import { differenceInMinutes, format, parse } from "date-fns";
 import { ColumnDef, Row, Table } from "@tanstack/react-table";
 import { ArrowDownRight, ArrowUpRight, Minus } from "lucide-react";
+import { calculatePercentageChange } from "@/utils/stats";
 
 const columnVars = [
   { key: "temperature.inside", label: "Vnitřní", key2: "temperature_inside" },
@@ -49,17 +50,20 @@ const columnVars = [
             .rows[currentIndex - 1].getValue(c.key2) as number)
         : undefined;
 
+    const percentageChange = previousValue
+      ? calculatePercentageChange(previousValue, currentValue)
+      : 0;
+
     const arrow =
-      !previousValue || !currentValue ? undefined : currentValue >
-        previousValue ? (
+      percentageChange > 1 ? (
         <ArrowUpRight size={16} className="text-red-600 dark:text-red-700" />
-      ) : currentValue < previousValue ? (
+      ) : percentageChange < -1 ? (
         <ArrowDownRight
           size={16}
           className="text-blue-600 dark:text-blue-700"
         />
       ) : (
-        <Minus size={16} />
+        <Minus size={16} className="text-slate-700 dark:text-slate-400" />
       );
 
     return (

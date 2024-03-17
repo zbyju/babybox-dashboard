@@ -15,14 +15,14 @@ export default function VariableStats({
       </div>
 
       <div className="flex flex-row gap-2">
-        <div className="flex flex-row items-center gap-0 text-blue-900 dark:text-blue-300 dark:opacity-90">
+        <div className="flex flex-row items-center gap-0 text-blue-900 dark:text-blue-600">
           <ArrowDown size={24} />
-          <p className="inline-flex items-end text-3xl font-semibold tracking-tighter dark:font-semibold">
+          <p className="inline-flex items-end text-3xl tracking-tighter">
             {stats.min.toFixed(2)}
           </p>
         </div>
-        <div className="flex flex-row items-center gap-0 text-red-700 dark:text-red-300 dark:opacity-90">
-          <p className="inline-flex items-end text-3xl font-semibold tracking-tighter dark:font-semibold">
+        <div className="flex flex-row items-center gap-0 text-red-700 dark:text-red-600">
+          <p className="inline-flex items-end text-3xl tracking-tighter">
             {stats.max.toFixed(2)}
           </p>
           <ArrowUp size={24} className="self-center" />

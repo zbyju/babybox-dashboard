@@ -9,7 +9,7 @@ export interface SnapshotGroup {
 
 export type SnapshotVariable = string | number | boolean | Date | undefined;
 
-export function isSnapshotGroup(value: any): value is SnapshotGroup {
+export function isSnapshotGroup(value: unknown): value is SnapshotGroup {
   // Check if the value is an object and not null, not Date and not Array
   if (
     typeof value === "object" &&
@@ -48,10 +48,11 @@ export interface SnapshotVariableStat {
 }
 
 export function isSnapshotVariableStat(
-  value: any,
+  value: unknown,
 ): value is SnapshotVariableStat {
   return (
-    value &&
+    value !== null &&
+    value !== undefined &&
     typeof value === "object" &&
     "min" in value &&
     "max" in value &&
