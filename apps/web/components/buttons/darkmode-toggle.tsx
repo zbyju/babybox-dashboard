@@ -11,9 +11,22 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { useEffect } from "react";
 
 export function ModeToggle() {
-  const { setTheme } = useTheme();
+  const { setTheme, resolvedTheme } = useTheme();
+
+  useEffect(() => {
+    if (resolvedTheme === "dark") {
+      document
+        .querySelector('meta[name="theme-color"]')!
+        .setAttribute("content", "#020817");
+    } else {
+      document
+        .querySelector('meta[name="theme-color"]')!
+        .setAttribute("content", "#FFF");
+    }
+  }, [resolvedTheme]);
 
   return (
     <DropdownMenu>
@@ -27,7 +40,9 @@ export function ModeToggle() {
       <DropdownMenuContent align="end">
         <DropdownMenuItem
           className="cursor-pointer"
-          onClick={() => setTheme("light")}
+          onClick={() => {
+            setTheme("light");
+          }}
         >
           Světlý
         </DropdownMenuItem>

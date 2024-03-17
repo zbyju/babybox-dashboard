@@ -24,7 +24,10 @@ Best options for running this project as a whole is to go to the root of the rep
 docker compose up
 
 # Development
-docker compose -f docker-compose.dev.yml up
+docker compose -f docker-compose.dev.yml -p babybox-dashboard-dev up
+
+# WSL Access from LAN
+netsh interface portproxy add v4tov4 listenport=3000 listenaddress=0.0.0.0 connectport=3000 connectaddress=<WSL IP address>
 ```
 
 ### Development
