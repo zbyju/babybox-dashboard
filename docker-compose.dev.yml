@@ -5,8 +5,6 @@ services:
     build:
       context: ./apps/web
       dockerfile: Dockerfile.dev
-    ports:
-      - "3000:3000"
     volumes:
       - ./apps/web:/app
     environment:
