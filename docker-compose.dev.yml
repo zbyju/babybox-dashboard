@@ -9,3 +9,11 @@ services:
       - ./apps/web:/app
     environment:
       - NODE_ENV=development
+  snapshot-handler:
+    build:
+      context: ./apps/snapshot-handler
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./apps/snapshot-handler:/app
+    environment:
+      - APP_ENV=development
