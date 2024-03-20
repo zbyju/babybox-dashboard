@@ -6,7 +6,7 @@ Babybox Dashboard is a microservice application that provides a platform for man
 
 This application can be either ran manually, or using docker (specifically docker compose).
 
-### Docker
+### Docker Compose
 
 You can run the application in production or development mode.
 
@@ -23,3 +23,11 @@ docker compose up --build
 ```sh
 docker compose -f docker-compose.yml -f docker-compose.dev.yml -p babybox-dashboard-dev up
 ```
+
+### Docker
+
+Each service has a Dockerfile and Dockerfile.dev that can be used to run a single individual service.
+
+### Manually
+
+You can run each service manually by following the README in its directory inside `/apps/`.
