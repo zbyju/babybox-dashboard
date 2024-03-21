@@ -10,6 +10,9 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
+    restart: always
+    depends_on:
+      - snapshot-handler
 
   snapshot-handler:
     build:
@@ -27,6 +30,10 @@ services:
       - INFLUXDB_TOKEN=${INFLUXDB_ADMIN_TOKEN}
       - RABBITMQ_USERNAME=${RABBITMQ_USERNAME}
       - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+    restart: always
+    depends_on:
+      - rabbitmq
+      - influxdb
   # ------------------- SERVICES ------------------
   mongodb:
     image: mongo:latest
@@ -34,6 +41,7 @@ services:
       - mongodb_data:/data/db
     ports:
       - 27017:27017
+    restart: always
 
   influxdb:
     image: influxdb:latest
@@ -49,6 +57,7 @@ services:
       - DOCKER_INFLUXDB_INIT_ORG=${INFLUXDB_ORG}
       - DOCKER_INFLUXDB_INIT_BUCKET=${INFLUXDB_BUCKET}
       - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_ADMIN_TOKEN}
+    restart: always
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -61,6 +70,7 @@ services:
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+    restart: always
 
 volumes:
   mongodb_data:

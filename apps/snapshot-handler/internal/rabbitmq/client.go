@@ -22,7 +22,6 @@ func NewClient() (*Client, error) {
 	}
 
 	url := fmt.Sprintf("amqp://%s:%s@rabbitmq:5672/", rabbitmqUsername, rabbitmqPassword)
-	fmt.Println(url)
 
 	conn, err := amqp.Dial(url)
 	if err != nil {

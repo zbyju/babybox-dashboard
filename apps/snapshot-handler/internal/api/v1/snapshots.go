@@ -34,7 +34,7 @@ func (app *Application) OldSnapshotHandler(c echo.Context) error {
 		Temperatures: temperatures,
 		Voltages:     voltages,
 		Version:      1,
-		Timestamp:    time.Now().Format("2006-01-02 15:04:05"),
+		Timestamp:    time.Now().In(app.Config.TimeLocation).Format("2006-01-02 15:04:05"),
 	}
 
 	err := app.DBService.WriteSnapshot(snapshot)

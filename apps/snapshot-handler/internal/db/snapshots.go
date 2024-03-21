@@ -2,7 +2,6 @@ package db
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"log"
 	"time"
@@ -30,7 +29,7 @@ from(bucket: "%s")
 	}
 	defer result.Close()
 
-	var snapshots []domain.Snapshot
+	snapshots := []domain.Snapshot{}
 	for result.Next() {
 		snapshot, err := service.ConvertRecordToSnapshot(*result.Record())
 		if err != nil {
@@ -47,7 +46,6 @@ from(bucket: "%s")
 }
 
 func (service *DBService) QuerySnapshotsBySlug(slug string, from, to time.Time, n uint) ([]domain.Snapshot, error) {
-	fmt.Println(from, to)
 	fluxQuery := fmt.Sprintf(`
 from(bucket: "%s")
   |> range(start: %s, stop: %s)
@@ -62,7 +60,7 @@ from(bucket: "%s")
 	}
 	defer result.Close()
 
-	var snapshots []domain.Snapshot
+	snapshots := []domain.Snapshot{}
 	for result.Next() {
 		snapshot, err := service.ConvertRecordToSnapshot(*result.Record())
 		if err != nil {
@@ -78,43 +76,17 @@ from(bucket: "%s")
 	return snapshots, nil
 }
 
-func (service *DBService) QueryLatestNSnapshotsBySlug(slug string, n uint) (*domain.Snapshot, error) {
-	fluxQuery := fmt.Sprintf(`
-from(bucket: "%s")
-  |> range(start: -30d)
-  |> filter(fn: (r) => r._measurement == "%s" and r.slug == "%s")
-  |> pivot(rowKey: ["_time"], columnKey: ["_field"], valueColumn: "_value")
-  |> sort(columns: ["_time"], desc: true)
-  |> limit(n: %d)`, service.bucket, measurementName, slug, n)
-
-	result, err := service.QueryData(fluxQuery)
-	if err != nil {
-		return nil, err
-	}
-	defer result.Close()
-
-	if result.Next() {
-		snapshot, err := service.ConvertRecordToSnapshot(*result.Record())
-		if err != nil {
-			return nil, err
-		}
-		return &snapshot, nil
-	}
-
-	if result.Err() != nil {
-		return nil, result.Err()
-	}
-
-	// If no snapshot is found, you might want to return nil or an appropriate error.
-	return nil, errors.New("No snapshot found")
-}
-
 func (service *DBService) WriteSnapshot(snapshot domain.Snapshot) error {
 	// Convert your domain model (e.g., Snapshot) to an InfluxDB point
-	point := ConvertToInfluxDBPoint(&snapshot, measurementName)
+	point, err := service.ConvertToInfluxDBPoint(&snapshot, measurementName)
+
+	if err != nil {
+		service.logger.Printf("Failed to convert snapshot to a influxdb point: %v", err)
+		return err
+	}
 
 	// Use the writeAPI to write the point to InfluxDB
-	if err := service.writeAPI.WritePoint(context.Background(), point); err != nil {
+	if err = service.writeAPI.WritePoint(context.Background(), point); err != nil {
 		log.Printf("Failed to write point to InfluxDB: %v", err)
 		return err
 	}
@@ -144,24 +116,20 @@ func (service *DBService) QuerySnapshots(query string) ([]domain.Snapshot, error
 	}
 	defer result.Close()
 
-	// Iterate over query result
-	for result.Next() {
-		// Access data
-		if result.Record() != nil {
-			// Example of accessing data; adjust according to your data schema
-			fmt.Printf("Time: %s, Value: %v\n", result.Record().Time(), result.Record())
-		}
-	}
-
 	// Check for an error
 	if result.Err() != nil {
 		return nil, fmt.Errorf("query parsing error: %w", result.Err())
 	}
 
-	return nil, nil
+	return []domain.Snapshot{}, nil
 }
 
-func ConvertToInfluxDBPoint(s *domain.Snapshot, measurementName string) *write.Point {
+func (service *DBService) ConvertToInfluxDBPoint(s *domain.Snapshot, measurementName string) (*write.Point, error) {
+	parsedTime, err := time.ParseInLocation("2006-01-02 15:04:05", s.Timestamp, service.location)
+	if err != nil {
+		return nil, err
+	}
+
 	point := influxdb2.NewPointWithMeasurement(measurementName).
 		AddTag("slug", s.Slug).
 		AddTag("version", fmt.Sprintf("%d", s.Version)).
@@ -171,9 +139,10 @@ func ConvertToInfluxDBPoint(s *domain.Snapshot, measurementName string) *write.P
 		AddField("temperature_top", s.Temperatures.Top).
 		AddField("temperature_bottom", s.Temperatures.Bottom).
 		AddField("voltage_in", s.Voltages.In).
-		AddField("voltage_battery", s.Voltages.Battery)
+		AddField("voltage_battery", s.Voltages.Battery).
+		SetTime(parsedTime)
 
-	return point
+	return point, nil
 }
 
 func (service *DBService) ConvertResultsToSnapshots(result *api.QueryTableResult) ([]domain.Snapshot, error) {
@@ -210,7 +179,7 @@ func (service *DBService) ConvertRecordToSnapshot(record query.FluxRecord) (doma
 			In:      record.ValueByKey("voltage_in").(float64),
 			Battery: record.ValueByKey("voltage_battery").(float64),
 		},
-		Timestamp: record.Time().Format("2006-01-02 15:04:05"),
+		Timestamp: record.Time().In(service.location).Format("2006-01-02 15:04:05"),
 	}
 
 	return snapshot, nil

@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	api "github.com/influxdata/influxdb-client-go/v2/api"
+	"github.com/labstack/echo/v4"
 
 	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
 )
@@ -17,9 +19,12 @@ type DBService struct {
 
 	org    string
 	bucket string
+
+	logger   echo.Logger
+	location *time.Location
 }
 
-func InitConnection() (*DBService, error) {
+func InitConnection(logger *echo.Logger, location *time.Location) (*DBService, error) {
 	influxDBURL := os.Getenv("INFLUXDB_URL")
 	influxDBToken := os.Getenv("INFLUXDB_TOKEN")
 	influxDBOrg := os.Getenv("INFLUXDB_ORG")
@@ -41,6 +46,9 @@ func InitConnection() (*DBService, error) {
 
 		org:    influxDBOrg,
 		bucket: influxDBBucket,
+
+		logger:   *logger,
+		location: location,
 	}
 
 	return service, nil

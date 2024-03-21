@@ -1,14 +1,17 @@
 package v1
 
 import (
+	"time"
+
 	"github.com/labstack/echo/v4"
 	"github.com/zbyju/babybox-dashboard/apps/snapshot-handler/internal/db"
 	"github.com/zbyju/babybox-dashboard/apps/snapshot-handler/internal/rabbitmq"
 )
 
 type Config struct {
-	Version string
-	Port    uint16
+	Version      string
+	Port         uint16
+	TimeLocation *time.Location
 }
 
 type Application struct {
