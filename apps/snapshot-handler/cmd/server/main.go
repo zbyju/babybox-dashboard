@@ -7,13 +7,19 @@ import (
 	"github.com/zbyju/babybox-dashboard/apps/snapshot-handler/internal/api"
 	v1 "github.com/zbyju/babybox-dashboard/apps/snapshot-handler/internal/api/v1"
 	"github.com/zbyju/babybox-dashboard/apps/snapshot-handler/internal/db"
+	"github.com/zbyju/babybox-dashboard/apps/snapshot-handler/internal/rabbitmq"
 )
 
 func main() {
 	e := echo.New()
 
 	dbService, err := db.InitConnection()
+	if err != nil {
+		e.Logger.Errorf(err.Error())
+		return
+	}
 
+	mqService, err := rabbitmq.NewClient()
 	if err != nil {
 		e.Logger.Errorf(err.Error())
 		return
@@ -26,6 +32,7 @@ func main() {
 			Port:    8080,
 		},
 		DBService: dbService,
+		MQService: mqService,
 	}
 
 	// Register versioned API routes
