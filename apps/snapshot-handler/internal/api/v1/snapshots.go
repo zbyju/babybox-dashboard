@@ -42,6 +42,11 @@ func (app *Application) OldSnapshotHandler(c echo.Context) error {
 		return err
 	}
 
+	err = app.MQService.PublishSnapshot(snapshot)
+	if err != nil {
+		app.Logger.Warnf("Couldn't publish snapshot to RabbitMQ - %s", err)
+	}
+
 	return c.JSON(http.StatusOK, snapshot)
 }
 

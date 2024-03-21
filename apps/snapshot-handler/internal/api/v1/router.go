@@ -3,6 +3,7 @@ package v1
 import (
 	"github.com/labstack/echo/v4"
 	"github.com/zbyju/babybox-dashboard/apps/snapshot-handler/internal/db"
+	"github.com/zbyju/babybox-dashboard/apps/snapshot-handler/internal/rabbitmq"
 )
 
 type Config struct {
@@ -14,6 +15,7 @@ type Application struct {
 	Logger    echo.Logger
 	Config    *Config
 	DBService *db.DBService
+	MQService *rabbitmq.Client
 }
 
 // RegisterRoutes registers the routes for version 1
