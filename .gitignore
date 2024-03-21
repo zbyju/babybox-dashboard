@@ -1,0 +1,28 @@
+.env
+
+# Operating System Files
+.DS_Store  # macOS System files 
+Thumbs.db  # Windows image thumbnails
+
+# Compiled Code / Build Artifacts
+*.o        # Object files
+*.exe      # Executables
+*.dll      # Dynamic link libraries
+*.lib 
+*.class    # Java class files
+*.jar      # Java archive files
+
+# Logs and temporary files
+*.log
+*.tmp
+*~
+
+# Dependency Directories (Adjust as needed)
+node_modules/
+vendor/
+build/
+dist/
+
+# IDE/Editor Configuration Files
+.vscode/
+.idea/

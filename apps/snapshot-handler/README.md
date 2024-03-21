@@ -21,3 +21,16 @@ docker run -p 8080:8080 babybox-dashboard-snapshot-handler
 docker build -f Dockerfile.dev -t babybox-dashboard-snapshot-handler-dev .
 docker run -p 8080:8080 babybox-dashboard-snapshot-handler-dev
 ```
+
+### Manual
+
+```sh
+# Production Run
+go run ./cmd/server/
+
+# Development Run
+air
+
+# Run tests
+go test
+```
