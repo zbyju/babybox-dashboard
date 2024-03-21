@@ -2,6 +2,7 @@ package v1
 
 import (
 	"github.com/labstack/echo/v4"
+	"github.com/zbyju/babybox-dashboard/apps/snapshot-handler/internal/db"
 )
 
 type Config struct {
@@ -10,13 +11,14 @@ type Config struct {
 }
 
 type Application struct {
-	Logger echo.Logger
-	Config *Config
+	Logger    echo.Logger
+	Config    *Config
+	DBService *db.DBService
 }
 
 // RegisterRoutes registers the routes for version 1
 func RegisterRoutes(g *echo.Group, app *Application) {
 	g.GET("/healthcheck", app.HealthCheck)
-	// g.GET("/snapshots", GetSnapshots)
-	// g.GET("/snapshots/:id", GetSnapshot)
+	g.GET("/snapshots", app.GetAllSnapshotsHandler)
+	g.GET("/snapshots/:slug", app.GetAllSnapshotsBySlugHandler)
 }
