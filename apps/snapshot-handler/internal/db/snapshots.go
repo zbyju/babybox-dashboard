@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
@@ -74,6 +75,59 @@ from(bucket: "%s")
 	}
 
 	return snapshots, nil
+}
+
+func (service *DBService) QuerySnapshotSummaryBySlug(slug string, from, to time.Time) (interface{}, error) {
+	queryTemplate := `from(bucket: "%s")
+  |> range(start: %s, stop: %s)
+  |> filter(fn: (r) => r._measurement == "%s" and r.slug == "%s" and r._field == "%s")
+  |> %s()
+  |> yield(name: "%s_%s")
+
+  `
+
+	queries := ""
+
+	fields := []string{"temperature_inside", "temperature_outside", "temperature_casing", "temperature_top", "temperature_bottom", "voltage_in", "voltage_battery"}
+	aggregations := []string{"min", "mean", "max"}
+
+	for _, field := range fields {
+		for _, aggregation := range aggregations {
+			query := fmt.Sprintf(queryTemplate, service.bucket, from.Format(time.RFC3339), to.Format(time.RFC3339), measurementName, slug, field, aggregation, field, aggregation)
+			queries += query
+		}
+	}
+
+	result, err := service.QueryData(queries)
+	if err != nil {
+		return nil, err
+	}
+	defer result.Close()
+
+	summaryData := make(map[string]map[string]map[string]interface{})
+
+	for result.Next() {
+		record := result.Record()
+
+		name := strings.Split(record.Result(), "_")
+		groupName := name[0]
+		fieldName := name[1]
+		aggrName := name[2]
+		if aggrName == "mean" {
+			aggrName = "average"
+		}
+		aggValue := record.Value()
+
+		if _, ok := summaryData[groupName]; !ok {
+			summaryData[groupName] = make(map[string]map[string]interface{})
+		}
+		if _, ok := summaryData[groupName][fieldName]; !ok {
+			summaryData[groupName][fieldName] = make(map[string]interface{})
+		}
+		summaryData[groupName][fieldName][aggrName] = aggValue
+	}
+
+	return summaryData, nil
 }
 
 func (service *DBService) WriteSnapshot(snapshot domain.Snapshot) error {

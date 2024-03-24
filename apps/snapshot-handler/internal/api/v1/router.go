@@ -25,5 +25,6 @@ type Application struct {
 func RegisterRoutes(g *echo.Group, app *Application) {
 	g.GET("/healthcheck", app.HealthCheck)
 	g.GET("/snapshots", app.GetAllSnapshotsHandler)
+	g.GET("/snapshots/:slug/summary", app.GetSnapshotSummaryBySlugHandler)
 	g.GET("/snapshots/:slug", app.GetAllSnapshotsBySlugHandler)
 }

@@ -104,16 +104,38 @@ func (app *Application) GetAllSnapshotsBySlugHandler(c echo.Context) error {
 	return c.JSON(http.StatusOK, snapshots)
 }
 
-func (app *Application) GetLastNSnapshotBySlugHandler(c echo.Context) error {
+func (app *Application) GetSnapshotSummaryBySlugHandler(c echo.Context) error {
 	slug := c.Param("slug")
-	snapshot, err := app.DBService.QueryLatestNSnapshotsBySlug(slug, 1)
+	from := c.QueryParam("from")
+	to := c.QueryParam("to")
+
+	if from == "" {
+		from = time.Now().AddDate(-1, 0, 0).Format("2006-01-02") // One year ago
+	}
+	if to == "" {
+		to = time.Now().Format("2006-01-02") // Today
+	}
+
+	// Parse the dates from the query parameters
+	fromTime, err := time.Parse("2006-01-02", from)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid 'from' date format"})
+	}
+	toTime, err := time.Parse("2006-01-02", to)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid 'to' date format"})
+	}
+	// Adjust 'toTime' to the end of the day if you want the 'to' date to be inclusive
+	toTime = toTime.Add(24 * time.Hour)
+
+	snapshots, err := app.DBService.QuerySnapshotSummaryBySlug(slug, fromTime, toTime)
 	if err != nil {
 		// Log the error and return an appropriate error response
 		app.Logger.Error("Failed to query all snapshots: ", err)
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to fetch snapshots"})
 	}
 
-	return c.JSON(http.StatusOK, snapshot)
+	return c.JSON(http.StatusOK, snapshots)
 }
 
 func parseQueryParam(app *Application, c echo.Context, param string) float64 {
