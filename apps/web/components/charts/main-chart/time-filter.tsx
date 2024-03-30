@@ -27,7 +27,7 @@ interface Props {
 }
 
 export function dateToStringDate(str: Date): string {
-  return format(str, "dd-MM-yyyy");
+  return format(str, "yyyy-MM-dd");
 }
 
 export default function TimeFilter(props: Props) {
@@ -56,8 +56,8 @@ export default function TimeFilter(props: Props) {
           <div className="mx-auto flex flex-row justify-center">
             <DateRangePicker
               date={{
-                from: parse(dateRange.from, "dd-MM-yyyy", new Date()),
-                to: parse(dateRange.to, "dd-MM-yyyy", new Date()),
+                from: parse(dateRange.from, "yyyy-MM-dd", new Date()),
+                to: parse(dateRange.to, "yyyy-MM-dd", new Date()),
               }}
               onDateChange={(val) => {
                 if (

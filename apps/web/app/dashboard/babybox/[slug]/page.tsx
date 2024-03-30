@@ -3,27 +3,44 @@ import BabyboxSideMenu from "@/components/babybox-side-menu";
 import Widget from "@/components/ui/widget";
 
 import { events } from "../../../../data/heating_cooling_events.js";
-import { snapshots } from "../../../../data/snapshots.js";
 import LatestSnapshots from "@/components/widgets/latest-snapshots";
 import { Snapshot, SnapshotGroupStat } from "@/types/snapshot.types";
 import { Event } from "@/types/event.types";
 import LatestEvents from "@/components/widgets/latest-events";
-import VariableStats from "@/components/widgets/variable-stats";
 import { calculateSnapshotStats } from "@/utils/stats";
 import TextualSnapshotStats from "@/components/misc/textual-snapshot-stats";
 import { Separator } from "@/components/ui/separator";
 import VariableOverview from "@/components/widgets/variable-overview";
+import { fetchSnapshotsBySlugAndTime } from "@/helpers/api-helper";
+import { addDays, format } from "date-fns";
 
-export default function BabyboxPage({ params }: { params: { slug: string } }) {
+export default async function BabyboxPage({
+  params,
+}: {
+  params: { slug: string };
+}) {
   const slug = params.slug;
 
-  const stats = calculateSnapshotStats(snapshots);
-  const statsSmall = calculateSnapshotStats(
-    snapshots.slice(0, snapshots.length / 2),
+  const today = new Date();
+  const snapshotsWeek = await fetchSnapshotsBySlugAndTime(
+    slug,
+    format(addDays(today, -6), "yyyy-MM-dd"),
+    format(today, "yyyy-MM-dd"),
   );
-  const statsSmaller = calculateSnapshotStats(
-    snapshots.slice(0, snapshots.length / 4),
+  const snapshots3Days = await fetchSnapshotsBySlugAndTime(
+    slug,
+    format(addDays(today, -2), "yyyy-MM-dd"),
+    format(today, "yyyy-MM-dd"),
   );
+  const snapshotsDay = await fetchSnapshotsBySlugAndTime(
+    slug,
+    format(today, "yyyy-MM-dd"),
+    format(today, "yyyy-MM-dd"),
+  );
+
+  const stats = calculateSnapshotStats(snapshotsWeek);
+  const statsSmall = calculateSnapshotStats(snapshots3Days);
+  const statsSmaller = calculateSnapshotStats(snapshotsDay);
 
   const temperatureVariableOverviews = [
     { key: "inside", name: "Vnitřní teplota", color: "inside" },
@@ -33,18 +50,24 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
     { key: "bottom", name: "Teplota spodní", color: "cooling" },
   ].map((o) => (
     <Widget key={o.key} title={o.name} subtitle="Přehled">
-      <VariableOverview
-        source={{
-          group: "temperature",
-          variable: o.key,
-          color: `hsl(var(--${o.color}))`,
-          name: o.name,
-        }}
-        lastWeek={(stats.temperature as SnapshotGroupStat)[o.key]}
-        last3Days={(statsSmall.temperature as SnapshotGroupStat)[o.key]}
-        lastDay={(statsSmaller.temperature as SnapshotGroupStat)[o.key]}
-        snapshots={snapshots}
-      />
+      {stats.temperature === undefined ||
+      statsSmall.temperature === undefined ||
+      statsSmaller.temperature === undefined ? (
+        <>Statistiky nejsou dostupné</>
+      ) : (
+        <VariableOverview
+          source={{
+            group: "temperature",
+            variable: o.key,
+            color: `hsl(var(--${o.color}))`,
+            name: o.name,
+          }}
+          lastWeek={(stats.temperature as SnapshotGroupStat)[o.key]}
+          last3Days={(statsSmall.temperature as SnapshotGroupStat)[o.key]}
+          lastDay={(statsSmaller.temperature as SnapshotGroupStat)[o.key]}
+          snapshots={snapshotsDay}
+        />
+      )}
     </Widget>
   ));
 
@@ -53,18 +76,24 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
     { key: "battery", name: "Napětí akumulátoru", color: "battery" },
   ].map((o) => (
     <Widget key={o.key} title={o.name} subtitle="Přehled">
-      <VariableOverview
-        source={{
-          group: "voltage",
-          variable: o.key,
-          color: `hsl(var(--${o.color}))`,
-          name: o.name,
-        }}
-        lastWeek={(stats.voltage as SnapshotGroupStat)[o.key]}
-        last3Days={(statsSmall.voltage as SnapshotGroupStat)[o.key]}
-        lastDay={(statsSmaller.voltage as SnapshotGroupStat)[o.key]}
-        snapshots={snapshots}
-      />
+      {stats.voltage === undefined ||
+      statsSmall.voltage === undefined ||
+      statsSmaller.voltage === undefined ? (
+        <>Statistiky nejsou dostupné</>
+      ) : (
+        <VariableOverview
+          source={{
+            group: "voltage",
+            variable: o.key,
+            color: `hsl(var(--${o.color}))`,
+            name: o.name,
+          }}
+          lastWeek={(stats.voltage as SnapshotGroupStat)[o.key]}
+          last3Days={(statsSmall.voltage as SnapshotGroupStat)[o.key]}
+          lastDay={(statsSmaller.voltage as SnapshotGroupStat)[o.key]}
+          snapshots={snapshotsDay}
+        />
+      )}
     </Widget>
   ));
 
@@ -98,10 +127,13 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
           <h4 className="mb-3 ml-1 text-3xl font-black">Data</h4>
           <div className="mb-4 flex flex-row flex-wrap justify-center justify-items-center gap-4 md:justify-start">
             <Widget title="Nejnovější data">
-              <LatestSnapshots snapshots={snapshots as Snapshot[]} take={11} />
+              <LatestSnapshots
+                snapshots={snapshotsDay as Snapshot[]}
+                take={11}
+              />
               <Separator className="my-2" />
               <TextualSnapshotStats
-                snapshots={snapshots as Snapshot[]}
+                snapshots={snapshotsDay as Snapshot[]}
                 take={11}
               />
             </Widget>

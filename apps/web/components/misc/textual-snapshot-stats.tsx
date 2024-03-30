@@ -9,6 +9,7 @@ interface Props {
 }
 
 export default function TextualSnapshotStats(props: Props) {
+  if (props.snapshots.length === 0) return null;
   const snapshotsFirst = props.snapshots.slice(0, props.take || 5);
   const averageGap = calculateAverageSnapshotGap(snapshotsFirst)?.toFixed(0);
   const lastSnapshotGap = formatDistanceToNow(

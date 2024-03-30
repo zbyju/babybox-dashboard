@@ -6,6 +6,7 @@ import { AuthProvider } from "@/components/contexts/auth-context";
 import { Nunito as FontSans } from "next/font/google";
 import { cookies } from "next/headers";
 import { Toaster } from "sonner";
+import ClientProviders from "@/components/contexts/client-providers";
 
 const fontSans = FontSans({
   subsets: ["latin", "latin-ext"],

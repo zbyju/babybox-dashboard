@@ -1,6 +1,12 @@
+import { Snapshot } from "./snapshot.types";
+
 export type BabyboxBase = {
   slug: string;
   name: string;
+};
+
+export type BabyboxData = BabyboxBase & {
+  lastData: Snapshot;
 };
 
 export type BabyboxAddress = {

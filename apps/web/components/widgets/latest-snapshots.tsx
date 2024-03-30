@@ -81,7 +81,7 @@ export const columns: ColumnDef<Snapshot>[] = [
     cell: ({ row }) => {
       const timestamp = format(
         parse(row.getValue("timestamp"), "yyyy-MM-dd HH:mm:ss", new Date()),
-        "HH:mm",
+        "d.M.yy HH:mm",
       );
       return <div className="">{timestamp}</div>;
     },

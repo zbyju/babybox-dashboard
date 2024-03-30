@@ -119,10 +119,11 @@ export const columns: ColumnDef<Babybox>[] = [
     accessorKey: "lastData.timestamp",
     header: () => <div className="text-right">Čas dat</div>,
     cell: ({ row }) => {
+      console.log(row.getValue("lastData_timestamp"));
       const timestamp = format(
         parse(
           row.getValue("lastData_timestamp"),
-          "HH:mm:ss dd-MM-yyyy",
+          "yyyy-MM-dd HH:mm:ss",
           new Date(),
         ),
         "HH:mm dd.MM.yyyy",
@@ -136,7 +137,7 @@ export const columns: ColumnDef<Babybox>[] = [
     cell: ({ row }) => {
       const d = parse(
         row.getValue("lastData_timestamp"),
-        "HH:mm:ss dd-MM-yyyy",
+        "yyyy-MM-dd HH:mm:ss",
         new Date(),
       );
       const now = new Date();
@@ -197,7 +198,7 @@ export default function BabyboxesTable() {
   function setRowClassName(row: Row<Babybox>): string {
     const _d = parse(
       row.getValue("lastData_timestamp"),
-      "HH:mm:ss dd-MM-yyyy",
+      "yyyy-MM-dd HH:mm:ss",
       new Date(),
     );
     const _now = new Date();

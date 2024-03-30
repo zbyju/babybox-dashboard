@@ -8,6 +8,12 @@ interface Props {
 }
 
 export default function ChartStats(props: Props) {
+  if (props.data.length === 0)
+    return (
+      <div className="flex flex-row flex-wrap justify-center justify-items-center gap-4 md:justify-start">
+        <h5>Žádné data</h5>
+      </div>
+    );
   const stats = calculateSnapshotStats(props.data);
 
   return (
@@ -27,7 +33,7 @@ export default function ChartStats(props: Props) {
         classNameInner="border-b-4 border-b-outside"
       >
         <VariableStats
-          stats={(stats.temperature as SnapshotGroupStat).inside}
+          stats={(stats.temperature as SnapshotGroupStat).outside}
         />
       </Widget>
       <Widget
@@ -36,7 +42,7 @@ export default function ChartStats(props: Props) {
         classNameInner="border-b-4 border-b-casing"
       >
         <VariableStats
-          stats={(stats.temperature as SnapshotGroupStat).inside}
+          stats={(stats.temperature as SnapshotGroupStat).casing}
         />
       </Widget>
       <Widget
@@ -44,9 +50,7 @@ export default function ChartStats(props: Props) {
         className="mx-auto"
         classNameInner="border-b-4 border-b-heating"
       >
-        <VariableStats
-          stats={(stats.temperature as SnapshotGroupStat).inside}
-        />
+        <VariableStats stats={(stats.temperature as SnapshotGroupStat).top} />
       </Widget>
       <Widget
         title="Spodní teplota"
@@ -54,7 +58,7 @@ export default function ChartStats(props: Props) {
         classNameInner="border-b-4 border-b-cooling"
       >
         <VariableStats
-          stats={(stats.temperature as SnapshotGroupStat).inside}
+          stats={(stats.temperature as SnapshotGroupStat).bottom}
         />
       </Widget>
       <Widget
@@ -62,18 +66,14 @@ export default function ChartStats(props: Props) {
         className="mx-auto"
         classNameInner="border-b-4 border-b-in"
       >
-        <VariableStats
-          stats={(stats.temperature as SnapshotGroupStat).inside}
-        />
+        <VariableStats stats={(stats.voltage as SnapshotGroupStat).in} />
       </Widget>
       <Widget
         title="Napětí akumulátor"
         className="mx-auto"
         classNameInner="border-b-4 border-b-battery"
       >
-        <VariableStats
-          stats={(stats.temperature as SnapshotGroupStat).inside}
-        />
+        <VariableStats stats={(stats.voltage as SnapshotGroupStat).battery} />
       </Widget>
     </div>
   );
