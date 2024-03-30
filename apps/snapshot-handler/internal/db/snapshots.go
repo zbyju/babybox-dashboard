@@ -187,13 +187,13 @@ func (service *DBService) ConvertToInfluxDBPoint(s *domain.Snapshot, measurement
 	point := influxdb2.NewPointWithMeasurement(measurementName).
 		AddTag("slug", s.Slug).
 		AddTag("version", fmt.Sprintf("%d", s.Version)).
-		AddField("temperature_inside", s.Temperatures.Inside).
-		AddField("temperature_outside", s.Temperatures.Outside).
-		AddField("temperature_casing", s.Temperatures.Casing).
-		AddField("temperature_top", s.Temperatures.Top).
-		AddField("temperature_bottom", s.Temperatures.Bottom).
-		AddField("voltage_in", s.Voltages.In).
-		AddField("voltage_battery", s.Voltages.Battery).
+		AddField("temperature_inside", s.Temperature.Inside).
+		AddField("temperature_outside", s.Temperature.Outside).
+		AddField("temperature_casing", s.Temperature.Casing).
+		AddField("temperature_top", s.Temperature.Top).
+		AddField("temperature_bottom", s.Temperature.Bottom).
+		AddField("voltage_in", s.Voltage.In).
+		AddField("voltage_battery", s.Voltage.Battery).
 		SetTime(parsedTime)
 
 	return point, nil
@@ -222,14 +222,14 @@ func (service *DBService) ConvertResultsToSnapshots(result *api.QueryTableResult
 func (service *DBService) ConvertRecordToSnapshot(record query.FluxRecord) (domain.Snapshot, error) {
 	snapshot := domain.Snapshot{
 		Slug: record.ValueByKey("slug").(string),
-		Temperatures: domain.Temperatures{
+		Temperature: domain.Temperature{
 			Inside:  record.ValueByKey("temperature_inside").(float64),
 			Outside: record.ValueByKey("temperature_outside").(float64),
 			Casing:  record.ValueByKey("temperature_casing").(float64),
 			Top:     record.ValueByKey("temperature_top").(float64),
 			Bottom:  record.ValueByKey("temperature_bottom").(float64),
 		},
-		Voltages: domain.Voltages{
+		Voltage: domain.Voltage{
 			In:      record.ValueByKey("voltage_in").(float64),
 			Battery: record.ValueByKey("voltage_battery").(float64),
 		},

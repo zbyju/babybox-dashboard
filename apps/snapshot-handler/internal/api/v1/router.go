@@ -21,6 +21,23 @@ type Application struct {
 	MQService *rabbitmq.Client
 }
 
+type APIResponse struct {
+	Data     interface{} `json:"data"`
+	Metadata Metadata    `json:"metadata"`
+}
+
+type Metadata struct {
+	Err     bool        `json:"err"`
+	Message interface{} `json:"message"`
+}
+
+func ReturnOk(data interface{}) APIResponse {
+	return APIResponse{Data: data, Metadata: Metadata{Err: false, Message: "Ok"}}
+}
+func ReturnErr(err interface{}) APIResponse {
+	return APIResponse{Metadata: Metadata{Err: true, Message: err}}
+}
+
 // RegisterRoutes registers the routes for version 1
 func RegisterRoutes(g *echo.Group, app *Application) {
 	g.GET("/healthcheck", app.HealthCheck)

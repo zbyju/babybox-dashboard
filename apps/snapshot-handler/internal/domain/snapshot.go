@@ -5,15 +5,15 @@ import (
 )
 
 type Snapshot struct {
-	ID           primitive.ObjectID `json:"-"`
-	Slug         string             `json:"slug"`
-	Temperatures Temperatures       `json:"temperatures"`
-	Voltages     Voltages           `json:"voltage"`
-	Version      uint               `json:"version"`
-	Timestamp    string             `json:"timestamp"`
+	ID          primitive.ObjectID `json:"-"`
+	Slug        string             `json:"slug"`
+	Temperature Temperature        `json:"temperature"`
+	Voltage     Voltage            `json:"voltage"`
+	Version     uint               `json:"version"`
+	Timestamp   string             `json:"timestamp"`
 }
 
-type Temperatures struct {
+type Temperature struct {
 	Inside  float64 `json:"inside"`
 	Outside float64 `json:"outside"`
 	Casing  float64 `json:"casing"`
@@ -21,7 +21,7 @@ type Temperatures struct {
 	Bottom  float64 `json:"bottom"`
 }
 
-type Voltages struct {
+type Voltage struct {
 	In      float64 `json:"in"`
 	Battery float64 `json:"battery"`
 }

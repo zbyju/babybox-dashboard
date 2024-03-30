@@ -15,7 +15,7 @@ func (app *Application) OldSnapshotHandler(c echo.Context) error {
 	slug := utils.ToSlug(c.QueryParam("BB"))
 
 	// Directly parse temperature and voltage values based on the T0-T7 mapping
-	temperatures := domain.Temperatures{
+	temperature := domain.Temperature{
 		Outside: parseQueryParam(app, c, "T0") / 100,
 		Inside:  parseQueryParam(app, c, "T1") / 100,
 		Bottom:  parseQueryParam(app, c, "T2") / 100,
@@ -23,23 +23,23 @@ func (app *Application) OldSnapshotHandler(c echo.Context) error {
 		Casing:  parseQueryParam(app, c, "T7") / 100,
 	}
 
-	voltages := domain.Voltages{
+	voltage := domain.Voltage{
 		In:      parseQueryParam(app, c, "T4") / 100,
 		Battery: parseQueryParam(app, c, "T5") / 100,
 	}
 
 	// Create the Snapshot object
 	snapshot := domain.Snapshot{
-		Slug:         slug,
-		Temperatures: temperatures,
-		Voltages:     voltages,
-		Version:      1,
-		Timestamp:    time.Now().In(app.Config.TimeLocation).Format("2006-01-02 15:04:05"),
+		Slug:        slug,
+		Temperature: temperature,
+		Voltage:     voltage,
+		Version:     1,
+		Timestamp:   time.Now().In(app.Config.TimeLocation).Format("2006-01-02 15:04:05"),
 	}
 
 	err := app.DBService.WriteSnapshot(snapshot)
 	if err != nil {
-		return err
+		return c.JSON(http.StatusInternalServerError, ReturnErr(err.Error()))
 	}
 
 	err = app.MQService.PublishSnapshot(snapshot)
@@ -47,7 +47,7 @@ func (app *Application) OldSnapshotHandler(c echo.Context) error {
 		app.Logger.Warnf("Couldn't publish snapshot to RabbitMQ - %s", err)
 	}
 
-	return c.JSON(http.StatusOK, snapshot)
+	return c.JSON(http.StatusOK, ReturnOk(snapshot))
 }
 
 func (app *Application) GetAllSnapshotsHandler(c echo.Context) error {
@@ -55,10 +55,10 @@ func (app *Application) GetAllSnapshotsHandler(c echo.Context) error {
 	if err != nil {
 		// Log the error and return an appropriate error response
 		app.Logger.Error("Failed to query all snapshots: ", err)
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to fetch snapshots"})
+		return c.JSON(http.StatusInternalServerError, ReturnErr("Failed to fetch snapshots"))
 	}
 
-	return c.JSON(http.StatusOK, snapshots)
+	return c.JSON(http.StatusOK, ReturnOk(snapshots))
 }
 
 func (app *Application) GetAllSnapshotsBySlugHandler(c echo.Context) error {
@@ -80,15 +80,15 @@ func (app *Application) GetAllSnapshotsBySlugHandler(c echo.Context) error {
 	// Parse the dates from the query parameters
 	fromTime, err := time.Parse("2006-01-02", from)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid 'from' date format"})
+		return c.JSON(http.StatusBadRequest, ReturnErr("Invalid 'from' date format"))
 	}
 	toTime, err := time.Parse("2006-01-02", to)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid 'to' date format"})
+		return c.JSON(http.StatusBadRequest, ReturnErr("Invalid 'to' date format"))
 	}
 	nNum, err := strconv.Atoi(n)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": "'n' is not a number"})
+		return c.JSON(http.StatusBadRequest, ReturnErr("'n' is not a number"))
 	}
 
 	// Adjust 'toTime' to the end of the day if you want the 'to' date to be inclusive
@@ -98,10 +98,10 @@ func (app *Application) GetAllSnapshotsBySlugHandler(c echo.Context) error {
 	if err != nil {
 		// Log the error and return an appropriate error response
 		app.Logger.Error("Failed to query all snapshots: ", err)
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to fetch snapshots"})
+		return c.JSON(http.StatusInternalServerError, ReturnErr("Failed to fetch snapshots"))
 	}
 
-	return c.JSON(http.StatusOK, snapshots)
+	return c.JSON(http.StatusOK, ReturnOk(snapshots))
 }
 
 func (app *Application) GetSnapshotSummaryBySlugHandler(c echo.Context) error {
@@ -119,11 +119,11 @@ func (app *Application) GetSnapshotSummaryBySlugHandler(c echo.Context) error {
 	// Parse the dates from the query parameters
 	fromTime, err := time.Parse("2006-01-02", from)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid 'from' date format"})
+		return c.JSON(http.StatusBadRequest, ReturnErr("Invalid 'from' date format"))
 	}
 	toTime, err := time.Parse("2006-01-02", to)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid 'to' date format"})
+		return c.JSON(http.StatusBadRequest, ReturnErr("Invalid 'to' date format"))
 	}
 	// Adjust 'toTime' to the end of the day if you want the 'to' date to be inclusive
 	toTime = toTime.Add(24 * time.Hour)
@@ -132,10 +132,10 @@ func (app *Application) GetSnapshotSummaryBySlugHandler(c echo.Context) error {
 	if err != nil {
 		// Log the error and return an appropriate error response
 		app.Logger.Error("Failed to query all snapshots: ", err)
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to fetch snapshots"})
+		return c.JSON(http.StatusInternalServerError, ReturnErr("Failed to fetch snapshots"))
 	}
 
-	return c.JSON(http.StatusOK, snapshots)
+	return c.JSON(http.StatusOK, ReturnOk(snapshots))
 }
 
 func parseQueryParam(app *Application, c echo.Context, param string) float64 {

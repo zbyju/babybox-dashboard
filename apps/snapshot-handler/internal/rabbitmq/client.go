@@ -9,8 +9,13 @@ import (
 )
 
 type Client struct {
-	conn *amqp.Connection
+	conn                *amqp.Connection
+	newSnapshotsChannel *amqp.Channel
+	newSnapshotsQueue   *amqp.Queue
 }
+
+// How long the messages stay in queue
+const ttl int32 = 1000 * 60 * 10
 
 func NewClient() (*Client, error) {
 	rabbitmqUsername := os.Getenv("RABBITMQ_USERNAME")
@@ -27,7 +32,27 @@ func NewClient() (*Client, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Client{conn: conn}, nil
+
+	ch, err := conn.Channel()
+	if err != nil {
+		return nil, err
+	}
+	defer ch.Close()
+
+	// Queue Declaration
+	q, err := ch.QueueDeclare(
+		"newSnapshotsQueue",          // Queue name
+		false,                        // Durable
+		false,                        // Delete when unused
+		false,                        // Exclusive
+		false,                        // No-wait
+		amqp.Table{"x-expires": ttl}, // Arguments
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &Client{conn: conn, newSnapshotsQueue: &q, newSnapshotsChannel: ch}, nil
 }
 
 func (c *Client) Close() {
