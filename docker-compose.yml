@@ -34,9 +34,30 @@ services:
     depends_on:
       - rabbitmq
       - influxdb
+
+  babybox-service:
+    build:
+      context: ./apps/babybox-service
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    environment:
+      - APP_ENV=production
+      - MONGODB_USERNAME=${MONGODB_USERNAME}
+      - MONGODB_PASSWORD=${MONGODB_PASSWORD}
+      - MONGODB_DATABASE=${MONGODB_DATABASE}
+      - RABBITMQ_USERNAME=${RABBITMQ_USERNAME}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+    restart: always
+    depends_on:
+      - rabbitmq
+      - mongodb
   # ------------------- SERVICES ------------------
   mongodb:
     image: mongo:latest
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASSWORD}
     volumes:
       - mongodb_data:/data/db
     ports:
