@@ -11,6 +11,9 @@ import (
 	"github.com/zbyju/babybox-dashboard/apps/snapshot-handler/internal/rabbitmq"
 )
 
+const maxRetries = 5
+const retryDelay = 3 * time.Second
+
 func main() {
 	location, err := time.LoadLocation("Europe/Prague")
 	if err != nil {
@@ -20,17 +23,39 @@ func main() {
 
 	e := echo.New()
 
-	dbService, err := db.InitConnection(&e.Logger, location)
-	if err != nil {
-		e.Logger.Errorf(err.Error())
-		return
+	var dbService *db.DBService
+	var mqService *rabbitmq.Client
+
+	for i := 0; i < maxRetries; i++ {
+		dbService, err = db.InitConnection(&e.Logger, location)
+		if err != nil {
+			e.Logger.Errorf("Failed to initialize DB service: %s", err)
+			if i < maxRetries-1 {
+				e.Logger.Infof("Retrying in %v...", retryDelay)
+				time.Sleep(retryDelay)
+				continue
+			} else {
+				return
+			}
+		}
+
+		mqService, err = rabbitmq.NewClient()
+		if err != nil {
+			e.Logger.Errorf("Failed to initialize MQ service: %s", err)
+			if i < maxRetries-1 {
+				e.Logger.Infof("Retrying in %v...", retryDelay)
+				time.Sleep(retryDelay)
+				continue
+			} else {
+				return
+			}
+		}
+
+		// If both services initialized successfully, break out of the loop
+		break
 	}
 
-	mqService, err := rabbitmq.NewClient()
-	if err != nil {
-		e.Logger.Errorf(err.Error())
-		return
-	}
+	defer mqService.Close()
 
 	app := &v1.Application{
 		Logger: e.Logger,
