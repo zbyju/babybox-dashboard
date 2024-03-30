@@ -98,7 +98,7 @@ export function calculateAverageSnapshotGap(
   // Calculate gaps (in seconds) between consecutive timestamps
   const gapsInSeconds = [];
   for (let i = 1; i < dates.length; i++) {
-    const gap = differenceInSeconds(dates[i], dates[i - 1]);
+    const gap = Math.abs(differenceInSeconds(dates[i], dates[i - 1]));
     gapsInSeconds.push(gap);
   }
 
