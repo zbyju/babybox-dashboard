@@ -1,0 +1,5 @@
+{ "dependencies": { "bcryptjs": "^2.4.3", "elysia": "^1.0.10", "jsonwebtoken": "^9.0.2", "mongoose": "^8.2.4" }, "name": "user-service", "module": "index.ts", "type": "module", "devDependencies": {
+  "@types/bun": "latest"
+}, "peerDependencies": {
+  "typescript": "^5.0.0"
+} }

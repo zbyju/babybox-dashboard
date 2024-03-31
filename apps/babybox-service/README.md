@@ -1,6 +1,6 @@
-# Snapshot Handler
+# Babybox Service
 
-Snapshot Handler service focuses on processing snapshots coming from babyboxes and requests coming from the frontend asking about those snapshots.
+Babybox service focuses on maintaining information about babyboxes - it exposes a REST API for creating, updating and querying babybox information. Babyboxes are automatically created when there is a snapshot with a babybox using a slug that hasn't been stored yet.
 
 ## How to run
 
@@ -11,15 +11,15 @@ _It is recommended that you go to the root of this repository and run the whole 
 #### Production
 
 ```sh
-docker build -t babybox-dashboard-snapshot-handler .
-docker run -p 8080:8080 babybox-dashboard-snapshot-handler
+docker build -t babybox-dashboard-babybox-service .
+docker run -p 8080:8080 babybox-dashboard-babybox-service
 ```
 
 #### Development
 
 ```sh
-docker build -f Dockerfile.dev -t babybox-dashboard-snapshot-handler-dev .
-docker run -p 8080:8080 babybox-dashboard-snapshot-handler-dev
+docker build -f Dockerfile.dev -t babybox-dashboard-babybox-service-dev .
+docker run -p 8080:8080 babybox-dashboard-babybox-service-dev
 ```
 
 ### Manual
