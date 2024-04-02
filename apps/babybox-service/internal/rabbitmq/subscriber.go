@@ -12,6 +12,11 @@ import (
 func (c *Client) HandleNewSnapshots(dbService *db.DBService) {
 	forever := make(chan bool)
 
+	if c == nil {
+		log.Fatal("Client was NIL!")
+		return
+	}
+
 	go func() {
 		for msg := range c.newSnapshotsDelivery {
 			var snapshot domain.Snapshot

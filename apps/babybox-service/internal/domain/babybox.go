@@ -33,6 +33,7 @@ type Coordinates struct {
 type NetworkConfiguration struct {
 	Type        string   `json:"type" bson:"type"`
 	IPAddresses IPConfig `json:"ip_addresses" bson:"ip_addresses"`
+	Note        string   `json:"note,omitempty" bson:"note,omitempty"`
 }
 
 // IPConfig struct to neatly hold network IPs
