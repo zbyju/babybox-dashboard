@@ -12,7 +12,6 @@ export function BabyboxesProvider({
   children: React.ReactNode;
   babyboxes: BabyboxData[];
 }>) {
-  console.log(babyboxes);
   return (
     <BabyboxesContext.Provider
       value={babyboxes.sort((a: unknown, b: unknown) =>

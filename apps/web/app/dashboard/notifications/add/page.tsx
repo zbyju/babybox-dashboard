@@ -1,6 +1,9 @@
 "use client";
 import { BabyboxCombo } from "@/components/babybox-combo";
+import { BabyboxesContext } from "@/components/contexts/babyboxes-context";
+import { Babybox } from "@/components/tables/babyboxes-table";
 import { Button } from "@/components/ui/button";
+import Combobox from "@/components/ui/combobox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -22,10 +25,15 @@ import {
 } from "@/components/ui/tooltip";
 import { ArrowLeft, Info } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 export default function NotificationsPage() {
-  const [global, setGlobal] = useState<boolean>(true);
+  const [template, setTemplate] = useState({
+    context: "global",
+  });
+  const babyboxes = useContext(BabyboxesContext) as Babybox[];
+
+  const selected = babyboxes.find((bb) => bb.slug === template.context);
 
   function minmaxValueBasedOnVariable(variable: string): {
     min: number;
@@ -73,14 +81,29 @@ export default function NotificationsPage() {
           <Label className="text-xl">Notifikace pro...</Label>
           <div className="flex flex-row flex-wrap items-center gap-2">
             <Switch
-              checked={global}
-              onCheckedChange={(val) => setGlobal(val)}
+              checked={template.context === "global"}
+              onCheckedChange={(val) =>
+                val === true
+                  ? setTemplate({ ...template, context: "global" })
+                  : setTemplate({ ...template, context: "" })
+              }
             />
             <Label>Všechny babyboxy</Label>
           </div>
-          {global === false ? (
+          {template.context !== "global" ? (
             <div>
-              <BabyboxCombo />
+              <Combobox
+                values={babyboxes.map((b) => ({
+                  value: b.slug,
+                  label: b.name,
+                }))}
+                selected={
+                  selected
+                    ? { value: selected.slug, label: selected.name }
+                    : undefined
+                }
+                onSelect={(val) => setTemplate({ ...template, context: val })}
+              />
             </div>
           ) : null}
         </div>
@@ -162,6 +185,25 @@ export default function NotificationsPage() {
         <div className="flex flex-row items-center gap-2">
           <Switch />
           <Label>Notifikace nové chyby</Label>
+          <TooltipProvider>
+            <Tooltip delayDuration={100}>
+              <TooltipTrigger asChild>
+                <Info className="mb-[2px] h-4 w-4 cursor-pointer" />
+              </TooltipTrigger>
+              <TooltipContent className="max-w-[300px]">
+                <p>
+                  Pokud příjdou data, které nesplňují podmínku pro notifikaci
+                  (data jsou v pořádku v rámci této šablony), pak dojde k
+                  vyresetování časové prodlevy a řady. To znamená, že vždy při
+                  každé nové chybě se vygeneruje notifikace.
+                </p>
+                <p>
+                  Tohle nastavení tedy nemá vliv na data, které jsou vadná pořád
+                  bez přerušení.
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
         <div className="flex flex-row flex-wrap items-center gap-4">
           <div className="flex flex-col gap-2">

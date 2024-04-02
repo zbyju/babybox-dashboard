@@ -26,12 +26,25 @@ import {
 } from "./ui/select";
 
 interface Props {
-  networkConfiguration: BabyboxNetworkConfiguration;
+  networkConfiguration: BabyboxNetworkConfiguration | undefined;
+  onClick: (newNetworkConfiguration: BabyboxNetworkConfiguration) => void;
 }
 
 export default function NetworkConfigurationEdit(props: Props) {
   const [networkConfiguration, setNetworkConfiguration] =
-    useState<BabyboxNetworkConfiguration>(props.networkConfiguration);
+    useState<BabyboxNetworkConfiguration>(
+      props.networkConfiguration ?? {
+        type: "vlan",
+        ip_addresses: {
+          router: "",
+          engine_unit: "",
+          thermal_unit: "",
+          camera: "",
+          pc: "",
+          gateway: "",
+        },
+      },
+    );
 
   function handleSaveClicked(): void {
     toast.error("Error when saivng");
@@ -53,6 +66,7 @@ export default function NetworkConfigurationEdit(props: Props) {
               Typ síťového zapojení:
             </Label>
             <Select
+              value={networkConfiguration.type}
               onValueChange={(val) =>
                 setNetworkConfiguration({
                   ...networkConfiguration,
@@ -84,10 +98,13 @@ export default function NetworkConfigurationEdit(props: Props) {
               onChange={(e) =>
                 setNetworkConfiguration({
                   ...networkConfiguration,
-                  ip: { ...networkConfiguration.ip, router: e.target.value },
+                  ip_addresses: {
+                    ...networkConfiguration.ip_addresses,
+                    router: e.target.value,
+                  },
                 })
               }
-              value={networkConfiguration.ip.router}
+              value={networkConfiguration.ip_addresses.router}
             />
           </div>
           <div className="flex flex-col gap-2">
@@ -96,13 +113,13 @@ export default function NetworkConfigurationEdit(props: Props) {
             </Label>
             <Input
               id="engine"
-              value={networkConfiguration.ip.engineUnit}
+              value={networkConfiguration.ip_addresses.engine_unit}
               onChange={(e) =>
                 setNetworkConfiguration({
                   ...networkConfiguration,
-                  ip: {
-                    ...networkConfiguration.ip,
-                    engineUnit: e.target.value,
+                  ip_addresses: {
+                    ...networkConfiguration.ip_addresses,
+                    engine_unit: e.target.value,
                   },
                 })
               }
@@ -117,13 +134,13 @@ export default function NetworkConfigurationEdit(props: Props) {
             </Label>
             <Input
               id="thermal"
-              value={networkConfiguration.ip.thermalUnit}
+              value={networkConfiguration.ip_addresses.thermal_unit}
               onChange={(e) =>
                 setNetworkConfiguration({
                   ...networkConfiguration,
-                  ip: {
-                    ...networkConfiguration.ip,
-                    thermalUnit: e.target.value,
+                  ip_addresses: {
+                    ...networkConfiguration.ip_addresses,
+                    thermal_unit: e.target.value,
                   },
                 })
               }
@@ -135,11 +152,14 @@ export default function NetworkConfigurationEdit(props: Props) {
             </Label>
             <Input
               id="camera"
-              value={networkConfiguration.ip.camera}
+              value={networkConfiguration.ip_addresses.camera}
               onChange={(e) =>
                 setNetworkConfiguration({
                   ...networkConfiguration,
-                  ip: { ...networkConfiguration.ip, camera: e.target.value },
+                  ip_addresses: {
+                    ...networkConfiguration.ip_addresses,
+                    camera: e.target.value,
+                  },
                 })
               }
             />
@@ -150,11 +170,14 @@ export default function NetworkConfigurationEdit(props: Props) {
             </Label>
             <Input
               id="pc"
-              value={networkConfiguration.ip.pc}
+              value={networkConfiguration.ip_addresses.pc}
               onChange={(e) =>
                 setNetworkConfiguration({
                   ...networkConfiguration,
-                  ip: { ...networkConfiguration.ip, gateway: e.target.value },
+                  ip_addresses: {
+                    ...networkConfiguration.ip_addresses,
+                    pc: e.target.value,
+                  },
                 })
               }
             />
@@ -168,11 +191,14 @@ export default function NetworkConfigurationEdit(props: Props) {
             </Label>
             <Input
               id="gateway"
-              value={networkConfiguration.ip.gateway}
+              value={networkConfiguration.ip_addresses.gateway}
               onChange={(e) =>
                 setNetworkConfiguration({
                   ...networkConfiguration,
-                  ip: { ...networkConfiguration.ip, gateway: e.target.value },
+                  ip_addresses: {
+                    ...networkConfiguration.ip_addresses,
+                    gateway: e.target.value,
+                  },
                 })
               }
             />
@@ -196,9 +222,25 @@ export default function NetworkConfigurationEdit(props: Props) {
       </CardContent>
       <CardFooter>
         <div className="flex flex-row flex-wrap gap-2">
-          <Button onClick={() => handleSaveClicked()}>Uložit</Button>
+          <Button onClick={() => props.onClick(networkConfiguration)}>
+            Uložit
+          </Button>
           <Button
-            onClick={() => setNetworkConfiguration(props.networkConfiguration)}
+            onClick={() =>
+              setNetworkConfiguration(
+                props.networkConfiguration ?? {
+                  type: "vlan",
+                  ip_addresses: {
+                    router: "",
+                    engine_unit: "",
+                    thermal_unit: "",
+                    camera: "",
+                    pc: "",
+                    gateway: "",
+                  },
+                },
+              )
+            }
             variant="secondary"
           >
             Storno

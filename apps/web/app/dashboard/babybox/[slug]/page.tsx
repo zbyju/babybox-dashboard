@@ -11,7 +11,10 @@ import { calculateSnapshotStats } from "@/utils/stats";
 import TextualSnapshotStats from "@/components/misc/textual-snapshot-stats";
 import { Separator } from "@/components/ui/separator";
 import VariableOverview from "@/components/widgets/variable-overview";
-import { fetchSnapshotsBySlugAndTime } from "@/helpers/api-helper";
+import {
+  fetchBabyboxDetail,
+  fetchSnapshotsBySlugAndTime,
+} from "@/helpers/api-helper";
 import { addDays, format } from "date-fns";
 
 export default async function BabyboxPage({
@@ -20,6 +23,8 @@ export default async function BabyboxPage({
   params: { slug: string };
 }) {
   const slug = params.slug;
+
+  const babybox = await fetchBabyboxDetail(slug);
 
   const today = new Date();
   const snapshotsWeek = await fetchSnapshotsBySlugAndTime(
@@ -99,7 +104,7 @@ export default async function BabyboxPage({
 
   return (
     <div className="w-screen lg:pb-24 lg:pr-5">
-      <BabyboxSideMenu babybox={{ slug, name: slug }} />
+      <BabyboxSideMenu babybox={babybox} />
       <div className="lg:ml-main mb-1 mt-5 flex-grow">
         <div className="mx-auto flex w-11/12 flex-col">
           <div className="mb-4">

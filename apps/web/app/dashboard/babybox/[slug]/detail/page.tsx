@@ -1,18 +1,20 @@
 import LocationInformation from "@/components/location-information";
 import NetworkConfiguration from "@/components/network-configuration";
-import ContactInformationTable from "@/components/tables/contact-information-table";
-import MaintenanceTable from "@/components/tables/maintenance-table";
 import { Button } from "@/components/ui/button";
+import { fetchBabyboxDetail } from "@/helpers/api-helper";
 import { ArrowLeft, FilePenLine } from "lucide-react";
 import Link from "next/link";
 
-export default function Home({ params }: { params: { slug: string } }) {
+export const dynamic = "force-dynamic";
+
+export default async function Home({ params }: { params: { slug: string } }) {
+  const babybox = await fetchBabyboxDetail(params.slug);
   return (
     <div className="mt-4 px-[5%] lg:px-[16%]">
       <div className="flex flex-row flex-wrap justify-between gap-4">
         <h2 className="ml-1 text-3xl font-semibold">
           <span className="font-bold text-pink-600">Babybox </span>
-          <span className="capitalize">{params.slug}</span>
+          <span className="capitalize">{babybox.name}</span>
         </h2>
         <div className="flex flex-row flex-wrap gap-4">
           <Link href={"/dashboard/babybox/" + params.slug + "/edit"}>
@@ -34,50 +36,13 @@ export default function Home({ params }: { params: { slug: string } }) {
       </div>
 
       <div className="mt-6 flex flex-row flex-wrap gap-6">
-        <LocationInformation
-          address={{
-            hospital: "Nemocnice Hello",
-            city: "Praha",
-            street: "Test 1234",
-            postcode: "1234 23",
-            coordinates: {
-              latitude: 50.07615058737413,
-              longitude: 14.475897782815395,
-            },
-          }}
-        />
+        {babybox.location && <LocationInformation address={babybox.location} />}
 
-        <NetworkConfiguration
-          networkConfiguration={{
-            type: "vlan",
-            ip: {
-              router: "10.1.1.1",
-              engineUnit: "10.1.1.5",
-              thermalUnit: "10.1.1.6",
-              camera: "10.1.1.7",
-              pc: "10.1.1.10",
-              gateway: "192.168.1.1",
-            },
-          }}
-        />
-      </div>
-
-      <div className="mt-6 flex flex-row flex-wrap gap-6">
-        <ContactInformationTable
-          contacts={[
-            {
-              id: "1",
-              name: "Jana Joe",
-              email: "test@test.com",
-              phone: "600 500 400",
-              note: "Poznamka",
-            },
-          ]}
-        />
-
-        <MaintenanceTable
-          maintenances={[{ timestamp: new Date(), note: "Poznamka" }]}
-        />
+        {babybox.network_configuration && (
+          <NetworkConfiguration
+            networkConfiguration={babybox.network_configuration}
+          />
+        )}
       </div>
     </div>
   );

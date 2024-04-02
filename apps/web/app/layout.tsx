@@ -2,11 +2,10 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 import { ThemeProvider } from "@/components/contexts/theme-provider";
-import { AuthProvider } from "@/components/contexts/auth-context";
 import { Nunito as FontSans } from "next/font/google";
 import { cookies } from "next/headers";
 import { Toaster } from "sonner";
-import ClientProviders from "@/components/contexts/client-providers";
+import { AuthProvider } from "@/components/contexts/auth-context";
 
 const fontSans = FontSans({
   subsets: ["latin", "latin-ext"],
@@ -77,7 +76,7 @@ export default function RootLayout({
               enableSystem
             >
               {children}
-              <Toaster />
+              <Toaster richColors />
             </ThemeProvider>
           </AuthProvider>
         </div>

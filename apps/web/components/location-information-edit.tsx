@@ -10,23 +10,24 @@ import {
 } from "./ui/card";
 import { MapPin } from "lucide-react";
 import { Button } from "./ui/button";
-import { toast } from "sonner";
 import { Input } from "./ui/input";
 import { useState } from "react";
 import { Switch } from "./ui/switch";
 import { Label } from "./ui/label";
 
 interface Props {
-  address: BabyboxAddress;
+  address: BabyboxAddress | undefined;
+  onClick: (newAddress: BabyboxAddress) => void;
 }
 
 export default function LocationInformationEdit(props: Props) {
-  const [address, setAddress] = useState<BabyboxAddress>(props.address);
-
-  function handleSaveClicked(): void {
-    toast.error("Error saving data");
-    console.log(address);
-  }
+  const [address, setAddress] = useState<BabyboxAddress>(
+    props.address ?? {
+      hospital: "",
+      street: "",
+      postcode: "",
+    },
+  );
 
   return (
     <Card className="min-w-[300px] max-w-[400px] flex-grow">
@@ -158,7 +159,7 @@ export default function LocationInformationEdit(props: Props) {
                         latitude: parseFloat(e.target.value) || 0,
                         longitude:
                           address.coordinates?.longitude ||
-                          props.address.coordinates?.longitude ||
+                          props.address?.coordinates?.longitude ||
                           0,
                       },
                     })
@@ -180,7 +181,7 @@ export default function LocationInformationEdit(props: Props) {
                       coordinates: {
                         latitude:
                           address.coordinates?.latitude ||
-                          props.address.coordinates?.latitude ||
+                          props.address?.coordinates?.latitude ||
                           0,
                         longitude: parseFloat(e.target.value) || 0,
                       },
@@ -194,8 +195,19 @@ export default function LocationInformationEdit(props: Props) {
       </CardContent>
       <CardFooter>
         <div className="flex flex-row flex-wrap gap-2">
-          <Button onClick={() => handleSaveClicked()}>Uložit</Button>
-          <Button onClick={() => setAddress(props.address)} variant="secondary">
+          <Button onClick={() => props.onClick(address)}>Uložit</Button>
+          <Button
+            onClick={() =>
+              setAddress(
+                props.address || {
+                  hospital: "",
+                  street: "",
+                  postcode: "",
+                },
+              )
+            }
+            variant="secondary"
+          >
             Storno
           </Button>
         </div>

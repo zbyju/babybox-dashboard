@@ -58,7 +58,6 @@ function transformData(
       name,
       color,
       data: originalData.map((item) => {
-        console.log(item);
         return {
           x: parse(item.timestamp, "yyyy-MM-dd HH:mm:ss", new Date()).getTime(),
           // @ts-expect-error apex

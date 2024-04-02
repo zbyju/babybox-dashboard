@@ -5,6 +5,11 @@ export type BabyboxBase = {
   name: string;
 };
 
+export type BabyboxDetail = BabyboxBase & {
+  location?: BabyboxAddress;
+  network_configuration?: BabyboxNetworkConfiguration;
+};
+
 export type BabyboxData = BabyboxBase & {
   lastData: Snapshot;
 };
@@ -29,12 +34,14 @@ export type BabyboxContact = {
   note?: string;
 };
 
+export type BabyboxNetworkType = "vlan" | "lan" | "routing" | "custom";
+
 export type BabyboxNetworkConfiguration = {
-  type: "vlan" | "lan" | "routing" | "custom";
-  ip: {
+  type: BabyboxNetworkType;
+  ip_addresses: {
     router: string;
-    engineUnit: string;
-    thermalUnit: string;
+    engine_unit: string;
+    thermal_unit: string;
     camera: string;
     pc: string;
     gateway: string;
