@@ -1,9 +1,12 @@
-import { Schema, model, type CallbackError } from "mongoose";
+import { type CallbackError, model, Schema } from "mongoose";
 
-interface User {
+export interface UserSanitized {
   username: string;
-  password: string;
   email: string;
+}
+
+export interface User extends UserSanitized {
+  password: string;
 }
 
 const userSchema = new Schema<User>({

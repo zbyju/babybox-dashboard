@@ -1,0 +1,19 @@
+# Use the official Bun image as a base
+FROM oven/bun:latest
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Install Bun dependencies
+COPY package.json bun.lockb ./
+RUN bun install
+
+# Copy the rest of your application code
+COPY . .
+
+# Expose the port the app runs on
+EXPOSE 3000
+
+# Start the application in watch mode for development
+CMD ["bun", "run", "--watch", "src/server.ts"]
+

@@ -1,31 +1,53 @@
-import Router from "elysia";
+import { Elysia } from "elysia";
 import jwt from "jsonwebtoken";
+import * as z from "zod";
+
 import UserModel from "../models/user.model";
-import bcrypt from "bcryptjs";
+import { findUserByUsernameWithPassword } from "../services/user.service";
+import { ReturnErr, ReturnOk } from "../utils/api";
+import { signJWT } from "../utils/auth";
 
-const router = new Router();
+export const loginSchema = z.object({
+  username: z.string(),
+  password: z.string(),
+});
 
-// Simplified user registration example
-router.post("/register", async (req, res) => {
+const routes = new Elysia().post("/login", async ({ body, error }) => {
+  const result = loginSchema.safeParse(body);
+
+  if (!result.success) return ReturnErr(result.error.toString());
+
+  const { username, password } = result.data;
   try {
-    const { username, password, email } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 12);
+    // 1. Find user by username
+    const userO = await findUserByUsernameWithPassword(username);
+    if (userO.isNone())
+      return error(
+        401,
+        ReturnErr("There has been a problem fetching from the database."),
+      );
 
-    const newUser = new UserModel({
-      username,
-      password: hashedPassword,
-      email,
-    });
+    const user = userO.unwrap();
+    if (!user) {
+      return error(401, ReturnErr("User not found."));
+    }
 
-    await newUser.save();
-    res.statusCode = 201; // Created
-    return res.json({ message: "User created" });
-  } catch (error) {
-    res.statusCode = 500; // Internal Server Error
-    return res.json({ message: "Error creating user" });
+    // 2. Compare passwords
+    const passwordMatch = await Bun.password.verify(password, user.password);
+    if (!passwordMatch) {
+      return error(401, ReturnErr("Wrong password."));
+    }
+
+    // 3. Generate and send a JWT (or other authentication mechanism)
+    const token = signJWT(user);
+    return ReturnOk({ token: token });
+  } catch (err) {
+    console.error(err);
+    return error(
+      500,
+      "There has been an error when fetching from the database.",
+    );
   }
 });
 
-// More routes (login, etc.) here...
-
-export default router;
+export default routes;

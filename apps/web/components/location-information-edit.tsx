@@ -20,6 +20,7 @@ interface Props {
   onClick: (newAddress: BabyboxAddress) => void;
 }
 
+
 export default function LocationInformationEdit(props: Props) {
   const [address, setAddress] = useState<BabyboxAddress>(
     props.address ?? {
