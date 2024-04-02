@@ -2,9 +2,11 @@ module github.com/zbyju/babybox-dashboard/apps/babybox-service
 
 go 1.22.0
 
+require dario.cat/mergo v1.0.0
+
 require (
-	dario.cat/mergo v1.0.0
 	github.com/apapsch/go-jsonmerge/v2 v2.0.0 // indirect
+	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/uuid v1.3.1 // indirect
 	github.com/influxdata/influxdb-client-go/v2 v2.13.0 // indirect
@@ -29,4 +31,5 @@ require (
 	golang.org/x/sync v0.1.0 // indirect
 	golang.org/x/sys v0.15.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
+	golang.org/x/time v0.5.0 // indirect
 )

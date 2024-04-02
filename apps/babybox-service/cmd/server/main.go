@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"github.com/zbyju/babybox-dashboard/apps/babybox-service/internal/api"
 	v1 "github.com/zbyju/babybox-dashboard/apps/babybox-service/internal/api/v1"
 	"github.com/zbyju/babybox-dashboard/apps/babybox-service/internal/db"
@@ -22,7 +23,7 @@ func main() {
 	}
 
 	e := echo.New()
-	e.Logger.Print("test")
+	e.Use(middleware.CORS())
 
 	var dbService *db.DBService
 	var mqService *rabbitmq.Client
