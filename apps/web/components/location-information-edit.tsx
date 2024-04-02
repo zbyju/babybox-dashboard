@@ -124,9 +124,9 @@ export default function LocationInformationEdit(props: Props) {
                     coordinates:
                       val === true
                         ? {
-                            latitude: props.address.coordinates?.latitude || 0,
+                            latitude: props.address?.coordinates?.latitude || 0,
                             longitude:
-                              props.address.coordinates?.longitude || 0,
+                              props.address?.coordinates?.longitude || 0,
                           }
                         : undefined,
                   });
