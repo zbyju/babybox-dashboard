@@ -1,0 +1,14 @@
+entryPoints:
+  web:
+    address: ":80"
+  websecure:
+    address: ":443"
+  dashboard:
+    address: ":8000"
+
+providers:
+  docker:
+    exposedByDefault: false # Expose services only when you have labels for them
+
+api:
+  dashboard: true

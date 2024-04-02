@@ -1,6 +1,21 @@
 version: "3.8"
 
 services:
+  traefik:
+    image: traefik:v2.5
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8000:8000"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock" # So Traefik can listen to the Docker events
+      - "./letsencrypt:/letsencrypt" # Persistent volume for certificates
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+    restart: always
   # ------------------- APPS ------------------
   web:
     build:
@@ -10,6 +25,9 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
+      - NEXT_PUBLIC_URL_SNAPSHOT_HANDLER=${URL_SNAPSHOT_HANDLER}
+      - NEXT_PUBLIC_URL_BABYBOX_SERVICE=${URL_BABYBOX_SERVICE}
+      - NEXT_PUBLIC_URL_USER_SERVICE=${URL_USER_SERVICE}
     restart: always
     depends_on:
       - snapshot-handler
@@ -31,6 +49,10 @@ services:
       - RABBITMQ_USERNAME=${RABBITMQ_USERNAME}
       - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
     restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.snapshot-handler.entrypoints=web"
+      - "traefik.http.routers.snapshot-handler.rule=Host(`snapshot-handler.${DOMAIN}`)"
     depends_on:
       - rabbitmq
       - influxdb
@@ -49,8 +71,31 @@ services:
       - RABBITMQ_USERNAME=${RABBITMQ_USERNAME}
       - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
     restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.babybox-service.entrypoints=web"
+      - "traefik.http.routers.babybox-service.rule=Host(`babybox-service.${DOMAIN}`)"
     depends_on:
       - rabbitmq
+      - mongodb
+
+  user-service:
+    build:
+      context: ./apps/user-service
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8082"
+    environment:
+      - APP_ENV=production
+      - MONGODB_USERNAME=${MONGODB_USERNAME}
+      - MONGODB_PASSWORD=${MONGODB_PASSWORD}
+      - MONGODB_DATABASE=${MONGODB_DATABASE}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.user-service.entrypoints=web"
+      - "traefik.http.routers.user-service.rule=Host(`user-service.${DOMAIN}`)"
+    restart: always
+    depends_on:
       - mongodb
   # ------------------- SERVICES ------------------
   mongodb:

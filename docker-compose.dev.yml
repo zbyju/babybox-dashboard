@@ -18,6 +18,10 @@ services:
       - ./apps/snapshot-handler:/app
     environment:
       - APP_ENV=development
+    labels:
+      - traefik.http.routers.snapshot-handler.rule=Host(`snapshot-handler.localhost`)
+      - traefik.http.routers.snapshot-handler.entrypoints=web
+      - traefik.http.services.snapshot-handler.loadbalancer.server.port=8080
 
   babybox-service:
     build:
@@ -27,3 +31,20 @@ services:
       - ./apps/babybox-service:/app
     environment:
       - APP_ENV=development
+    labels:
+      - traefik.http.routers.babybox-service.rule=Host(`babybox-service.localhost`)
+      - traefik.http.routers.babybox-service.entrypoints=web
+      - traefik.http.services.babybox-service.loadbalancer.server.port=8081
+
+  user-service:
+    build:
+      context: ./apps/user-service
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./apps/user-service:/app
+    environment:
+      - APP_ENV=development
+    labels:
+      - traefik.http.routers.user-service.rule=Host(`user-service.localhost`)
+      - traefik.http.routers.user-service.entrypoints=web
+      - traefik.http.services.user-service.loadbalancer.server.port=8082
