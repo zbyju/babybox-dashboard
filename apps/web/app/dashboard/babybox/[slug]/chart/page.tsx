@@ -1,10 +1,15 @@
+"use client";
+
 import {
   fetchAllSnapshots,
   fetchSnapshotsBySlug,
   fetchSnapshotsBySlugAndTime,
+  fetcherWithToken,
 } from "@/helpers/api-helper";
 import ChartPageWrapper from "./chart-page-wrapper";
 import { addDays, format } from "date-fns";
+import useSWR from "swr";
+import { useAuth } from "@/components/contexts/auth-context";
 
 function searchParamTimeToString(
   sp: string | string[] | undefined,
@@ -15,7 +20,7 @@ function searchParamTimeToString(
   return sp[0];
 }
 
-export default async function Home({
+export default function Home({
   params,
   searchParams,
 }: {
@@ -30,10 +35,27 @@ export default async function Home({
     searchParams?.to,
     format(new Date(), "yyyy-MM-dd"),
   );
-  const snapshots = await fetchSnapshotsBySlugAndTime(params.slug, from, to);
+
+  const { token } = useAuth();
+  const snapshotServiceURL = process.env.NEXT_PUBLIC_URL_SNAPSHOT_HANDLER;
+  const {
+    data: snapshotsData,
+    error: snapshotsError,
+    isLoading: snapshotsIsLoading,
+  } = useSWR(
+    [
+      `${snapshotServiceURL}/v1/snapshots/${params.slug}?from=${from}&to=${to}`,
+      token,
+    ],
+    ([url, token]) => fetcherWithToken(url, token),
+  );
+
+  if (snapshotsError) return <>Error</>;
+  if (snapshotsIsLoading) return <>Error</>;
+
   return (
     <div className="h-[92vh] min-h-[400px]">
-      <ChartPageWrapper slug={params.slug} snapshots={snapshots} />
+      <ChartPageWrapper slug={params.slug} snapshots={snapshotsData.data} />
     </div>
   );
 }

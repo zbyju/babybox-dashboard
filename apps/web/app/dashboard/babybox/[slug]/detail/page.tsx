@@ -1,20 +1,36 @@
+"use client";
+
+import { useAuth } from "@/components/contexts/auth-context";
 import LocationInformation from "@/components/location-information";
 import NetworkConfiguration from "@/components/network-configuration";
 import { Button } from "@/components/ui/button";
-import { fetchBabyboxDetail } from "@/helpers/api-helper";
+import { fetcherWithToken } from "@/helpers/api-helper";
 import { ArrowLeft, FilePenLine } from "lucide-react";
 import Link from "next/link";
+import useSWR from "swr";
 
-export const dynamic = "force-dynamic";
+export default function Home({ params }: { params: { slug: string } }) {
+  const { token } = useAuth();
+  const babyboxServiceURL = process.env.NEXT_PUBLIC_URL_BABYBOX_SERVICE;
 
-export default async function Home({ params }: { params: { slug: string } }) {
-  const babybox = await fetchBabyboxDetail(params.slug);
+  const {
+    data: babyboxData,
+    error: babyboxError,
+    isLoading: babyboxIsLoading,
+  } = useSWR(
+    [`${babyboxServiceURL}/v1/babyboxes/${params.slug}`, token],
+    ([url, token]) => fetcherWithToken(url, token),
+  );
+
+  if (babyboxError) return <>Error</>;
+  if (babyboxIsLoading) return <>Loadign</>;
+
   return (
     <div className="mt-4 px-[5%] lg:px-[16%]">
       <div className="flex flex-row flex-wrap justify-between gap-4">
         <h2 className="ml-1 text-3xl font-semibold">
           <span className="font-bold text-pink-600">Babybox </span>
-          <span className="capitalize">{babybox.name}</span>
+          <span className="capitalize">{babyboxData.data.name}</span>
         </h2>
         <div className="flex flex-row flex-wrap gap-4">
           <Link href={"/dashboard/babybox/" + params.slug + "/edit"}>
@@ -36,11 +52,13 @@ export default async function Home({ params }: { params: { slug: string } }) {
       </div>
 
       <div className="mt-6 flex flex-row flex-wrap gap-6">
-        {babybox.location && <LocationInformation address={babybox.location} />}
+        {babyboxData.data.location && (
+          <LocationInformation address={babyboxData.data.location} />
+        )}
 
-        {babybox.network_configuration && (
+        {babyboxData.data.network_configuration && (
           <NetworkConfiguration
-            networkConfiguration={babybox.network_configuration}
+            networkConfiguration={babyboxData.data.network_configuration}
           />
         )}
       </div>

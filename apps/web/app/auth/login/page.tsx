@@ -6,19 +6,30 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
 import { FormEvent } from "react";
+import { toast } from "sonner";
 
 export default function Login() {
   const { login } = useAuth();
   const router = useRouter();
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const formData = new FormData(e.currentTarget);
     const username = (formData.get("username") as string) ?? "";
-    const _password = (formData.get("password") as string) ?? "";
+    const password = (formData.get("password") as string) ?? "";
 
-    login(username);
-    router.push("/dashboard/babybox");
+    try {
+      const success = await login(username, password);
+      if (success) {
+        router.push("/dashboard/babybox");
+        toast.success("Úspěšně přihlášen.");
+      } else {
+        toast.error("Chyba při přihlašování.");
+      }
+    } catch (err) {
+      toast.error("Chyba při přihlašování.");
+    }
   };
 
   return (

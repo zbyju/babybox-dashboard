@@ -1,3 +1,5 @@
+"use client";
+
 import BabyboxSideMenu from "@/components/babybox-side-menu";
 
 import Widget from "@/components/ui/widget";
@@ -14,38 +16,90 @@ import VariableOverview from "@/components/widgets/variable-overview";
 import {
   fetchBabyboxDetail,
   fetchSnapshotsBySlugAndTime,
+  fetcherWithToken,
 } from "@/helpers/api-helper";
 import { addDays, format } from "date-fns";
+import useSWR from "swr";
+import { useAuth } from "@/components/contexts/auth-context";
 
-export default async function BabyboxPage({
-  params,
-}: {
-  params: { slug: string };
-}) {
+export default function BabyboxPage({ params }: { params: { slug: string } }) {
   const slug = params.slug;
+  const { token } = useAuth();
+  const babyboxServiceURL = process.env.NEXT_PUBLIC_URL_BABYBOX_SERVICE;
+  const snapshotServiceURL = process.env.NEXT_PUBLIC_URL_SNAPSHOT_HANDLER;
 
-  const babybox = await fetchBabyboxDetail(slug);
+  const {
+    data: babyboxData,
+    error: babyboxError,
+    isLoading: babyboxIsLoading,
+  } = useSWR(
+    [`${babyboxServiceURL}/v1/babyboxes/${params.slug}`, token],
+    ([url, token]) => fetcherWithToken(url, token),
+  );
 
   const today = new Date();
-  const snapshotsWeek = await fetchSnapshotsBySlugAndTime(
-    slug,
-    format(addDays(today, -6), "yyyy-MM-dd"),
-    format(today, "yyyy-MM-dd"),
-  );
-  const snapshots3Days = await fetchSnapshotsBySlugAndTime(
-    slug,
-    format(addDays(today, -2), "yyyy-MM-dd"),
-    format(today, "yyyy-MM-dd"),
-  );
-  const snapshotsDay = await fetchSnapshotsBySlugAndTime(
-    slug,
-    format(today, "yyyy-MM-dd"),
-    format(today, "yyyy-MM-dd"),
+  const todayDate = format(today, "yyyy-MM-dd");
+  const lastWeekDate = format(addDays(today, -6), "yyyy-MM-dd");
+  const last3DaysDate = format(addDays(today, -2), "yyyy-MM-dd");
+
+  const {
+    data: snapshotsWeekData,
+    error: snapshotsWeekError,
+    isLoading: snapshotsWeekIsLoading,
+  } = useSWR(
+    [
+      `${snapshotServiceURL}/v1/snapshots/${params.slug}?from=${lastWeekDate}&to=${todayDate}`,
+      token,
+    ],
+    ([url, token]) => fetcherWithToken(url, token),
   );
 
-  const stats = calculateSnapshotStats(snapshotsWeek);
-  const statsSmall = calculateSnapshotStats(snapshots3Days);
-  const statsSmaller = calculateSnapshotStats(snapshotsDay);
+  const {
+    data: snapshots3DaysData,
+    error: snapshots3DaysError,
+    isLoading: snapshots3DaysIsLoading,
+  } = useSWR(
+    [
+      `${snapshotServiceURL}/v1/snapshots/${params.slug}?from=${last3DaysDate}&to=${todayDate}`,
+      token,
+    ],
+    ([url, token]) => fetcherWithToken(url, token),
+  );
+
+  const {
+    data: snapshotsDayData,
+    error: snapshotsDayError,
+    isLoading: snapshotsDayIsLoading,
+  } = useSWR(
+    [
+      `${snapshotServiceURL}/v1/snapshots/${params.slug}?from=${todayDate}&to=${todayDate}`,
+      token,
+    ],
+    ([url, token]) => fetcherWithToken(url, token),
+  );
+
+  if (
+    snapshotsDayError ||
+    snapshots3DaysError ||
+    snapshotsWeekError ||
+    snapshotsDayIsLoading ||
+    snapshotsWeekIsLoading ||
+    snapshots3DaysIsLoading ||
+    babyboxIsLoading ||
+    babyboxError ||
+    !babyboxData.data
+  ) {
+    return <>Error</>;
+  }
+
+  console.log(babyboxData);
+  console.log(snapshotsDayData);
+  console.log(snapshots3DaysData);
+  console.log(snapshotsWeekData);
+
+  const stats = calculateSnapshotStats(snapshotsWeekData.data);
+  const statsSmall = calculateSnapshotStats(snapshots3DaysData.data);
+  const statsSmaller = calculateSnapshotStats(snapshotsDayData.data);
 
   const temperatureVariableOverviews = [
     { key: "inside", name: "Vnitřní teplota", color: "inside" },
@@ -70,7 +124,7 @@ export default async function BabyboxPage({
           lastWeek={(stats.temperature as SnapshotGroupStat)[o.key]}
           last3Days={(statsSmall.temperature as SnapshotGroupStat)[o.key]}
           lastDay={(statsSmaller.temperature as SnapshotGroupStat)[o.key]}
-          snapshots={snapshotsDay}
+          snapshots={snapshotsDayData.data}
         />
       )}
     </Widget>
@@ -96,7 +150,7 @@ export default async function BabyboxPage({
           lastWeek={(stats.voltage as SnapshotGroupStat)[o.key]}
           last3Days={(statsSmall.voltage as SnapshotGroupStat)[o.key]}
           lastDay={(statsSmaller.voltage as SnapshotGroupStat)[o.key]}
-          snapshots={snapshotsDay}
+          snapshots={snapshotsDayData.data}
         />
       )}
     </Widget>
@@ -104,7 +158,7 @@ export default async function BabyboxPage({
 
   return (
     <div className="w-screen lg:pb-24 lg:pr-5">
-      <BabyboxSideMenu babybox={babybox} />
+      <BabyboxSideMenu babybox={babyboxData.data} />
       <div className="lg:ml-main mb-1 mt-5 flex-grow">
         <div className="mx-auto flex w-11/12 flex-col">
           <div className="mb-4">
@@ -133,12 +187,12 @@ export default async function BabyboxPage({
           <div className="mb-4 flex flex-row flex-wrap justify-center justify-items-center gap-4 md:justify-start">
             <Widget title="Nejnovější data">
               <LatestSnapshots
-                snapshots={snapshotsDay as Snapshot[]}
+                snapshots={snapshotsDayData.data as Snapshot[]}
                 take={11}
               />
               <Separator className="my-2" />
               <TextualSnapshotStats
-                snapshots={snapshotsDay as Snapshot[]}
+                snapshots={snapshotsDayData.data as Snapshot[]}
                 take={11}
               />
             </Widget>

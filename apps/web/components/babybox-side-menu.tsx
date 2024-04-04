@@ -27,10 +27,18 @@ interface Props {
 
 export default function BabyboxSideMenu(props: Props) {
   const babyboxes = useContext(BabyboxesContext) as Babybox[];
-  const currentIdx = babyboxes.findIndex((b) => b.slug === props.babybox.slug);
+  const currentIdx =
+    babyboxes && babyboxes.length > 0
+      ? babyboxes.findIndex((b) => b.slug === props.babybox.slug)
+      : 0;
   const prevSlug =
-    babyboxes[(currentIdx - 1 + babyboxes.length) % babyboxes.length].slug;
-  const nextSlug = babyboxes[(currentIdx + 1) % babyboxes.length].slug;
+    babyboxes && babyboxes.length > 0
+      ? babyboxes[(currentIdx - 1 + babyboxes.length) % babyboxes.length].slug
+      : props.babybox.slug;
+  const nextSlug =
+    babyboxes && babyboxes.length > 0
+      ? babyboxes[(currentIdx + 1) % babyboxes.length].slug
+      : props.babybox.slug;
 
   const linkGroups = [
     {
@@ -61,12 +69,17 @@ export default function BabyboxSideMenu(props: Props) {
         },
         {
           href:
-            "/dashboard/babybox/" + props.babybox.slug + "/chart?sources=temperature",
+            "/dashboard/babybox/" +
+            props.babybox.slug +
+            "/chart?sources=temperature",
           text: "Teploty",
           icon: <Thermometer />,
         },
         {
-          href: "/dashboard/babybox/" + props.babybox.slug + "/chart?sources=voltage",
+          href:
+            "/dashboard/babybox/" +
+            props.babybox.slug +
+            "/chart?sources=voltage",
           text: "Napětí",
           icon: <Cable />,
         },
@@ -75,7 +88,11 @@ export default function BabyboxSideMenu(props: Props) {
     {
       group: "Analýza",
       links: [
-        { href: "/dashboard/babybox", text: "Akumulátor", icon: <BatteryCharging /> },
+        {
+          href: "/dashboard/babybox",
+          text: "Akumulátor",
+          icon: <BatteryCharging />,
+        },
         { href: "/dashboard/babybox", text: "Větráky", icon: <Fan /> },
       ],
     },
@@ -95,7 +112,11 @@ export default function BabyboxSideMenu(props: Props) {
       text: "Předchozí",
       icon: <ArrowLeft />,
     },
-    { href: "/dashboard/babybox/" + nextSlug, text: "Další", icon: <ArrowRight /> },
+    {
+      href: "/dashboard/babybox/" + nextSlug,
+      text: "Další",
+      icon: <ArrowRight />,
+    },
   ];
 
   return (

@@ -1,5 +1,3 @@
-"use client";
-
 import BabyboxesTable from "@/components/tables/babyboxes-table";
 
 export default function Home() {
