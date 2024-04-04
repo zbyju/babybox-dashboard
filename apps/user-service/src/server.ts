@@ -8,15 +8,18 @@ import { healthcheckHandler } from "./routes/misc.routes";
 import logger from "./services/logger";
 import authRoutes from "./routes/auth.routes";
 import { isAuthenticated } from "./utils/auth";
+import { cors } from "@elysiajs/cors";
 
 // Connect to MongoDB
 connectDB();
 
 // Initialize Elysia server
 const server = new Elysia()
+  .use(cors())
   .get("/healthcheck", healthcheckHandler)
   .group("/v1", (app) =>
     app
+      .group("/auth", (app) => app.use(authRoutes))
       .group("/users", (app) =>
         app
           .onBeforeHandle(({ headers, error }) => {
@@ -26,8 +29,7 @@ const server = new Elysia()
             }
           })
           .use(userRoutes),
-      )
-      .group("/auth", (app) => app.use(authRoutes)),
+      ),
   );
 
 // Start the server

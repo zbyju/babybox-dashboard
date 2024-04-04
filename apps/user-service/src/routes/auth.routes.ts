@@ -23,19 +23,19 @@ const routes = new Elysia().post("/login", async ({ body, error }) => {
     const userO = await findUserByUsernameWithPassword(username);
     if (userO.isNone())
       return error(
-        401,
+        400,
         ReturnErr("There has been a problem fetching from the database."),
       );
 
     const user = userO.unwrap();
     if (!user) {
-      return error(401, ReturnErr("User not found."));
+      return error(400, ReturnErr("User not found."));
     }
 
     // 2. Compare passwords
     const passwordMatch = await Bun.password.verify(password, user.password);
     if (!passwordMatch) {
-      return error(401, ReturnErr("Wrong password."));
+      return error(400, ReturnErr("Wrong password."));
     }
 
     // 3. Generate and send a JWT (or other authentication mechanism)
