@@ -31,6 +31,8 @@ const connectDB = async () => {
       password: defaultPassword,
       email: defaultEmail,
     });
+
+    logger.info("Created default user");
   } catch (err) {
     logger.error(err);
   }
