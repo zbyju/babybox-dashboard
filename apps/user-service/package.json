@@ -1,7 +1,23 @@
-{ "dependencies": { "@elysiajs/cors": "^1.0.2", "@elysiajs/jwt": "^1.0.2", "bcryptjs": "^2.4.3", "elysia": "^1.0.10", "jsonwebtoken": "^9.0.2", "mongoose": "^8.2.4", "pino": "^8.19.0", "zod": "^3.22.4" }, "name": "user-service", "module": "index.ts", "type": "module", "devDependencies": {
-  "@types/bun": "latest",
-  "@types/jsonwebtoken": "^9.0.6",
-  "pino-pretty": "^11.0.0"
-}, "peerDependencies": {
-  "typescript": "^5.0.0"
-} }
+{
+  "dependencies": {
+    "@elysiajs/cors": "^1.0.2",
+    "@elysiajs/jwt": "^1.0.2",
+    "bcryptjs": "^2.4.3",
+    "elysia": "^1.0.10",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.2.4",
+    "pino": "^8.19.0",
+    "zod": "^3.22.4"
+  },
+  "name": "user-service",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/jsonwebtoken": "^9.0.6",
+    "pino-pretty": "^11.0.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

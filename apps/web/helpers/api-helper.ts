@@ -14,8 +14,6 @@ export const fetcherWithToken = (url: string, token: string) =>
       Authorization: `Bearer ${token}`,
     },
   }).then((r) => {
-    console.log(r);
-    console.log(token);
     return r.json();
   });
 

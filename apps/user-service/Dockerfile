@@ -15,5 +15,5 @@ COPY . .
 # RUN bun run build
 
 # Start the application
-CMD ["bun", "start"]
+CMD ["bun", "run", "./src/server.ts"]
 
