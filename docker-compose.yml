@@ -93,6 +93,9 @@ services:
       - MONGODB_USERNAME=${MONGODB_USERNAME}
       - MONGODB_PASSWORD=${MONGODB_PASSWORD}
       - MONGODB_DATABASE=${MONGODB_DATABASE}
+      - DEFAULT_USERNAME=${DEFAULT_USERNAME}
+      - DEFAULT_PASSWORD=${DEFAULT_PASSWORD}
+      - DEFAULT_EMAIL=${DEFAULT_EMAIL}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.user-service.entrypoints=web"
