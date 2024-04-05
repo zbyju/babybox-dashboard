@@ -12,8 +12,8 @@ import (
 	"github.com/zbyju/babybox-dashboard/apps/snapshot-handler/internal/rabbitmq"
 )
 
-const maxRetries = 5
-const retryDelay = 3 * time.Second
+const maxRetries = 15
+const retryDelay = 5 * time.Second
 
 func main() {
 	location, err := time.LoadLocation("Europe/Prague")

@@ -22,6 +22,7 @@ export const authenticateUser = async (
   password: string,
 ): Promise<{ token: string } | Error> => {
   const userServiceURL = process.env.NEXT_PUBLIC_URL_USER_SERVICE;
+  console.log(userServiceURL, process.env.NEXT_PUBLIC_URL_USER_SERVICE, process.env.URL_USER_SERVICE, process.env)
 
   try {
     const response = await fetch(`${userServiceURL}/v1/auth/login`, {
