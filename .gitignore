@@ -26,3 +26,5 @@ dist/
 # IDE/Editor Configuration Files
 .vscode/
 .idea/
+
+letsencrypt/

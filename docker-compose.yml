@@ -6,16 +6,22 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      - "8000:8000"
+      - "8000:8080"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock" # So Traefik can listen to the Docker events
       - "./letsencrypt:/letsencrypt" # Persistent volume for certificates
     command:
+      - "--api.dashboard=true"
+      - "--api.insecure=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.email=${LETSENCRYPT_EMAIL}"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
     restart: always
+
   # ------------------- APPS ------------------
   web:
     build:
@@ -29,8 +35,15 @@ services:
       - NEXT_PUBLIC_URL_BABYBOX_SERVICE=${URL_BABYBOX_SERVICE}
       - NEXT_PUBLIC_URL_USER_SERVICE=${URL_USER_SERVICE}
     restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.web.entrypoints=web"
+      - "traefik.http.routers.web.rule=Host(`${DOMAIN}`)"
+      - traefik.http.services.snapshot-handler.loadbalancer.server.port=3000
     depends_on:
       - snapshot-handler
+      - babybox-service
+      - user-service
 
   snapshot-handler:
     build:
@@ -54,6 +67,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.snapshot-handler.entrypoints=web"
       - "traefik.http.routers.snapshot-handler.rule=Host(`snapshot-handler.${DOMAIN}`)"
+      - traefik.http.services.snapshot-handler.loadbalancer.server.port=8080
     depends_on:
       - rabbitmq
       - influxdb
@@ -77,6 +91,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.babybox-service.entrypoints=web"
       - "traefik.http.routers.babybox-service.rule=Host(`babybox-service.${DOMAIN}`)"
+      - traefik.http.services.snapshot-handler.loadbalancer.server.port=8081
     depends_on:
       - rabbitmq
       - mongodb
@@ -100,6 +115,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.user-service.entrypoints=web"
       - "traefik.http.routers.user-service.rule=Host(`user-service.${DOMAIN}`)"
+      - traefik.http.services.snapshot-handler.loadbalancer.server.port=8082
     restart: always
     depends_on:
       - mongodb
@@ -133,7 +149,6 @@ services:
 
   rabbitmq:
     image: rabbitmq:3-management
-    container_name: rabbitmq
     ports:
       - "5672:5672" # RabbitMQ service port
       - "15672:15672" # Management UI port
