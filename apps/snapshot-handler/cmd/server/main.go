@@ -24,6 +24,8 @@ func main() {
 
 	e := echo.New()
 	e.Use(middleware.CORS())
+	e.Logger.SetLevel(0)
+	e.Use(middleware.Logger())
 
 	var dbService *db.DBService
 	var mqService *rabbitmq.Client
@@ -56,7 +58,6 @@ func main() {
 		// If both services initialized successfully, break out of the loop
 		break
 	}
-
 	defer mqService.Close()
 
 	app := &v1.Application{

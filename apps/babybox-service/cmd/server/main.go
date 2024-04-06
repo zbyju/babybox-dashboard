@@ -24,6 +24,8 @@ func main() {
 
 	e := echo.New()
 	e.Use(middleware.CORS())
+	e.Logger.SetLevel(0)
+	e.Use(middleware.Logger())
 
 	var dbService *db.DBService
 	var mqService *rabbitmq.Client

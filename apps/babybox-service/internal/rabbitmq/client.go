@@ -30,29 +30,66 @@ func NewClient() (*Client, error) {
 		return nil, err
 	}
 
-	channel, err := conn.Channel()
+	ch, err := conn.Channel()
 	if err != nil {
 		return nil, err
 	}
-	defer channel.Close()
+
+	err = ch.ExchangeDeclare(
+		"logs",   // name
+		"fanout", // type
+		true,     // durable
+		false,    // auto-deleted
+		false,    // internal
+		false,    // no-wait
+		nil,      // arguments
+	)
+
+	if err != nil {
+		log.Println("Error when declaring exchange ", err)
+	}
+
+	q, err := ch.QueueDeclare(
+		"new_snapshots_queue", // name
+		false,                 // durable
+		false,                 // delete when unused
+		true,                  // exclusive
+		false,                 // no-wait
+		nil,                   // arguments
+	)
+	if err != nil {
+		log.Println("Error when declaring queue: ", err)
+	}
+
+	err = ch.QueueBind(
+		q.Name,          // queue name
+		"",              // routing key
+		"new_snapshots", // exchange
+		false,
+		nil,
+	)
+	if err != nil {
+		log.Println("Error when queue binding: ", err)
+	}
 
 	// Set up a consumer
-	delivery, err := channel.Consume(
-		"newSnapshotsQueue", // Queue name
-		"babybox-service",   // Consumer name
-		true,                // Auto-ack
-		false,               // Exclusive
-		false,               // No-local
-		false,               // No-wait
-		nil,                 // Args
+	delivery, err := ch.Consume(
+		"new_snapshots_queue", // Queue name
+		"babybox-service",     // Consumer name
+		true,                  // Auto-ack
+		false,                 // Exclusive
+		false,                 // No-local
+		false,                 // No-wait
+		nil,                   // Args
 	)
 	if err != nil {
 		return nil, err
 	}
 
-	return &Client{conn: conn, newSnapshotsChannel: channel, newSnapshotsDelivery: delivery}, nil
+	return &Client{conn: conn, newSnapshotsChannel: ch, newSnapshotsDelivery: delivery}, nil
 }
 
 func (c *Client) Close() {
+	c.newSnapshotsChannel.Close()
 	c.conn.Close()
 }

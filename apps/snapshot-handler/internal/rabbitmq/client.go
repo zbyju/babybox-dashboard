@@ -37,12 +37,12 @@ func NewClient() (*Client, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer ch.Close()
 
 	// Queue Declaration
-	q, err := ch.QueueDeclare(
-		"newSnapshotsQueue",          // Queue name
-		false,                        // Durable
+	err = ch.ExchangeDeclare(
+		"new_snapshots",              // Queue exchange
+		"fanout",                     //Type of exchange
+		true,                         // Durable
 		false,                        // Delete when unused
 		false,                        // Exclusive
 		false,                        // No-wait
@@ -52,9 +52,12 @@ func NewClient() (*Client, error) {
 		return nil, err
 	}
 
-	return &Client{conn: conn, newSnapshotsQueue: &q, newSnapshotsChannel: ch}, nil
+	fmt.Println("Created new_snapshots")
+
+	return &Client{conn: conn, newSnapshotsChannel: ch}, nil
 }
 
 func (c *Client) Close() {
+	c.newSnapshotsChannel.Close()
 	c.conn.Close()
 }

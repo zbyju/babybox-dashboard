@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -13,6 +14,10 @@ import (
 // Old snapshot handler
 func (app *Application) OldSnapshotHandler(c echo.Context) error {
 	slug := utils.ToSlug(c.QueryParam("BB"))
+	log.Println("New snapshot incoming")
+	app.Logger.Info("test\n")
+	app.Logger.Warn("test\n")
+	app.Logger.Error("test\n")
 
 	// Directly parse temperature and voltage values based on the T0-T7 mapping
 	temperature := domain.Temperature{
@@ -42,6 +47,7 @@ func (app *Application) OldSnapshotHandler(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, ReturnErr(err.Error()))
 	}
 
+	log.Printf("Trying to publish a new snapshot: %+v\n", snapshot)
 	err = app.MQService.PublishSnapshot(snapshot)
 	if err != nil {
 		app.Logger.Warnf("Couldn't publish snapshot to RabbitMQ - %s", err)

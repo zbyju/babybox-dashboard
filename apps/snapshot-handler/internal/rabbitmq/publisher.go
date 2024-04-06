@@ -2,6 +2,7 @@ package rabbitmq
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/streadway/amqp"
 	"github.com/zbyju/babybox-dashboard/apps/snapshot-handler/internal/domain"
@@ -16,17 +17,21 @@ func (p *Client) PublishSnapshot(snapshot domain.Snapshot) error {
 
 	// Publish the serialized Snapshot to the declared queue
 	err = p.newSnapshotsChannel.Publish(
-		"",                       // Exchange
-		p.newSnapshotsQueue.Name, // Routing key (queue name)
-		false,                    // Mandatory
-		false,                    // Immediate
+		"new_snapshots", // Exchange
+		"",              // Routing key (queue name)
+		false,           // Mandatory
+		false,           // Immediate
 		amqp.Publishing{
-			ContentType: "application/json",
-			Body:        body,
+			DeliveryMode: amqp.Persistent,
+			ContentType:  "application/json",
+			Body:         body,
 		})
 
 	if err != nil {
 		return err
 	}
+
+	fmt.Printf("Published new snapshot: %+v\n", snapshot)
+
 	return nil
 }

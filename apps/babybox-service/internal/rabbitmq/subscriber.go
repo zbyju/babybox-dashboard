@@ -25,6 +25,8 @@ func (c *Client) HandleNewSnapshots(dbService *db.DBService) {
 				continue // Skip malformed messages
 			}
 
+			log.Printf("Reading new snapshot: %+v\n", snapshot)
+
 			// Check if Babybox exists (with error handling)
 			_, err := dbService.FindBabyboxBySlug(snapshot.Slug)
 			if err != nil {
@@ -34,6 +36,7 @@ func (c *Client) HandleNewSnapshots(dbService *db.DBService) {
 					if err != nil {
 						log.Printf("Error creating Babybox: %v\n", err)
 					}
+					log.Printf("Creating new babybox with slug: %s\n", snapshot.Slug)
 				} else {
 					// Handle unexpected database error
 					log.Printf("Error checking Babybox existence: %v\n", err)
