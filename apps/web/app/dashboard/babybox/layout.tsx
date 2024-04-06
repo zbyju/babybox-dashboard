@@ -64,7 +64,11 @@ export default function BabyboxLayout({
       }
     };
 
-    if (babyboxNamesData === undefined || babyboxNamesData.data.length === 0)
+    if (
+      babyboxNamesData === undefined ||
+      !babyboxNamesData.data ||
+      babyboxNamesData.data.length === 0
+    )
       return;
     fetchBabyboxes();
   }, [babyboxNamesData, snapshotServiceURL, token]);
