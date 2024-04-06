@@ -26,6 +26,7 @@ export default function AuthProvider({
 
   useEffect(() => {
     const loadedToken = localStorage.getItem("authToken");
+    console.log("loaded", loadedToken);
     if (loadedToken) {
       setToken(loadedToken);
     }
@@ -35,11 +36,14 @@ export default function AuthProvider({
     username: string,
     password: string,
   ): Promise<boolean> => {
+    console.log("before", token);
     return authenticateUser(username, password)
       .then((result) => {
-        const token = (result as { token: string }).token;
-        setToken(token);
-        localStorage.setItem("authToken", token);
+        const newToken = (result as { token: string }).token;
+        console.log("after1", token, newToken);
+        setToken(newToken);
+        localStorage.setItem("authToken", newToken);
+        console.log("after2", token, newToken);
         return Promise.resolve(true);
       })
       .catch((error) => {
