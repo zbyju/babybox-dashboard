@@ -1,11 +1,12 @@
 "use client";
 
+import { useAuth } from "@/components/contexts/auth-context";
 import LocationInformationEdit from "@/components/location-information-edit";
 import NetworkConfigurationEdit from "@/components/network-configuration-edit";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { fetcher } from "@/helpers/api-helper";
+import { fetcherWithToken } from "@/helpers/api-helper";
 import { ApiResponse } from "@/types/api.types";
 import { BabyboxDetail } from "@/types/babybox.types";
 import { ArrowLeft, Info, Pencil } from "lucide-react";
@@ -16,9 +17,10 @@ import useSWR from "swr";
 
 export default function Home({ params }: { params: { slug: string } }) {
   const babyboxServiceURL = process.env.NEXT_PUBLIC_URL_BABYBOX_SERVICE;
+  const { token } = useAuth();
   const { data, error, isLoading, mutate } = useSWR(
-    `${babyboxServiceURL}/v1/babyboxes/${params.slug}`,
-    fetcher,
+    [`${babyboxServiceURL}/v1/babyboxes/${params.slug}`, token],
+    ([url, token]) => fetcherWithToken(url, token),
   );
 
   const [name, setName] = useState(data?.data?.name || params.slug);
@@ -37,7 +39,10 @@ export default function Home({ params }: { params: { slug: string } }) {
         `${babyboxServiceURL}/v1/babyboxes/${params.slug}`,
         {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
           body: JSON.stringify(babybox),
         },
       );
@@ -104,7 +109,7 @@ export default function Home({ params }: { params: { slug: string } }) {
 
       <div className="mt-6 flex flex-row flex-wrap justify-center justify-items-center gap-6 lg:justify-start">
         <LocationInformationEdit
-          address={data.data.location}
+          address={data?.data?.location}
           onClick={(location) =>
             updateBabybox({
               ...data.data,
@@ -114,7 +119,7 @@ export default function Home({ params }: { params: { slug: string } }) {
         />
 
         <NetworkConfigurationEdit
-          networkConfiguration={data.data.network_configuration}
+          networkConfiguration={data?.data?.network_configuration}
           onClick={(networkConfiguration) =>
             updateBabybox({
               ...data.data,
