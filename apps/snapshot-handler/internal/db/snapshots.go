@@ -14,7 +14,7 @@ import (
 	"github.com/zbyju/babybox-dashboard/apps/snapshot-handler/internal/domain"
 )
 
-const measurementName string = "thermal_unit_measurement"
+const measurementNameThermal string = "thermal_unit_measurement"
 
 func (service *DBService) QueryAllSnapshots() ([]domain.Snapshot, error) {
 	fluxQuery := fmt.Sprintf(`
@@ -22,7 +22,7 @@ from(bucket: "%s")
   |> range(start: -1y)
   |> filter(fn: (r) => r._measurement == "%s")
   |> pivot(rowKey: ["_time"], columnKey: ["_field"], valueColumn: "_value")
-  |> sort(columns: ["_time"], desc: true)`, service.bucket, measurementName)
+  |> sort(columns: ["_time"], desc: true)`, service.bucket, measurementNameThermal)
 
 	result, err := service.QueryData(fluxQuery)
 	if err != nil {
@@ -56,7 +56,7 @@ func (service *DBService) QuerySnapshotsBySlug(slug string, from, to time.Time, 
       |> filter(fn: (r) => r._measurement == "%s" and r.slug == "%s")
       |> pivot(rowKey: ["_time"], columnKey: ["_field"], valueColumn: "_value")
       |> sort(columns: ["_time"], desc: true)
-      |> limit(n: %d)`, service.bucket, from.Format(time.RFC3339), to.Format(time.RFC3339), measurementName, slug, n)
+      |> limit(n: %d)`, service.bucket, from.Format(time.RFC3339), to.Format(time.RFC3339), measurementNameThermal, slug, n)
 	} else {
 		fluxQuery = fmt.Sprintf(`
     import "date"
@@ -66,7 +66,7 @@ func (service *DBService) QuerySnapshotsBySlug(slug string, from, to time.Time, 
       |> aggregateWindow(every: 10m, fn: last, createEmpty: true)
       |> pivot(rowKey: ["_time"], columnKey: ["_field"], valueColumn: "_value")
       |> sort(columns: ["_time"], desc: true)
-      |> limit(n: %d)`, service.bucket, from.Format(time.RFC3339), to.Format(time.RFC3339), measurementName, slug, n)
+      |> limit(n: %d)`, service.bucket, from.Format(time.RFC3339), to.Format(time.RFC3339), measurementNameThermal, slug, n)
 
 	}
 
@@ -112,7 +112,7 @@ func (service *DBService) QuerySnapshotSummaryBySlug(slug string, from, to time.
 
 	for _, field := range fields {
 		for _, aggregation := range aggregations {
-			query := fmt.Sprintf(queryTemplate, service.bucket, from.Format(time.RFC3339), to.Format(time.RFC3339), measurementName, slug, field, aggregation, field, aggregation)
+			query := fmt.Sprintf(queryTemplate, service.bucket, from.Format(time.RFC3339), to.Format(time.RFC3339), measurementNameThermal, slug, field, aggregation, field, aggregation)
 			queries += query
 		}
 	}
@@ -151,7 +151,7 @@ func (service *DBService) QuerySnapshotSummaryBySlug(slug string, from, to time.
 
 func (service *DBService) WriteSnapshot(snapshot domain.Snapshot) error {
 	// Convert your domain model (e.g., Snapshot) to an InfluxDB point
-	point, err := service.ConvertToInfluxDBPoint(&snapshot, measurementName)
+	point, err := service.ConvertToInfluxDBPoint(&snapshot, measurementNameThermal)
 
 	if err != nil {
 		service.logger.Printf("Failed to convert snapshot to a influxdb point: %v", err)

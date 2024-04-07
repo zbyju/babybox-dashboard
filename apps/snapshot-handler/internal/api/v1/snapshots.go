@@ -1,8 +1,6 @@
 package v1
 
 import (
-	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -13,8 +11,12 @@ import (
 )
 
 // Old snapshot handler
-func (app *Application) OldSnapshotHandler(c echo.Context) error {
+func (app *Application) SnapshotHandler(c echo.Context) error {
 	slug := utils.ToSlug(c.QueryParam("BB"))
+
+	if slug == "" {
+		return c.JSON(http.StatusBadRequest, ReturnErr("Slug is empty"))
+	}
 
 	outside := parseQueryParam(app, c, "T0") / 100
 	inside := parseQueryParam(app, c, "T1") / 100
@@ -47,14 +49,12 @@ func (app *Application) OldSnapshotHandler(c echo.Context) error {
 		Version:     1,
 		Timestamp:   time.Now().In(app.Config.TimeLocation).Format("2006-01-02 15:04:05"),
 	}
-	fmt.Printf("%v %+v %#v", snapshot, snapshot, snapshot)
 
 	err := app.DBService.WriteSnapshot(snapshot)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, ReturnErr(err.Error()))
 	}
 
-	log.Printf("Trying to publish a new snapshot: %+v\n", snapshot)
 	err = app.MQService.PublishSnapshot(snapshot)
 	if err != nil {
 		app.Logger.Warnf("Couldn't publish snapshot to RabbitMQ - %s", err)
