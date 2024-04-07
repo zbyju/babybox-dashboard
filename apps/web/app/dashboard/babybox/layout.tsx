@@ -20,8 +20,6 @@ export default function BabyboxLayout({
   children: React.ReactNode;
 }>) {
   const { token } = useAuth();
-  console.log("layout", token);
-  console.log("localstorage", localStorage.getItem("authToken"));
   const babyboxServiceURL = process.env.NEXT_PUBLIC_URL_BABYBOX_SERVICE;
   const snapshotServiceURL = process.env.NEXT_PUBLIC_URL_SNAPSHOT_HANDLER;
   const {

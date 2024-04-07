@@ -48,9 +48,11 @@ from(bucket: "%s")
 
 func (service *DBService) QuerySnapshotsBySlug(slug string, from, to time.Time, n uint) ([]domain.Snapshot, error) {
 	fluxQuery := fmt.Sprintf(`
+  import "date"
 from(bucket: "%s")
   |> range(start: %s, stop: %s)
   |> filter(fn: (r) => r._measurement == "%s" and r.slug == "%s")
+  |> aggregateWindow(every: 10m, fn: last, createEmpty: true)
   |> pivot(rowKey: ["_time"], columnKey: ["_field"], valueColumn: "_value")
   |> sort(columns: ["_time"], desc: true)
   |> limit(n: %d)`, service.bucket, from.Format(time.RFC3339), to.Format(time.RFC3339), measurementName, slug, n)
@@ -72,6 +74,10 @@ from(bucket: "%s")
 
 	if result.Err() != nil {
 		return nil, result.Err()
+	}
+
+	if len(snapshots) > 1 && snapshots[0].Status == 1 {
+		snapshots = snapshots[1:]
 	}
 
 	return snapshots, nil
@@ -187,13 +193,13 @@ func (service *DBService) ConvertToInfluxDBPoint(s *domain.Snapshot, measurement
 	point := influxdb2.NewPointWithMeasurement(measurementName).
 		AddTag("slug", s.Slug).
 		AddTag("version", fmt.Sprintf("%d", s.Version)).
-		AddField("temperature_inside", s.Temperature.Inside).
-		AddField("temperature_outside", s.Temperature.Outside).
-		AddField("temperature_casing", s.Temperature.Casing).
-		AddField("temperature_top", s.Temperature.Top).
-		AddField("temperature_bottom", s.Temperature.Bottom).
-		AddField("voltage_in", s.Voltage.In).
-		AddField("voltage_battery", s.Voltage.Battery).
+		AddField("temperature_inside", *s.Temperature.Inside).
+		AddField("temperature_outside", *s.Temperature.Outside).
+		AddField("temperature_casing", *s.Temperature.Casing).
+		AddField("temperature_top", *s.Temperature.Top).
+		AddField("temperature_bottom", *s.Temperature.Bottom).
+		AddField("voltage_in", *s.Voltage.In).
+		AddField("voltage_battery", *s.Voltage.Battery).
 		SetTime(parsedTime)
 
 	return point, nil
@@ -219,21 +225,37 @@ func (service *DBService) ConvertResultsToSnapshots(result *api.QueryTableResult
 	return snapshots, nil
 }
 
+func float64PointerFromRecord(record query.FluxRecord, key string) *float64 {
+	if val, ok := record.Values()[key]; ok && val != nil {
+		if numVal, ok := val.(float64); ok {
+			return &numVal
+		}
+	}
+	return nil
+}
+
 func (service *DBService) ConvertRecordToSnapshot(record query.FluxRecord) (domain.Snapshot, error) {
 	snapshot := domain.Snapshot{
-		Slug: record.ValueByKey("slug").(string),
-		Temperature: domain.Temperature{
-			Inside:  record.ValueByKey("temperature_inside").(float64),
-			Outside: record.ValueByKey("temperature_outside").(float64),
-			Casing:  record.ValueByKey("temperature_casing").(float64),
-			Top:     record.ValueByKey("temperature_top").(float64),
-			Bottom:  record.ValueByKey("temperature_bottom").(float64),
-		},
-		Voltage: domain.Voltage{
-			In:      record.ValueByKey("voltage_in").(float64),
-			Battery: record.ValueByKey("voltage_battery").(float64),
-		},
+		Slug:      record.ValueByKey("slug").(string),
 		Timestamp: record.Time().In(service.location).Format("2006-01-02 15:04:05"),
+	}
+	snapshot.Temperature.Inside = float64PointerFromRecord(record, "temperature_inside")
+	snapshot.Temperature.Outside = float64PointerFromRecord(record, "temperature_outside")
+	snapshot.Temperature.Casing = float64PointerFromRecord(record, "temperature_casing")
+	snapshot.Temperature.Top = float64PointerFromRecord(record, "temperature_top")
+	snapshot.Temperature.Bottom = float64PointerFromRecord(record, "temperature_bottom")
+
+	snapshot.Voltage.In = float64PointerFromRecord(record, "voltage_in")
+	snapshot.Voltage.Battery = float64PointerFromRecord(record, "voltage_battery")
+
+	if snapshot.Temperature.Inside == nil ||
+		snapshot.Temperature.Outside == nil ||
+		snapshot.Temperature.Casing == nil ||
+		snapshot.Temperature.Top == nil ||
+		snapshot.Temperature.Bottom == nil ||
+		snapshot.Voltage.In == nil ||
+		snapshot.Voltage.Battery == nil {
+		snapshot.Status = snapshot.Status | 1
 	}
 
 	return snapshot, nil

@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -14,23 +15,28 @@ import (
 // Old snapshot handler
 func (app *Application) OldSnapshotHandler(c echo.Context) error {
 	slug := utils.ToSlug(c.QueryParam("BB"))
-	log.Println("New snapshot incoming")
-	app.Logger.Info("test\n")
-	app.Logger.Warn("test\n")
-	app.Logger.Error("test\n")
+
+	outside := parseQueryParam(app, c, "T0") / 100
+	inside := parseQueryParam(app, c, "T1") / 100
+	bottom := parseQueryParam(app, c, "T2") / 100
+	top := parseQueryParam(app, c, "T3") / 100
+	casing := parseQueryParam(app, c, "T7") / 100
 
 	// Directly parse temperature and voltage values based on the T0-T7 mapping
 	temperature := domain.Temperature{
-		Outside: parseQueryParam(app, c, "T0") / 100,
-		Inside:  parseQueryParam(app, c, "T1") / 100,
-		Bottom:  parseQueryParam(app, c, "T2") / 100,
-		Top:     parseQueryParam(app, c, "T3") / 100,
-		Casing:  parseQueryParam(app, c, "T7") / 100,
+		Outside: &outside,
+		Inside:  &inside,
+		Bottom:  &bottom,
+		Top:     &top,
+		Casing:  &casing,
 	}
 
+	in := parseQueryParam(app, c, "T4") / 100
+	battery := parseQueryParam(app, c, "T5") / 100
+
 	voltage := domain.Voltage{
-		In:      parseQueryParam(app, c, "T4") / 100,
-		Battery: parseQueryParam(app, c, "T5") / 100,
+		In:      &in,
+		Battery: &battery,
 	}
 
 	// Create the Snapshot object
@@ -41,6 +47,7 @@ func (app *Application) OldSnapshotHandler(c echo.Context) error {
 		Version:     1,
 		Timestamp:   time.Now().In(app.Config.TimeLocation).Format("2006-01-02 15:04:05"),
 	}
+	fmt.Printf("%v %+v %#v", snapshot, snapshot, snapshot)
 
 	err := app.DBService.WriteSnapshot(snapshot)
 	if err != nil {
@@ -73,22 +80,24 @@ func (app *Application) GetAllSnapshotsBySlugHandler(c echo.Context) error {
 	to := c.QueryParam("to")
 	n := c.QueryParam("n")
 
+	now := time.Now().In(app.Config.TimeLocation)
+
 	if from == "" {
-		from = time.Now().AddDate(-1, 0, 0).Format("2006-01-02") // One year ago
+		from = now.AddDate(-1, 0, 0).Format("2006-01-02") // One year ago
 	}
 	if to == "" {
-		to = time.Now().Format("2006-01-02") // Today
+		to = now.Format("2006-01-02") // Today
 	}
 	if n == "" {
 		n = "99999999"
 	}
 
 	// Parse the dates from the query parameters
-	fromTime, err := time.Parse("2006-01-02", from)
+	fromTime, err := time.ParseInLocation("2006-01-02", from, app.Config.TimeLocation)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, ReturnErr("Invalid 'from' date format"))
 	}
-	toTime, err := time.Parse("2006-01-02", to)
+	toTime, err := time.ParseInLocation("2006-01-02", to, app.Config.TimeLocation)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, ReturnErr("Invalid 'to' date format"))
 	}
@@ -99,6 +108,14 @@ func (app *Application) GetAllSnapshotsBySlugHandler(c echo.Context) error {
 
 	// Adjust 'toTime' to the end of the day if you want the 'to' date to be inclusive
 	toTime = toTime.Add(24 * time.Hour)
+
+	if toTime.After(now) {
+		toTime = now
+	}
+
+	if fromTime.After(toTime) {
+		fromTime = now
+	}
 
 	snapshots, err := app.DBService.QuerySnapshotsBySlug(slug, fromTime, toTime, uint(nNum))
 	if err != nil {

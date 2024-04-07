@@ -8,16 +8,14 @@ export const API_USER_SERVICE = "http://babybox-service:8082/v1";
 
 export const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
-export const fetcherWithToken = (url: string, token: string) => {
-  console.log("fetch", token);
-  return fetch(url, {
+export const fetcherWithToken = (url: string, token: string) =>
+  fetch(url, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   }).then((r) => {
     return r.json();
   });
-};
 
 export const authenticateUser = async (
   username: string,
@@ -34,7 +32,6 @@ export const authenticateUser = async (
 
     if (response.ok) {
       const data = await response.json();
-      console.log("auth", data);
       return Promise.resolve({ token: data.data.token });
     } else {
       const data = await response.json();

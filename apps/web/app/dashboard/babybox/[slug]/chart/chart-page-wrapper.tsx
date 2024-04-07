@@ -263,30 +263,32 @@ export default function ChartPageWrapper({
   }, [searchParams]);
 
   return (
-    <div className="h-[92vh] min-h-[400px]">
-      <div className="mb-5 flex h-full w-full flex-col gap-6">
-        <LineChart
-          id="main-chart"
-          series={series}
-          annotations={annotations}
-          xaxisType="datetime"
-          showGrid
-          showToolbar
-          showLegend
-          zoom
-          strokeType={chartSettings.strokeType}
-          strokeWidth={chartSettings.strokeWidth}
-        />
-        <div className="px-4 pb-2">
-          <ChartControl
-            sources={sources}
-            onSourcesChange={onSourcesChange}
-            chartSettings={chartSettings}
-            onSettingsChange={setChartSettings}
-            dateRange={dateRange}
-            onDateRangeChange={onDateChange}
-            slug={slug}
+    <>
+      <div className="h-[92vh] min-h-[400px]">
+        <div className="mb-5 flex h-full w-full flex-col gap-6">
+          <LineChart
+            id="main-chart"
+            series={series}
+            annotations={annotations}
+            xaxisType="datetime"
+            showGrid
+            showToolbar
+            showLegend
+            zoom
+            strokeType={chartSettings.strokeType}
+            strokeWidth={chartSettings.strokeWidth}
           />
+          <div className="px-4 pb-2">
+            <ChartControl
+              sources={sources}
+              onSourcesChange={onSourcesChange}
+              chartSettings={chartSettings}
+              onSettingsChange={setChartSettings}
+              dateRange={dateRange}
+              onDateRangeChange={onDateChange}
+              slug={slug}
+            />
+          </div>
         </div>
       </div>
       <div className="mb-5 border-t border-t-border px-4 pt-5">
@@ -294,10 +296,14 @@ export default function ChartPageWrapper({
         <h3 className="mb-6 ml-1 text-muted-foreground">Z vybraného období</h3>
         <ChartStats data={snapshots} />
       </div>
-      <div className="mt-12 px-4 pb-10">
+      <div className="mt-12 px-4 pb-2">
         <h2 className="mb-4 ml-1 text-3xl font-bold leading-6">Tabulka dat</h2>
-        <LatestSnapshots snapshots={snapshots as Snapshot[]} take={100} />
+        <LatestSnapshots
+          snapshots={snapshots as Snapshot[]}
+          take={100}
+          showPagination={true}
+        />
       </div>
-    </div>
+    </>
   );
 }

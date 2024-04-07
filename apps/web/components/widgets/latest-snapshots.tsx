@@ -47,12 +47,13 @@ const columnVars = [
       currentIndex > 0
         ? (table
             .getRowModel()
-            .rows[currentIndex - 1].getValue(c.key2) as number)
+            .rows[currentIndex - 1]?.getValue(c.key2) as number)
         : undefined;
 
-    const percentageChange = previousValue
-      ? calculatePercentageChange(previousValue, currentValue)
-      : 0;
+    const percentageChange =
+      previousValue && currentValue
+        ? calculatePercentageChange(previousValue, currentValue)
+        : 0;
 
     const arrow =
       percentageChange > 1 ? (
@@ -121,6 +122,30 @@ export const columns: ColumnDef<Snapshot>[] = [
         );
       }
 
+      const status = row.getValue("status");
+      console.log(status);
+      if (status == 1) {
+        return (
+          <div className="text-center">
+            <TooltipProvider delayDuration={300}>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Badge
+                    variant="default"
+                    className="mx-auto bg-destructive text-destructive-foreground hover:bg-destructive"
+                  >
+                    Error
+                  </Badge>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Data nepřišla - status = 1.</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+        );
+      }
+
       return (
         <div className="text-center">
           <TooltipProvider delayDuration={300}>
@@ -150,9 +175,11 @@ export const columns: ColumnDef<Snapshot>[] = [
 export default function LatestSnapshots({
   snapshots,
   take,
+  showPagination,
 }: {
   snapshots: Snapshot[];
   take?: number;
+  showPagination?: boolean;
 }) {
   const snapshotsFirst = snapshots.slice(0, take || 5);
 
@@ -163,6 +190,7 @@ export default function LatestSnapshots({
         data={snapshotsFirst}
         sorting={[]}
         className="ghost"
+        showPagination={showPagination === true}
       />
     </div>
   );

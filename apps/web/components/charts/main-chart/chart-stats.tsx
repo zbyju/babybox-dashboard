@@ -15,66 +15,53 @@ export default function ChartStats(props: Props) {
       </div>
     );
   const stats = calculateSnapshotStats(props.data);
+  console.log(stats);
+
+  const temperatureWidgets = [
+    { key: "inside", label: "Vnitřní teplota" },
+    { key: "outside", label: "Venkovní teplota" },
+    { key: "casing", label: "Teplota pláště" },
+    { key: "top", label: "Horní teplota" },
+    { key: "bottom", label: "Spodní teplota" },
+  ].map((v) => (
+    <Widget
+      key={v.key}
+      title={v.label}
+      className="mx-auto"
+      classNameInner={`border-b-4 border-b-${v.key}`}
+    >
+      {stats.temperature && (stats.temperature as SnapshotGroupStat)[v.key] ? (
+        <VariableStats
+          stats={(stats.temperature as SnapshotGroupStat)[v.key]}
+        />
+      ) : (
+        <p>Žádné statistiky.</p>
+      )}
+    </Widget>
+  ));
+
+  const voltageWidgets = [
+    { key: "in", label: "Napětí vstupní" },
+    { key: "battery", label: "Napětí baterie" },
+  ].map((v) => (
+    <Widget
+      key={v.key}
+      title={v.label}
+      className="mx-auto"
+      classNameInner={`border-b-4 border-b-${v.key}`}
+    >
+      {stats.voltage && (stats.voltage as SnapshotGroupStat)[v.key] ? (
+        <VariableStats stats={(stats.voltage as SnapshotGroupStat)[v.key]} />
+      ) : (
+        <p>Žádné statistiky.</p>
+      )}
+    </Widget>
+  ));
 
   return (
     <div className="flex flex-row flex-wrap justify-center justify-items-center gap-4 md:justify-start">
-      <Widget
-        title="Vnitřní teplota"
-        className="mx-auto"
-        classNameInner="border-b-4 border-b-inside"
-      >
-        <VariableStats
-          stats={(stats.temperature as SnapshotGroupStat).inside}
-        />
-      </Widget>
-      <Widget
-        title="Venkovní teplota"
-        className="mx-auto"
-        classNameInner="border-b-4 border-b-outside"
-      >
-        <VariableStats
-          stats={(stats.temperature as SnapshotGroupStat).outside}
-        />
-      </Widget>
-      <Widget
-        title="Teplota Pláště"
-        className="mx-auto"
-        classNameInner="border-b-4 border-b-casing"
-      >
-        <VariableStats
-          stats={(stats.temperature as SnapshotGroupStat).casing}
-        />
-      </Widget>
-      <Widget
-        title="Horní teplota"
-        className="mx-auto"
-        classNameInner="border-b-4 border-b-heating"
-      >
-        <VariableStats stats={(stats.temperature as SnapshotGroupStat).top} />
-      </Widget>
-      <Widget
-        title="Spodní teplota"
-        className="mx-auto"
-        classNameInner="border-b-4 border-b-cooling"
-      >
-        <VariableStats
-          stats={(stats.temperature as SnapshotGroupStat).bottom}
-        />
-      </Widget>
-      <Widget
-        title="Vstupní napětí"
-        className="mx-auto"
-        classNameInner="border-b-4 border-b-in"
-      >
-        <VariableStats stats={(stats.voltage as SnapshotGroupStat).in} />
-      </Widget>
-      <Widget
-        title="Napětí akumulátor"
-        className="mx-auto"
-        classNameInner="border-b-4 border-b-battery"
-      >
-        <VariableStats stats={(stats.voltage as SnapshotGroupStat).battery} />
-      </Widget>
+      {temperatureWidgets}
+      {voltageWidgets}
     </div>
   );
 }

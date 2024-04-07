@@ -152,7 +152,7 @@ export default function VariableOverview({
           showTooltip={false}
           showXaxisLabels={false}
           showXaxisTicks={false}
-          strokeType="monotoneCubic"
+          strokeType="smooth"
           strokeWidth={5}
         />
       </div>

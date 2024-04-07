@@ -7,7 +7,13 @@ export interface SnapshotGroup {
   [key: string]: SnapshotVariable;
 }
 
-export type SnapshotVariable = string | number | boolean | Date | undefined;
+export type SnapshotVariable =
+  | string
+  | number
+  | boolean
+  | Date
+  | undefined
+  | null;
 
 export function isSnapshotGroup(value: unknown): value is SnapshotGroup {
   // Check if the value is an object and not null, not Date and not Array

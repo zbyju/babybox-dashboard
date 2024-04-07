@@ -138,7 +138,9 @@ export default function LineChart(props: Props) {
         },
       },
       markers: {
+        size: 1,
         strokeColors: "hsl(var(--border))",
+        strokeWidth: 0,
       },
       forecastDataPoints: {
         count: config.forecastNumber,

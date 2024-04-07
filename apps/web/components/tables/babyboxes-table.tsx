@@ -121,7 +121,6 @@ export const columns: ColumnDef<Babybox>[] = [
     accessorKey: "lastData.timestamp",
     header: () => <div className="text-right">Čas dat</div>,
     cell: ({ row }) => {
-      console.log(row.getValue("lastData_timestamp"));
       const timestamp = format(
         parse(
           row.getValue("lastData_timestamp"),
@@ -134,7 +133,7 @@ export const columns: ColumnDef<Babybox>[] = [
     },
   },
   {
-    accessorKey: "status",
+    accessorKey: "lastData.status",
     header: () => <div className="text-center">Status</div>,
     cell: ({ row }) => {
       const d = parse(
@@ -160,6 +159,29 @@ export const columns: ColumnDef<Babybox>[] = [
                   <p>
                     Data nepřišla - poslední záznam je více než 12 minut starý.
                   </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+        );
+      }
+
+      const status = row.getValue("lastData_status");
+      if (status == 1) {
+        return (
+          <div className="text-center">
+            <TooltipProvider delayDuration={300}>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Badge
+                    variant="default"
+                    className="mx-auto bg-destructive text-destructive-foreground hover:bg-destructive"
+                  >
+                    Error
+                  </Badge>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Data nepřišla - status = 1.</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>

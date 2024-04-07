@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  fetchAllSnapshots,
-  fetchSnapshotsBySlug,
-  fetchSnapshotsBySlugAndTime,
-  fetcherWithToken,
-} from "@/helpers/api-helper";
+import { fetcherWithToken } from "@/helpers/api-helper";
 import ChartPageWrapper from "./chart-page-wrapper";
 import { addDays, format } from "date-fns";
 import useSWR from "swr";
@@ -54,7 +49,7 @@ export default function Home({
   if (snapshotsIsLoading) return <>Error</>;
 
   return (
-    <div className="h-[92vh] min-h-[400px]">
+    <div className="">
       <ChartPageWrapper slug={params.slug} snapshots={snapshotsData.data} />
     </div>
   );

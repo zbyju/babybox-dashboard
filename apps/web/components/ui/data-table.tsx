@@ -9,6 +9,7 @@ import {
   getCoreRowModel,
   getFilteredRowModel,
   getSortedRowModel,
+  getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 
@@ -22,12 +23,14 @@ import {
 } from "@/components/ui/table";
 import { useState } from "react";
 import { Input } from "./input";
+import { Button } from "./button";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   sorting: SortingState;
   hideColumns?: string[];
+  showPagination?: boolean;
   filterColumnName?: string;
   rowClassNameAccessor?: (row: Row<TData>) => string;
   rowClickAccessor?: (row: Row<TData>) => unknown;
@@ -39,6 +42,7 @@ export function DataTable<TData, TValue>({
   data,
   sorting: defaultSorting,
   filterColumnName,
+  showPagination,
   rowClassNameAccessor,
   rowClickAccessor,
   className = "",
@@ -53,6 +57,7 @@ export function DataTable<TData, TValue>({
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
     state: { sorting, columnFilters },
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
@@ -142,6 +147,30 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
+      {showPagination && (
+        <div className="flex items-center justify-end gap-2 space-x-2 py-2">
+          <span>
+            Strana: {table.getState().pagination.pageIndex + 1}/
+            {table.getPageCount()}
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            Předchozí
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            Další
+          </Button>
+        </div>
+      )}
     </>
   );
 }
