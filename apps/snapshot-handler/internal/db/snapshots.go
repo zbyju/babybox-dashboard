@@ -47,15 +47,28 @@ from(bucket: "%s")
 }
 
 func (service *DBService) QuerySnapshotsBySlug(slug string, from, to time.Time, n uint) ([]domain.Snapshot, error) {
-	fluxQuery := fmt.Sprintf(`
-  import "date"
-from(bucket: "%s")
-  |> range(start: %s, stop: %s)
-  |> filter(fn: (r) => r._measurement == "%s" and r.slug == "%s")
-  |> aggregateWindow(every: 10m, fn: last, createEmpty: true)
-  |> pivot(rowKey: ["_time"], columnKey: ["_field"], valueColumn: "_value")
-  |> sort(columns: ["_time"], desc: true)
-  |> limit(n: %d)`, service.bucket, from.Format(time.RFC3339), to.Format(time.RFC3339), measurementName, slug, n)
+	var fluxQuery string
+	if n == 1 {
+		fluxQuery = fmt.Sprintf(`
+    import "date"
+    from(bucket: "%s")
+      |> range(start: %s, stop: %s)
+      |> filter(fn: (r) => r._measurement == "%s" and r.slug == "%s")
+      |> pivot(rowKey: ["_time"], columnKey: ["_field"], valueColumn: "_value")
+      |> sort(columns: ["_time"], desc: true)
+      |> limit(n: %d)`, service.bucket, from.Format(time.RFC3339), to.Format(time.RFC3339), measurementName, slug, n)
+	} else {
+		fluxQuery = fmt.Sprintf(`
+    import "date"
+    from(bucket: "%s")
+      |> range(start: %s, stop: %s)
+      |> filter(fn: (r) => r._measurement == "%s" and r.slug == "%s")
+      |> aggregateWindow(every: 10m, fn: last, createEmpty: true)
+      |> pivot(rowKey: ["_time"], columnKey: ["_field"], valueColumn: "_value")
+      |> sort(columns: ["_time"], desc: true)
+      |> limit(n: %d)`, service.bucket, from.Format(time.RFC3339), to.Format(time.RFC3339), measurementName, slug, n)
+
+	}
 
 	result, err := service.QueryData(fluxQuery)
 	if err != nil {

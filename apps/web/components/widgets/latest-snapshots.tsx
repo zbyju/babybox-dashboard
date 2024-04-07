@@ -123,7 +123,6 @@ export const columns: ColumnDef<Snapshot>[] = [
       }
 
       const status = row.getValue("status");
-      console.log(status);
       if (status == 1) {
         return (
           <div className="text-center">
