@@ -44,13 +44,28 @@ export default function Home({
     ],
     ([url, token]) => fetcherWithToken(url, token),
   );
+  const {
+    data: eventsData,
+    error: eventsError,
+    isLoading: eventsIsLoading,
+  } = useSWR(
+    [
+      `${snapshotServiceURL}/v1/events/${params.slug}?from=${from}&to=${to}`,
+      token,
+    ],
+    ([url, token]) => fetcherWithToken(url, token),
+  );
 
-  if (snapshotsError) return <>Error</>;
-  if (snapshotsIsLoading) return <>Error</>;
+  if (snapshotsError || eventsError) return <>Error</>;
+  if (snapshotsIsLoading || eventsIsLoading) return <>Loading</>;
 
   return (
     <div className="">
-      <ChartPageWrapper slug={params.slug} snapshots={snapshotsData.data} />
+      <ChartPageWrapper
+        slug={params.slug}
+        snapshots={snapshotsData.data}
+        events={eventsData.data}
+      />
     </div>
   );
 }

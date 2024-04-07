@@ -32,6 +32,15 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
     ([url, token]) => fetcherWithToken(url, token),
   );
 
+  const {
+    data: eventsData,
+    error: eventsError,
+    isLoading: eventsLoading,
+  } = useSWR(
+    [`${snapshotServiceURL}/v1/events/${params.slug}?n=10`, token],
+    ([url, token]) => fetcherWithToken(url, token),
+  );
+
   const today = new Date();
   const todayDate = format(today, "yyyy-MM-dd");
   const lastWeekDate = format(addDays(today, -6), "yyyy-MM-dd");
@@ -82,15 +91,12 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
     snapshots3DaysIsLoading ||
     babyboxIsLoading ||
     babyboxError ||
+    eventsError ||
+    eventsLoading ||
     !babyboxData.data
   ) {
     return <>Error</>;
   }
-
-  console.log(babyboxData);
-  console.log(snapshotsDayData);
-  console.log(snapshots3DaysData);
-  console.log(snapshotsWeekData);
 
   const stats = calculateSnapshotStats(snapshotsWeekData.data);
   const statsSmall = calculateSnapshotStats(snapshots3DaysData.data);
@@ -192,7 +198,7 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
               />
             </Widget>
             <Widget title="Nejnovější události">
-              <LatestEvents events={events as Event[]} take={11} />
+              <LatestEvents events={eventsData.data as Event[]} take={11} />
             </Widget>
           </div>
 

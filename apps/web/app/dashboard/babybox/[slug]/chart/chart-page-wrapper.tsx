@@ -1,6 +1,5 @@
 "use client";
 
-import { events } from "../../../../../data/heating_cooling_events";
 import ChartControl from "@/components/charts/main-chart/chart-control";
 import LineChart from "@/components/charts/line-chart";
 import ChartStats from "@/components/charts/main-chart/chart-stats";
@@ -14,9 +13,12 @@ import {
   DateRange,
   dateToStringDate,
 } from "@/components/charts/main-chart/time-filter";
-import { Interval } from "@/types/event.types";
-import { combineIntervals, generateIntervals } from "@/utils/events";
-import { fetchAllSnapshots } from "@/helpers/api-helper";
+import { Event, Interval } from "@/types/event.types";
+import {
+  combineIntervals,
+  decodeEvent,
+  generateIntervals,
+} from "@/utils/events";
 import { useEffect, useState } from "react";
 
 function calculateStrokeWidth(series: ApexAxisChartSeries): number {
@@ -79,9 +81,11 @@ function convertObjectToString(obj: object) {
 export default function ChartPageWrapper({
   slug,
   snapshots,
+  events,
 }: {
   slug: string;
   snapshots: Snapshot[];
+  events: Event[];
 }) {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -90,6 +94,7 @@ export default function ChartPageWrapper({
     temperature: searchParams?.get("sources")?.includes("temperature") ?? false,
     voltage: searchParams?.get("sources")?.includes("voltage") ?? false,
     heating: searchParams?.get("sources")?.includes("heating") ?? false,
+    fans: searchParams?.get("sources")?.includes("fans") ?? false,
     doors: searchParams?.get("sources")?.includes("doors") ?? false,
     temperatureSetting:
       searchParams?.get("sources")?.includes("temperatureSetting") ?? false,
@@ -166,9 +171,21 @@ export default function ChartPageWrapper({
       borderColor: "hsl(var(--heating))",
       fillColor: "hsl(var(--heating))",
     },
+    HeatingCasing: {
+      borderColor: "hsl(var(--casing))",
+      fillColor: "hsl(var(--casing))",
+    },
     Cooling: {
       borderColor: "hsl(var(--cooling))",
       fillColor: "hsl(var(--cooling))",
+    },
+    FanTop: {
+      borderColor: "hsl(var(--in))",
+      fillColor: "hsl(var(--in))",
+    },
+    FanBottom: {
+      borderColor: "hsl(var(--battery))",
+      fillColor: "hsl(var(--battery))",
     },
     Doors: {
       borderColor: "hsl(var(--outside))",
@@ -194,13 +211,17 @@ export default function ChartPageWrapper({
     }));
   }
 
-  const intervals = combineIntervals(generateIntervals(events));
+  const eventsDecoded = events.map((e) => decodeEvent(e));
+  const intervals = combineIntervals(generateIntervals(eventsDecoded));
   const filteredIntervals = intervals.filter((i) => {
-    if (["heating", "cooling"].includes(i.type.toLowerCase())) {
+    if (
+      i.type.toLowerCase().includes("heating") ||
+      i.type.toLowerCase().includes("cooling")
+    ) {
       return sources.heating;
     }
-    if (["doors"].includes(i.type.toLowerCase())) {
-      return sources.doors;
+    if (i.type.toLowerCase().includes("fans")) {
+      return sources.fans;
     }
     return false;
   });
@@ -242,6 +263,7 @@ export default function ChartPageWrapper({
       temperature: sources?.includes("temperature") ?? false,
       voltage: sources?.includes("voltage") ?? false,
       heating: sources?.includes("heating") ?? false,
+      fans: sources?.includes("fans") ?? false,
       doors: sources?.includes("doors") ?? false,
       temperatureSetting: sources?.includes("temperatureSetting") ?? false,
       sun: sources?.includes("sun") ?? false,

@@ -3,10 +3,10 @@
 import { DataTable } from "../ui/data-table";
 import { format, parse } from "date-fns";
 import { ColumnDef } from "@tanstack/react-table";
-import { translateEvent } from "@/utils/events";
-import { Snapshot } from "@/types/snapshot.types";
+import { decodeEvent, translateEvent } from "@/utils/events";
+import { type Event } from "@/types/event.types";
 
-export const columns: ColumnDef<Snapshot>[] = [
+export const columns: ColumnDef<Event>[] = [
   {
     accessorKey: "timestamp",
     header: () => <div className="">Čas</div>,
@@ -19,12 +19,11 @@ export const columns: ColumnDef<Snapshot>[] = [
     },
   },
   {
-    accessorKey: "event",
+    accessorKey: "event_code",
     header: () => <div className="">Událost</div>,
-    cell: ({ getValue }: { getValue: () => unknown }) => {
-      const val = getValue();
-      const valStr = typeof val === "string" ? val : "";
-      const label = translateEvent(valStr);
+    cell: ({ row }) => {
+      const event = decodeEvent(row.original);
+      const label = translateEvent(event.event);
       return <div className="">{label as string}</div>;
     },
   },
@@ -34,7 +33,7 @@ export default function LatestEvents({
   events,
   take,
 }: {
-  events: Snapshot[];
+  events: Event[];
   take?: number;
 }) {
   const eventsFirst = events.slice(0, take || 5);

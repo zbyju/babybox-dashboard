@@ -18,6 +18,7 @@ export interface ChartSourcesObject {
   temperature: boolean;
   voltage: boolean;
   heating: boolean;
+  fans: boolean;
   doors: boolean;
   temperatureSetting: boolean;
   sun: boolean;
@@ -92,37 +93,13 @@ export default function ChartSources(props: Props) {
               </div>
               <div className="flex items-center space-x-2">
                 <Switch
-                  id="doors"
-                  checked={sources.doors}
+                  id="fans"
+                  checked={sources.fans}
                   onCheckedChange={(val) =>
-                    setSources({ ...sources, doors: val })
+                    setSources({ ...sources, fans: val })
                   }
                 />
-                <Label htmlFor="doors">Dvířka</Label>
-              </div>
-            </div>
-
-            <div className="flex flex-col items-start gap-2">
-              <h5 className="text-lg font-semibold">Anotace</h5>
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="temperatureSetting"
-                  checked={sources.temperatureSetting}
-                  onCheckedChange={(val) =>
-                    setSources({ ...sources, temperatureSetting: val })
-                  }
-                />
-                <Label htmlFor="temperatureSetting">Nastavení teploty</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="sun"
-                  checked={sources.sun}
-                  onCheckedChange={(val) =>
-                    setSources({ ...sources, sun: val })
-                  }
-                />
-                <Label htmlFor="sun">Východ/Západ Slunce</Label>
+                <Label htmlFor="doors">Větráky</Label>
               </div>
             </div>
           </div>

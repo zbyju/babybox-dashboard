@@ -1,20 +1,30 @@
-import { Event, Interval } from "@/types/event.types";
+import { Event, EventDecoded, Interval } from "@/types/event.types";
 import { parse } from "date-fns";
 
 export function translateEvent(str: string): string {
-  switch (str) {
-    case "Heating On":
-      return "Zapnuto vyhřívání";
-    case "Heating Off":
-      return "Vypnuto vyhřívání";
-    case "Cooling On":
-      return "Zapnuto chlazení";
-    case "Cooling Off":
-      return "Vypnuto chlazení";
-    case "Doors Opening":
-      return "Dveře otevřeny";
-    case "Doors Closing":
-      return "Dveře zavřeny";
+  switch (str.toLowerCase()) {
+    case "te0000":
+      return "JT - spuštěn";
+    case "te0101":
+      return "JT - start topení plašť";
+    case "te0100":
+      return "JT - konec topení plášť";
+    case "te0201":
+      return "JT - start topení pelt";
+    case "te0200":
+      return "JT - konec topení pelt";
+    case "te0301":
+      return "JT - start chlazení";
+    case "te0300":
+      return "JT - konec chlazení";
+    case "te0401":
+      return "JT - start větrák horní";
+    case "te0400":
+      return "JT - konec větrák horní";
+    case "te0501":
+      return "JT - start větrák dolní";
+    case "te0500":
+      return "JT - konec větrák dolní";
   }
   return "Neznámá událost";
 }
@@ -24,12 +34,40 @@ function stringToDate(s: string): Date {
 }
 
 const eventKeywords: { [key: string]: { start: string[]; end: string[] } } = {
-  Heating: { start: ["heating on"], end: ["heating off", "device on"] },
-  Cooling: { start: ["cooling on"], end: ["cooling off", "device on"] },
-  Doors: { start: ["doors opening"], end: ["doors closing", "device on"] },
+  HeatingCasing: {
+    start: ["te0101"],
+    end: ["te0100", "te0000"],
+  },
+  Heating: {
+    start: ["te0201"],
+    end: ["te0200", "te0000"],
+  },
+  Cooling: {
+    start: ["te0301"],
+    end: ["te0300", "te0000"],
+  },
+  FanTop: {
+    start: ["te0401"],
+    end: ["te0400", "te0000"],
+  },
+  FanBottom: {
+    start: ["te0501"],
+    end: ["te0500", "te0000"],
+  },
 };
 
-export function generateIntervals(events: Event[]): Interval[] {
+export function decodeEvent(event: Event): EventDecoded {
+  const eventCode = `${event.unit[0].toLowerCase()}e${event.event_code}`;
+  const translated = translateEvent(eventCode);
+  return {
+    slug: event.slug,
+    timestamp: event.timestamp,
+    event: eventCode,
+    label: translated,
+  };
+}
+
+export function generateIntervals(events: EventDecoded[]): Interval[] {
   const intervals: Interval[] = [];
   const startTimes: { [key: string]: Date } = {};
 
@@ -45,6 +83,7 @@ export function generateIntervals(events: Event[]): Interval[] {
       ) {
         intervals.push({
           type: eventType,
+          label: eventType,
           from: startTimes[eventType],
           to: stringToDate(event.timestamp),
         });
@@ -57,6 +96,7 @@ export function generateIntervals(events: Event[]): Interval[] {
   for (const eventType of Object.keys(startTimes)) {
     intervals.push({
       type: eventType,
+      label: eventType,
       from: startTimes[eventType],
       to: new Date(),
     });
