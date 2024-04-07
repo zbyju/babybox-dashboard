@@ -138,6 +138,6 @@ div.ghost tbody tr td {
 
 @media all and (display-mode: standalone) {
   nav.mobile-nav {
-    padding-bottom: 25px;
+    padding-bottom: 18px;
   }
 }

@@ -10,15 +10,13 @@ import { ModeToggle } from "./buttons/darkmode-toggle";
 import { BabyboxCombo } from "./babybox-combo";
 import Link from "next/link";
 import { Button } from "./ui/button";
+import { useAuth } from "./contexts/auth-context";
 
 export default function Navbar() {
+  const { isAuthenticated } = useAuth();
+
   const links = [
     { href: "/dashboard/babybox", name: "Domů", icon: <Home /> },
-    {
-      href: "/dashboard/babybox/maintenance",
-      name: "Servisy",
-      icon: <Construction />,
-    },
     { href: "/dashboard/notifications", name: "Notifikace", icon: <Bell /> },
     { href: "/dashboard/help", name: "Nápověda", icon: <HelpCircle /> },
   ];
@@ -43,21 +41,25 @@ export default function Navbar() {
             <ModeToggle />
           </div>
           <div className="flex flex-row items-center justify-between gap-4">
-            <Link href="/auth/login" className={linkClass}>
-              <LogIn />
-              Login
-            </Link>
-            <Link href="/auth/logout" className={linkClass}>
-              <LogOut />
-              Logout
-            </Link>
+            {!isAuthenticated && (
+              <Link href="/auth/login" className={linkClass}>
+                <LogIn />
+                Login
+              </Link>
+            )}
+            {isAuthenticated && (
+              <Link href="/auth/logout" className={linkClass}>
+                <LogOut />
+                Logout
+              </Link>
+            )}
           </div>
         </div>
       </nav>
 
       <nav className="mobile-nav visible fixed bottom-0 z-50 w-screen border-collapse border border-slate-100 bg-background dark:border-slate-800 lg:hidden">
-        <div className="flex flex-row items-center justify-start gap-5 px-4 py-2">
-          <div className="flex flex-grow flex-row justify-start gap-5">
+        <div className="flex flex-row items-center justify-start gap-2 px-4 py-2">
+          <div className="flex flex-grow flex-row justify-start gap-2">
             {links.map((l) => (
               <Link className={linkClass} key={l.href} href={l.href}>
                 <Button size="icon" variant="ghost">
@@ -66,16 +68,20 @@ export default function Navbar() {
               </Link>
             ))}
           </div>
-          <div className="flex flex-row items-center justify-between gap-5">
+          <div className="flex flex-row items-center justify-between gap-2">
             <ModeToggle />
           </div>
-          <div className="flex flex-row items-center justify-between gap-5">
-            <Link href="/auth/login" className={linkClass}>
-              <LogIn />
-            </Link>
-            <Link href="/auth/logout" className={linkClass}>
-              <LogOut />
-            </Link>
+          <div className="flex flex-row items-center justify-between gap-2">
+            {!isAuthenticated && (
+              <Link href="/auth/login" className={linkClass}>
+                <LogIn />
+              </Link>
+            )}
+            {isAuthenticated && (
+              <Link href="/auth/logout" className={linkClass}>
+                <LogOut />
+              </Link>
+            )}
           </div>
         </div>
       </nav>

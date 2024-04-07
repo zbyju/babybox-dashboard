@@ -13,17 +13,12 @@ import { calculateSnapshotStats } from "@/utils/stats";
 import TextualSnapshotStats from "@/components/misc/textual-snapshot-stats";
 import { Separator } from "@/components/ui/separator";
 import VariableOverview from "@/components/widgets/variable-overview";
-import {
-  fetchBabyboxDetail,
-  fetchSnapshotsBySlugAndTime,
-  fetcherWithToken,
-} from "@/helpers/api-helper";
+import { fetcherWithToken } from "@/helpers/api-helper";
 import { addDays, format } from "date-fns";
 import useSWR from "swr";
 import { useAuth } from "@/components/contexts/auth-context";
 
 export default function BabyboxPage({ params }: { params: { slug: string } }) {
-  const slug = params.slug;
   const { token } = useAuth();
   const babyboxServiceURL = process.env.NEXT_PUBLIC_URL_BABYBOX_SERVICE;
   const snapshotServiceURL = process.env.NEXT_PUBLIC_URL_SNAPSHOT_HANDLER;
