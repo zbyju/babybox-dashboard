@@ -1,6 +1,6 @@
 module github.com/zbyju/babybox-dashboard/apps/snapshot-handler
 
-go 1.21.4
+go 1.22
 
 require (
 	github.com/apapsch/go-jsonmerge/v2 v2.0.0 // indirect
