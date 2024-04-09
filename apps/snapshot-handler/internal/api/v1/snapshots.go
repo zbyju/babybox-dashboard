@@ -1,11 +1,13 @@
 package v1
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/labstack/echo/v4"
+
 	"github.com/zbyju/babybox-dashboard/apps/snapshot-handler/internal/domain"
 	"github.com/zbyju/babybox-dashboard/apps/snapshot-handler/utils"
 )
@@ -79,6 +81,9 @@ func (app *Application) GetAllSnapshotsBySlugHandler(c echo.Context) error {
 	from := c.QueryParam("from")
 	to := c.QueryParam("to")
 	n := c.QueryParam("n")
+	fill := c.QueryParam("fill")
+
+	shouldFill := false
 
 	now := time.Now().In(app.Config.TimeLocation)
 
@@ -91,6 +96,10 @@ func (app *Application) GetAllSnapshotsBySlugHandler(c echo.Context) error {
 	if n == "" {
 		n = "99999999"
 	}
+	if fill != "" {
+		shouldFill = true
+	}
+	fmt.Println(shouldFill)
 
 	// Parse the dates from the query parameters
 	fromTime, err := time.ParseInLocation("2006-01-02", from, app.Config.TimeLocation)
@@ -166,7 +175,12 @@ func parseQueryParam(app *Application, c echo.Context, param string) float64 {
 	value, err := strconv.ParseFloat(valueStr, 64)
 	if err != nil {
 		// Handle the error. For this example, we'll just log it and use 0 as the default value
-		app.Logger.Errorf("Error parsing parameter %s: %v | for URL: %s", param, err, c.Request().URL.String())
+		app.Logger.Errorf(
+			"Error parsing parameter %s: %v | for URL: %s",
+			param,
+			err,
+			c.Request().URL.String(),
+		)
 		return 0
 	}
 	return value

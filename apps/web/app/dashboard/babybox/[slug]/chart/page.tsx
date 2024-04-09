@@ -5,6 +5,9 @@ import ChartPageWrapper from "./chart-page-wrapper";
 import { addDays, format } from "date-fns";
 import useSWR from "swr";
 import { useAuth } from "@/components/contexts/auth-context";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function searchParamTimeToString(
   sp: string | string[] | undefined,
@@ -56,16 +59,46 @@ export default function Home({
     ([url, token]) => fetcherWithToken(url, token),
   );
 
-  if (snapshotsError || eventsError) return <>Error</>;
-  if (snapshotsIsLoading || eventsIsLoading) return <>Loading</>;
-
   return (
     <div className="">
-      <ChartPageWrapper
-        slug={params.slug}
-        snapshots={snapshotsData.data}
-        events={eventsData.data}
-      />
+      {snapshotsIsLoading || eventsIsLoading ? (
+        <div className="flex w-full flex-col items-center justify-center gap-3">
+          <Skeleton className="h-[90vh] w-11/12" />
+          <Skeleton className="h-4 w-11/12" />
+          <Skeleton className="h-4 w-11/12" />
+          <Skeleton className="h-4 w-11/12" />
+          <Skeleton className="h-4 w-11/12" />
+        </div>
+      ) : snapshotsError ? (
+        <div>
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>Chyba načítání dat.</AlertDescription>
+          </Alert>
+        </div>
+      ) : eventsError ? (
+        <div className="flex w-full flex-col items-center justify-center gap-2">
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>
+              Chyba načítání událostí - zobrazuju data bez nich.
+            </AlertDescription>
+          </Alert>
+          <ChartPageWrapper
+            slug={params.slug}
+            snapshots={snapshotsData.data}
+            events={[]}
+          />
+        </div>
+      ) : (
+        <ChartPageWrapper
+          slug={params.slug}
+          snapshots={snapshotsData.data}
+          events={eventsData.data}
+        />
+      )}
     </div>
   );
 }

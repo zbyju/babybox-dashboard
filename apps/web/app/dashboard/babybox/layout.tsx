@@ -13,6 +13,10 @@ import { ApiResponse } from "@/types/api.types";
 import { BabyboxBase } from "@/types/babybox.types";
 import { useEffect, useState } from "react";
 import { Babybox } from "@/components/tables/babyboxes-table";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
+import Link from "next/link";
 
 export default function BabyboxLayout({
   children,
@@ -75,7 +79,19 @@ export default function BabyboxLayout({
     return (
       <div>
         <Navbar />
-        Error
+        <div className="flex w-full flex-row items-center justify-center">
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>
+              Došlo k chybě načítání babyboxů. Zkuste se znovu příhlásit
+              <Link className="underline" href="/auth/login">
+                zde
+              </Link>
+              .
+            </AlertDescription>
+          </Alert>
+        </div>
       </div>
     );
 
@@ -83,11 +99,18 @@ export default function BabyboxLayout({
     return (
       <div>
         <Navbar />
-        Loading
+        <div className="mt-4 flex w-full flex-col items-center justify-center gap-2 lg:items-start lg:px-[16%]">
+          <Skeleton className="h-4 w-[120px] max-w-full self-start" />
+          <Skeleton className="h-[120px] w-[350px] max-w-full" />
+          <Skeleton className="h-4 w-[350px] max-w-full" />
+          <Skeleton className="h-4 w-[450px] max-w-full" />
+          <Skeleton className="h-4 w-[350px] max-w-full" />
+          <Skeleton className="h-[120px] w-[350px] max-w-full" />
+          <Skeleton className="h-4 w-[450px] max-w-full" />
+          <Skeleton className="h-4 w-[350px] max-w-full" />
+        </div>
       </div>
     );
-
-  console.log(babyboxes);
 
   return (
     <div>

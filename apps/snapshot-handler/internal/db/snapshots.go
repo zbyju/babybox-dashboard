@@ -11,6 +11,7 @@ import (
 	"github.com/influxdata/influxdb-client-go/v2/api"
 	"github.com/influxdata/influxdb-client-go/v2/api/query"
 	write "github.com/influxdata/influxdb-client-go/v2/api/write"
+
 	"github.com/zbyju/babybox-dashboard/apps/snapshot-handler/internal/domain"
 )
 
@@ -46,7 +47,11 @@ from(bucket: "%s")
 	return snapshots, nil
 }
 
-func (service *DBService) QuerySnapshotsBySlug(slug string, from, to time.Time, n uint) ([]domain.Snapshot, error) {
+func (service *DBService) QuerySnapshotsBySlug(
+	slug string,
+	from, to time.Time,
+	n uint,
+) ([]domain.Snapshot, error) {
 	var fluxQuery string
 	if n == 1 {
 		fluxQuery = fmt.Sprintf(`
@@ -63,7 +68,6 @@ func (service *DBService) QuerySnapshotsBySlug(slug string, from, to time.Time, 
     from(bucket: "%s")
       |> range(start: %s, stop: %s)
       |> filter(fn: (r) => r._measurement == "%s" and r.slug == "%s")
-      |> aggregateWindow(every: 10m, fn: last, createEmpty: true)
       |> pivot(rowKey: ["_time"], columnKey: ["_field"], valueColumn: "_value")
       |> sort(columns: ["_time"], desc: true)
       |> limit(n: %d)`, service.bucket, from.Format(time.RFC3339), to.Format(time.RFC3339), measurementNameThermal, slug, n)
@@ -89,14 +93,13 @@ func (service *DBService) QuerySnapshotsBySlug(slug string, from, to time.Time, 
 		return nil, result.Err()
 	}
 
-	if len(snapshots) > 1 && snapshots[0].Status == 1 {
-		snapshots = snapshots[1:]
-	}
-
 	return snapshots, nil
 }
 
-func (service *DBService) QuerySnapshotSummaryBySlug(slug string, from, to time.Time) (interface{}, error) {
+func (service *DBService) QuerySnapshotSummaryBySlug(
+	slug string,
+	from, to time.Time,
+) (interface{}, error) {
 	queryTemplate := `from(bucket: "%s")
   |> range(start: %s, stop: %s)
   |> filter(fn: (r) => r._measurement == "%s" and r.slug == "%s" and r._field == "%s")
@@ -107,12 +110,31 @@ func (service *DBService) QuerySnapshotSummaryBySlug(slug string, from, to time.
 
 	queries := ""
 
-	fields := []string{"temperature_inside", "temperature_outside", "temperature_casing", "temperature_top", "temperature_bottom", "voltage_in", "voltage_battery"}
+	fields := []string{
+		"temperature_inside",
+		"temperature_outside",
+		"temperature_casing",
+		"temperature_top",
+		"temperature_bottom",
+		"voltage_in",
+		"voltage_battery",
+	}
 	aggregations := []string{"min", "mean", "max"}
 
 	for _, field := range fields {
 		for _, aggregation := range aggregations {
-			query := fmt.Sprintf(queryTemplate, service.bucket, from.Format(time.RFC3339), to.Format(time.RFC3339), measurementNameThermal, slug, field, aggregation, field, aggregation)
+			query := fmt.Sprintf(
+				queryTemplate,
+				service.bucket,
+				from.Format(time.RFC3339),
+				to.Format(time.RFC3339),
+				measurementNameThermal,
+				slug,
+				field,
+				aggregation,
+				field,
+				aggregation,
+			)
 			queries += query
 		}
 	}
@@ -197,7 +219,10 @@ func (service *DBService) QuerySnapshots(query string) ([]domain.Snapshot, error
 	return []domain.Snapshot{}, nil
 }
 
-func (service *DBService) ConvertToInfluxDBPoint(s *domain.Snapshot, measurementName string) (*write.Point, error) {
+func (service *DBService) ConvertToInfluxDBPoint(
+	s *domain.Snapshot,
+	measurementName string,
+) (*write.Point, error) {
 	parsedTime, err := time.ParseInLocation("2006-01-02 15:04:05", s.Timestamp, service.location)
 	if err != nil {
 		return nil, err
@@ -218,7 +243,9 @@ func (service *DBService) ConvertToInfluxDBPoint(s *domain.Snapshot, measurement
 	return point, nil
 }
 
-func (service *DBService) ConvertResultsToSnapshots(result *api.QueryTableResult) ([]domain.Snapshot, error) {
+func (service *DBService) ConvertResultsToSnapshots(
+	result *api.QueryTableResult,
+) ([]domain.Snapshot, error) {
 	var snapshots []domain.Snapshot
 	defer result.Close()
 
@@ -247,7 +274,9 @@ func float64PointerFromRecord(record query.FluxRecord, key string) *float64 {
 	return nil
 }
 
-func (service *DBService) ConvertRecordToSnapshot(record query.FluxRecord) (domain.Snapshot, error) {
+func (service *DBService) ConvertRecordToSnapshot(
+	record query.FluxRecord,
+) (domain.Snapshot, error) {
 	snapshot := domain.Snapshot{
 		Slug:      record.ValueByKey("slug").(string),
 		Timestamp: record.Time().In(service.location).Format("2006-01-02 15:04:05"),

@@ -322,7 +322,7 @@ export default function ChartPageWrapper({
         <h2 className="mb-4 ml-1 text-3xl font-bold leading-6">Tabulka dat</h2>
         <LatestSnapshots
           snapshots={snapshots as Snapshot[]}
-          take={100}
+          take={99999}
           showPagination={true}
         />
       </div>

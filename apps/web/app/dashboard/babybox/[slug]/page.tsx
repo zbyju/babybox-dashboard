@@ -17,20 +17,17 @@ import { fetcherWithToken } from "@/helpers/api-helper";
 import { addDays, format } from "date-fns";
 import useSWR from "swr";
 import { useAuth } from "@/components/contexts/auth-context";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useContext } from "react";
+import { BabyboxesContext } from "@/components/contexts/babyboxes-context";
+import { Babybox } from "@/components/tables/babyboxes-table";
 
 export default function BabyboxPage({ params }: { params: { slug: string } }) {
   const { token } = useAuth();
   const babyboxServiceURL = process.env.NEXT_PUBLIC_URL_BABYBOX_SERVICE;
   const snapshotServiceURL = process.env.NEXT_PUBLIC_URL_SNAPSHOT_HANDLER;
-
-  const {
-    data: babyboxData,
-    error: babyboxError,
-    isLoading: babyboxIsLoading,
-  } = useSWR(
-    [`${babyboxServiceURL}/v1/babyboxes/${params.slug}`, token],
-    ([url, token]) => fetcherWithToken(url, token),
-  );
+  const babyboxes = useContext(BabyboxesContext) as Babybox[];
+  const babybox = babyboxes.find((x) => x.slug === params.slug);
 
   const {
     data: eventsData,
@@ -82,25 +79,15 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
     ([url, token]) => fetcherWithToken(url, token),
   );
 
-  if (
-    snapshotsDayError ||
-    snapshots3DaysError ||
-    snapshotsWeekError ||
-    snapshotsDayIsLoading ||
-    snapshotsWeekIsLoading ||
-    snapshots3DaysIsLoading ||
-    babyboxIsLoading ||
-    babyboxError ||
-    eventsError ||
-    eventsLoading ||
-    !babyboxData.data
-  ) {
-    return <>Error</>;
-  }
-
-  const stats = calculateSnapshotStats(snapshotsWeekData.data);
-  const statsSmall = calculateSnapshotStats(snapshots3DaysData.data);
-  const statsSmaller = calculateSnapshotStats(snapshotsDayData.data);
+  const stats = snapshotsWeekData
+    ? calculateSnapshotStats(snapshotsWeekData.data)
+    : null;
+  const statsSmall = snapshots3DaysData
+    ? calculateSnapshotStats(snapshots3DaysData.data)
+    : null;
+  const statsSmaller = snapshotsDayData
+    ? calculateSnapshotStats(snapshotsDayData.data)
+    : null;
 
   const temperatureVariableOverviews = [
     { key: "inside", name: "Vnitřní teplota", color: "inside" },
@@ -110,9 +97,18 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
     { key: "bottom", name: "Teplota spodní", color: "cooling" },
   ].map((o) => (
     <Widget key={o.key} title={o.name} subtitle="Přehled">
-      {stats.temperature === undefined ||
-      statsSmall.temperature === undefined ||
-      statsSmaller.temperature === undefined ? (
+      {snapshotsDayIsLoading ||
+        snapshots3DaysIsLoading ||
+        snapshotsWeekIsLoading ? (
+        <div className="flex flex-col items-center justify-center gap-2">
+          <Skeleton className="h-[120px] w-[250px]" />
+          <Skeleton className="h-4 w-[250px]" />
+          <Skeleton className="h-4 w-[250px]" />
+          <Skeleton className="h-4 w-[250px]" />
+        </div>
+      ) : stats?.temperature === undefined ||
+        statsSmall?.temperature === undefined ||
+        statsSmaller?.temperature === undefined ? (
         <>Statistiky nejsou dostupné</>
       ) : (
         <VariableOverview
@@ -136,9 +132,18 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
     { key: "battery", name: "Napětí akumulátoru", color: "battery" },
   ].map((o) => (
     <Widget key={o.key} title={o.name} subtitle="Přehled">
-      {stats.voltage === undefined ||
-      statsSmall.voltage === undefined ||
-      statsSmaller.voltage === undefined ? (
+      {snapshotsDayIsLoading ||
+        snapshots3DaysIsLoading ||
+        snapshotsWeekIsLoading ? (
+        <div className="flex flex-col items-center justify-center gap-2">
+          <Skeleton className="h-[120px] w-[250px]" />
+          <Skeleton className="h-4 w-[250px]" />
+          <Skeleton className="h-4 w-[250px]" />
+          <Skeleton className="h-4 w-[250px]" />
+        </div>
+      ) : stats?.voltage === undefined ||
+        statsSmall?.voltage === undefined ||
+        statsSmaller?.voltage === undefined ? (
         <>Statistiky nejsou dostupné</>
       ) : (
         <VariableOverview
@@ -159,7 +164,11 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
 
   return (
     <div className="w-screen lg:pb-24 lg:pr-5">
-      <BabyboxSideMenu babybox={babyboxData.data} />
+      {!babybox ? (
+        <BabyboxSideMenu babybox={{ slug: params.slug, name: params.slug }} />
+      ) : (
+        <BabyboxSideMenu babybox={babybox} />
+      )}
       <div className="lg:ml-main mb-1 mt-5 flex-grow">
         <div className="mx-auto flex w-11/12 flex-col">
           <div className="mb-4">
@@ -187,18 +196,34 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
           <h4 className="mb-3 ml-1 text-3xl font-black">Data</h4>
           <div className="mb-4 flex flex-row flex-wrap justify-center justify-items-center gap-4 md:justify-start">
             <Widget title="Nejnovější data">
-              <LatestSnapshots
-                snapshots={snapshotsDayData.data as Snapshot[]}
-                take={11}
-              />
-              <Separator className="my-2" />
-              <TextualSnapshotStats
-                snapshots={snapshotsDayData.data as Snapshot[]}
-                take={11}
-              />
+              {snapshotsDayIsLoading ? (
+                <div>Loading</div>
+              ) : snapshotsDayError ? (
+                <div>Error</div>
+              ) : (
+                <>
+                  <LatestSnapshots
+                    snapshots={snapshotsDayData.data as Snapshot[]}
+                    take={11}
+                  />
+                  <Separator className="my-2" />
+                  <TextualSnapshotStats
+                    snapshots={snapshotsDayData.data as Snapshot[]}
+                    take={11}
+                  />
+                </>
+              )}
             </Widget>
             <Widget title="Nejnovější události">
-              <LatestEvents events={eventsData.data as Event[]} take={11} />
+              {eventsLoading ? (
+                <div>Loading</div>
+              ) : eventsError ? (
+                <div>Error</div>
+              ) : (
+                <>
+                  <LatestEvents events={eventsData.data as Event[]} take={11} />
+                </>
+              )}
             </Widget>
           </div>
 
