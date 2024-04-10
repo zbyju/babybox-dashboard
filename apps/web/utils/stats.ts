@@ -22,7 +22,7 @@ export function transformToSnapshotNumeric(
       result[key] = value;
     } else if (isSnapshotGroup(value)) {
       const group = value;
-      group.timestamp = "";
+      group.timestamp = null;
       const transformed = transformToSnapshotNumeric(
         group as Snapshot,
       ) as SnapshotGroupNumeric;
@@ -91,9 +91,7 @@ export function calculateAverageSnapshotGap(
 ): number | undefined {
   if (snapshots.length < 2) return undefined;
 
-  const dates = snapshots.map((snapshot) =>
-    parse(snapshot.timestamp, "yyyy-MM-dd HH:mm:ss", new Date()),
-  );
+  const dates = snapshots.map((snapshot) => snapshot.timestamp);
 
   // Calculate gaps (in seconds) between consecutive timestamps
   const gapsInSeconds = [];

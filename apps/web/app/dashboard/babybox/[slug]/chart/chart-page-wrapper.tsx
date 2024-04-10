@@ -20,6 +20,12 @@ import {
   generateIntervals,
 } from "@/utils/events";
 import { useEffect, useState } from "react";
+import useSWR from "swr";
+import { useAuth } from "@/components/contexts/auth-context";
+import { fetcherWithToken, snapshotFetcher } from "@/helpers/api-helper";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 function calculateStrokeWidth(series: ApexAxisChartSeries): number {
   const n = series.length > 0 ? series[0].data.length : 0;
@@ -39,10 +45,8 @@ function calculateStrokeType(
   const n = series.length > 0 ? series[0].data.length : 0;
   if (n > 144) {
     return "straight";
-  } else if (n > 50) {
+  } 
     return "smooth";
-  }
-  return "monotoneCubic";
 }
 
 function transformData(
@@ -61,7 +65,7 @@ function transformData(
       color,
       data: originalData.map((item) => {
         return {
-          x: parse(item.timestamp, "yyyy-MM-dd HH:mm:ss", new Date()).getTime(),
+          x: item.timestamp.getTime(),
           // @ts-expect-error apex
           y: item[group][variable],
         };
@@ -80,15 +84,18 @@ function convertObjectToString(obj: object) {
 
 export default function ChartPageWrapper({
   slug,
-  snapshots,
-  events,
+  from,
+  to,
 }: {
   slug: string;
-  snapshots: Snapshot[];
-  events: Event[];
+  from: string;
+  to: string;
 }) {
   const searchParams = useSearchParams();
   const router = useRouter();
+
+  const { token } = useAuth();
+  const snapshotServiceURL = process.env.NEXT_PUBLIC_URL_SNAPSHOT_HANDLER;
 
   const [sources, setSources] = useState<ChartSourcesObject>({
     temperature: searchParams?.get("sources")?.includes("temperature") ?? false,
@@ -152,7 +159,50 @@ export default function ChartPageWrapper({
     }
     return true;
   });
-  const series = transformData(snapshots, sourcesFiltered);
+
+  const {
+    data: snapshots,
+    error: snapshotsError,
+    isLoading: snapshotsIsLoading,
+  } = useSWR(
+    sources.temperature || sources.voltage
+      ? [
+        `${snapshotServiceURL}/v1/snapshots/${slug}?from=${from}&to=${to}&fill=lazy`,
+        token,
+      ]
+      : null,
+    ([url, token]) => snapshotFetcher(url, token),
+  );
+
+    const {
+    data: snapshotsTable,
+    error: snapshotsTableError,
+    isLoading: snapshotsTableIsLoading,
+  } = useSWR(
+    sources.temperature || sources.voltage
+      ? [
+        `${snapshotServiceURL}/v1/snapshots/${slug}?from=${from}&to=${to}&fill=fill`,
+        token,
+      ]
+      : null,
+    ([url, token]) => snapshotFetcher(url, token),
+  );
+
+
+  const {
+    data: eventsData,
+    error: eventsError,
+    isLoading: eventsIsLoading,
+  } = useSWR(
+    sources.heating || sources.fans
+      ? [`${snapshotServiceURL}/v1/events/${slug}?from=${from}&to=${to}`, token]
+      : null,
+    ([url, token]) => fetcherWithToken(url, token),
+  );
+
+  console.time("transform")
+  const series = transformData(snapshots || [], sourcesFiltered);
+  console.timeEnd("transform")
 
   const [dateRange, setDateRange] = useState<DateRange>({
     from: dateToStringDate(addDays(new Date(), -7)),
@@ -211,8 +261,15 @@ export default function ChartPageWrapper({
     }));
   }
 
-  const eventsDecoded = events.map((e) => decodeEvent(e));
+  console.time("decode")
+  const eventsDecoded =
+    !eventsError || !eventsIsLoading || !eventsData || !("data" in eventsData)
+      ? []
+      : eventsData?.data.map((e: any) => decodeEvent(e));
+  console.timeEnd("decode")
+  console.time("interval")
   const intervals = combineIntervals(generateIntervals(eventsDecoded));
+  console.timeEnd("interval")
   const filteredIntervals = intervals.filter((i) => {
     if (
       i.type.toLowerCase().includes("heating") ||
@@ -288,18 +345,33 @@ export default function ChartPageWrapper({
     <>
       <div className="h-[92vh] min-h-[400px]">
         <div className="mb-5 flex h-full w-full flex-col gap-6">
-          <LineChart
-            id="main-chart"
-            series={series}
-            annotations={annotations}
-            xaxisType="datetime"
-            showGrid
-            showToolbar
-            showLegend
-            zoom
-            strokeType={chartSettings.strokeType}
-            strokeWidth={chartSettings.strokeWidth}
-          />
+          {snapshotsIsLoading || eventsIsLoading ? (
+            <div className="mt-4 flex w-full h-full flex-col items-center justify-center gap-3">
+              <Skeleton className="h-full w-11/12" />
+            </div>
+          ) : snapshotsError || eventsError ? (
+            <Alert
+              variant="destructive"
+              className="mx-auto w-11/12 lg:w-[500px]"
+            >
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>Chyba při načítání dat.</AlertDescription>
+            </Alert>
+          ) : (
+            <LineChart
+              id="main-chart"
+              series={series}
+              annotations={annotations}
+              xaxisType="datetime"
+              showGrid
+              showToolbar
+              showLegend
+              zoom
+              strokeType={chartSettings.strokeType}
+              strokeWidth={chartSettings.strokeWidth}
+            />
+          )}
           <div className="px-4 pb-2">
             <ChartControl
               sources={sources}
@@ -316,15 +388,41 @@ export default function ChartPageWrapper({
       <div className="mb-5 border-t border-t-border px-4 pt-5">
         <h2 className="ml-1 text-3xl font-bold leading-6">Statistiky</h2>
         <h3 className="mb-6 ml-1 text-muted-foreground">Z vybraného období</h3>
-        <ChartStats data={snapshots} />
+        {snapshotsIsLoading ? (
+          <div className="mt-4 flex w-full flex-row items-center justify-center gap-6 lg:items-start lg:px-[16%]">
+            <Skeleton className="h-[200px] w-[250px] max-w-full" />
+            <Skeleton className="h-[200px] w-[250px] max-w-full" />
+            <Skeleton className="h-[200px] w-[250px] max-w-full" />
+            <Skeleton className="h-[200px] w-[250px] max-w-full" />
+            <Skeleton className="h-[200px] w-[250px] max-w-full" />
+            <Skeleton className="h-[200px] w-[250px] max-w-full" />
+          </div>
+        ) : snapshotsError || eventsError ? (
+          <></>
+        ) : (
+          <ChartStats data={snapshots || []} />
+        )}
       </div>
       <div className="mt-12 px-4 pb-2">
         <h2 className="mb-4 ml-1 text-3xl font-bold leading-6">Tabulka dat</h2>
-        <LatestSnapshots
-          snapshots={snapshots as Snapshot[]}
-          take={99999}
-          showPagination={true}
-        />
+        {snapshotsTableIsLoading ? (
+          <div className="mt-4 flex w-full flex-col items-center justify-center gap-6 lg:items-start lg:px-[16%]">
+            <Skeleton className="h-8 w-11/12 max-w-full" />
+            <Skeleton className="h-4 w-11/12 max-w-full" />
+            <Skeleton className="h-4 w-11/12 max-w-full" />
+            <Skeleton className="h-4 w-11/12 max-w-full" />
+            <Skeleton className="h-4 w-11/12 max-w-full" />
+            <Skeleton className="h-4 w-11/12 max-w-full" />
+          </div>
+        ) : snapshotsTableError  ? (
+          <></>
+        ) : (
+          <LatestSnapshots
+            snapshots={snapshotsTable || []}
+            take={99999}
+            showPagination={true}
+          />
+        )}
       </div>
     </>
   );

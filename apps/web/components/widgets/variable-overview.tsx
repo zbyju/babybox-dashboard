@@ -37,7 +37,7 @@ function transformData(
       color,
       data: originalData.map((item) => {
         return {
-          x: parse(item.timestamp, "yyyy-MM-dd HH:mm:ss", new Date()).getTime(),
+          x: item.timestamp.getTime(),
           // @ts-expect-error apex
           y: item[group][variable],
         };
@@ -80,8 +80,8 @@ const minavgmaxColumns = [
       const previousValue =
         currentIndex > 0
           ? (table
-              .getRowModel()
-              .rows[currentIndex - 1].getValue(c.key) as number)
+            .getRowModel()
+            .rows[currentIndex - 1].getValue(c.key) as number)
           : undefined;
 
       const percentageChange = previousValue

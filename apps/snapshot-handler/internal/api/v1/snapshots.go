@@ -1,8 +1,8 @@
 package v1
 
 import (
-	"fmt"
 	"net/http"
+	"slices"
 	"strconv"
 	"time"
 
@@ -49,7 +49,7 @@ func (app *Application) SnapshotHandler(c echo.Context) error {
 		Temperature: temperature,
 		Voltage:     voltage,
 		Version:     1,
-		Timestamp:   time.Now().In(app.Config.TimeLocation).Format("2006-01-02 15:04:05"),
+		Timestamp:   time.Now().In(app.Config.TimeLocation),
 	}
 
 	err := app.DBService.WriteSnapshot(snapshot)
@@ -83,8 +83,6 @@ func (app *Application) GetAllSnapshotsBySlugHandler(c echo.Context) error {
 	n := c.QueryParam("n")
 	fill := c.QueryParam("fill")
 
-	shouldFill := false
-
 	now := time.Now().In(app.Config.TimeLocation)
 
 	if from == "" {
@@ -96,10 +94,6 @@ func (app *Application) GetAllSnapshotsBySlugHandler(c echo.Context) error {
 	if n == "" {
 		n = "99999999"
 	}
-	if fill != "" {
-		shouldFill = true
-	}
-	fmt.Println(shouldFill)
 
 	// Parse the dates from the query parameters
 	fromTime, err := time.ParseInLocation("2006-01-02", from, app.Config.TimeLocation)
@@ -133,7 +127,17 @@ func (app *Application) GetAllSnapshotsBySlugHandler(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, ReturnErr("Failed to fetch snapshots"))
 	}
 
-	return c.JSON(http.StatusOK, ReturnOk(snapshots))
+	if fill == "" || fill == "no" || fill == "false" {
+		return c.JSON(http.StatusOK, ReturnOk(snapshots))
+	}
+
+	if fill == "lazy" {
+		filled := utils.FillGapsLazy(snapshots, slug, fromTime, toTime)
+		return c.JSON(http.StatusOK, ReturnOk(filled))
+	}
+
+	filled := utils.FillGaps(snapshots, slug, fromTime, toTime)
+	return c.JSON(http.StatusOK, ReturnOk(filled))
 }
 
 func (app *Application) GetSnapshotSummaryBySlugHandler(c echo.Context) error {

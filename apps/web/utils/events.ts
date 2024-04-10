@@ -126,7 +126,7 @@ export function combineIntervals(intervals: Interval[]): Interval[] {
         (Math.abs(interval.from.getTime() - existingInterval.to.getTime()) <=
           300000 || // 5 minutes in milliseconds
           Math.abs(interval.to.getTime() - existingInterval.from.getTime()) <=
-            300000)
+          300000)
       ) {
         // 5 minutes in milliseconds
         // Merge intervals

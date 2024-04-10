@@ -1,5 +1,5 @@
 export interface Snapshot {
-  timestamp: string;
+  timestamp: Date;
   [key: string]: SnapshotGroup | SnapshotVariable;
 }
 

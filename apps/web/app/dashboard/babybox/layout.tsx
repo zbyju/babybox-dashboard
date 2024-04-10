@@ -25,7 +25,6 @@ export default function BabyboxLayout({
 }>) {
   const { token } = useAuth();
   const babyboxServiceURL = process.env.NEXT_PUBLIC_URL_BABYBOX_SERVICE;
-  const snapshotServiceURL = process.env.NEXT_PUBLIC_URL_SNAPSHOT_HANDLER;
   const {
     data: babyboxNamesData,
     error: babyboxNamesError,
@@ -34,57 +33,16 @@ export default function BabyboxLayout({
     fetcherWithToken(url, token || ""),
   );
 
-  const [babyboxes, setBabyboxes] = useState<Babybox[]>([]);
-
-  useEffect(() => {
-    const fetchSnapshot = async (slug: string) => {
-      try {
-        const response = await fetch(
-          `${snapshotServiceURL}/v1/snapshots/${slug}?n=1`,
-          { headers: { Authorization: `Bearer ${token}` } },
-        );
-        const data = await response.json();
-        return data.data[0];
-      } catch (error) {
-        throw error;
-      }
-    };
-
-    const fetchBabyboxes = async () => {
-      try {
-        const promises = babyboxNamesData.data.map((b: BabyboxBase) =>
-          fetchSnapshot(b.slug),
-        );
-        const results = await Promise.all(promises);
-        const babyboxes = results.map((r, i) => ({
-          ...babyboxNamesData.data[i],
-          lastData: r,
-        }));
-        setBabyboxes(babyboxes);
-      } catch (error) {
-        console.error("Error fetching data: ", error);
-      }
-    };
-
-    if (
-      babyboxNamesData === undefined ||
-      !babyboxNamesData.data ||
-      babyboxNamesData.data.length === 0
-    )
-      return;
-    fetchBabyboxes();
-  }, [babyboxNamesData, snapshotServiceURL, token]);
-
   if (babyboxNamesError)
     return (
       <div>
         <Navbar />
-        <div className="flex w-full flex-row items-center justify-center">
+        <div className="lg:[500px] mx-auto flex w-11/12 flex-row items-center justify-center">
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
             <AlertTitle>Error</AlertTitle>
             <AlertDescription>
-              Došlo k chybě načítání babyboxů. Zkuste se znovu příhlásit
+              Došlo k chybě načítání babyboxů. Zkuste se znovu příhlásit{" "}
               <Link className="underline" href="/auth/login">
                 zde
               </Link>
@@ -114,7 +72,7 @@ export default function BabyboxLayout({
 
   return (
     <div>
-      <BabyboxesProvider babyboxes={babyboxes}>
+      <BabyboxesProvider babyboxes={babyboxNamesData.data}>
         <Navbar />
         {children}
       </BabyboxesProvider>

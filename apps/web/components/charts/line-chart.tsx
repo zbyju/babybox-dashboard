@@ -1,7 +1,10 @@
 "use client";
 
+import { format } from "date-fns";
+import { cs } from "date-fns/locale";
 import { useTheme } from "next-themes";
 import Chart from "react-apexcharts";
+import { formatWithOptions } from "util";
 
 interface Props {
   id: string;
@@ -74,7 +77,9 @@ export default function LineChart(props: Props) {
         enabled: config.showTooltip,
         theme: theme,
         x: {
-          format: "dd.MM.yyyy hh:mm",
+          format: "dd.MM.yyyy HH:mm",
+          formatter: (val: Date) =>
+            format(val, "dd.MM.yyyy HH:mm:ss", { locale: cs }),
         },
       },
       grid: {
@@ -91,7 +96,8 @@ export default function LineChart(props: Props) {
         type: config.xaxisType,
         labels: {
           show: config.showXaxisLabels,
-          format: "dd.MM hh:mm",
+          format: "dd.MM HH:mm",
+          formatter: (val: Date) => format(val, "d.M.yy HH:mm", { locale: cs }),
         },
         axisBorder: {
           offsetX: -1,

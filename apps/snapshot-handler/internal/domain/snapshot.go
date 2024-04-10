@@ -1,6 +1,8 @@
 package domain
 
 import (
+	"time"
+
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -10,7 +12,7 @@ type Snapshot struct {
 	Temperature Temperature        `json:"temperature"`
 	Voltage     Voltage            `json:"voltage"`
 	Version     uint               `json:"version"`
-	Timestamp   string             `json:"timestamp"`
+	Timestamp   time.Time          `json:"timestamp"`
 	Status      uint32             `json:"status"`
 }
 

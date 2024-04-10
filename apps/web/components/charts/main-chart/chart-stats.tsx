@@ -15,7 +15,6 @@ export default function ChartStats(props: Props) {
       </div>
     );
   const stats = calculateSnapshotStats(props.data);
-  console.log(stats);
 
   const temperatureWidgets = [
     { key: "inside", label: "Vnitřní teplota" },

@@ -46,8 +46,8 @@ const columnVars = [
     const previousValue =
       currentIndex > 0
         ? (table
-            .getRowModel()
-            .rows[currentIndex - 1]?.getValue(c.key2) as number)
+          .getRowModel()
+          .rows[currentIndex - 1]?.getValue(c.key2) as number)
         : undefined;
 
     const percentageChange =
@@ -80,10 +80,7 @@ export const columns: ColumnDef<Snapshot>[] = [
     accessorKey: "timestamp",
     header: () => <div className="">Čas</div>,
     cell: ({ row }) => {
-      const timestamp = format(
-        parse(row.getValue("timestamp"), "yyyy-MM-dd HH:mm:ss", new Date()),
-        "d.M.yy HH:mm",
-      );
+      const timestamp = format(row.getValue("timestamp"), "d.M.yy HH:mm");
       return <div className="">{timestamp}</div>;
     },
   },
@@ -92,36 +89,6 @@ export const columns: ColumnDef<Snapshot>[] = [
     accessorKey: "status",
     header: () => <div className="text-center">Status</div>,
     cell: ({ row }) => {
-      const d = parse(
-        row.getValue("timestamp"),
-        "HH:mm:ss dd-MM-yyyy",
-        new Date(),
-      );
-      const now = new Date();
-      if (differenceInMinutes(now, d) >= 12) {
-        return (
-          <div className="text-center">
-            <TooltipProvider delayDuration={300}>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Badge
-                    variant="default"
-                    className="mx-auto bg-destructive text-destructive-foreground hover:bg-destructive"
-                  >
-                    Error
-                  </Badge>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>
-                    Data nepřišla - poslední záznam je více než 12 minut starý.
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-        );
-      }
-
       const status = row.getValue("status");
       if (status == 1) {
         return (

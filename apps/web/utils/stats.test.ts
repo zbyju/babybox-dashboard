@@ -6,12 +6,17 @@ import {
   calculateSnapshotStats,
   transformToSnapshotsNumeric,
 } from "./stats"; // Adjust the import path based on your project structure
+import { parse } from "date-fns";
 
 describe("Snapshot utilities", () => {
   it("should transform snapshots to only contain numeric variables", () => {
     const snapshots = [
       {
-        timestamp: "2024-02-28T12:00:00Z",
+        timestamp: parse(
+          "2024-02-28 12:00:00",
+          "yyyy-MM-dd hh:mm:ss",
+          new Date(),
+        ),
         var1: 100,
         group1: {
           var2: 200,
@@ -23,7 +28,11 @@ describe("Snapshot utilities", () => {
         group2: {},
       },
       {
-        timestamp: "2024-02-28T13:00:00Z",
+        timestamp: parse(
+          "2024-02-28 13:00:00",
+          "yyyy-MM-dd hh:mm:ss",
+          new Date(),
+        ),
         var1: 400,
         group1: { var3: "string", var2: 500 },
         group2: {},
@@ -39,12 +48,20 @@ describe("Snapshot utilities", () => {
   it("should calculate stats correctly for numeric variables", () => {
     const snapshots = [
       {
-        timestamp: "2024-02-28T12:00:00Z",
+        timestamp: parse(
+          "2024-02-28 12:00:00",
+          "yyyy-MM-dd hh:mm:ss",
+          new Date(),
+        ),
         var1: 100,
         group1: { var2: 200, var3: "non-numeric" },
       },
       {
-        timestamp: "2024-02-28T13:00:00Z",
+        timestamp: parse(
+          "2024-02-28 13:00:00",
+          "yyyy-MM-dd hh:mm:ss",
+          new Date(),
+        ),
         var1: 400,
         group1: { var2: 500, var3: "string" },
       },
@@ -60,9 +77,27 @@ describe("Snapshot utilities", () => {
 describe("calculateAverageGap", () => {
   test("calculates the average gap for timestamps with equal gaps", () => {
     const snapshots = [
-      { timestamp: "2024-03-17 08:00:00" },
-      { timestamp: "2024-03-17 08:00:10" },
-      { timestamp: "2024-03-17 08:00:20" },
+      {
+        timestamp: parse(
+          "2024-03-17 08:00:00",
+          "yyyy-MM-dd hh:mm:ss",
+          new Date(),
+        ),
+      },
+      {
+        timestamp: parse(
+          "2024-03-17 08:00:10",
+          "yyyy-MM-dd hh:mm:ss",
+          new Date(),
+        ),
+      },
+      {
+        timestamp: parse(
+          "2024-03-17 08:00:20",
+          "yyyy-MM-dd hh:mm:ss",
+          new Date(),
+        ),
+      },
     ];
     const averageGap = calculateAverageSnapshotGap(snapshots);
     expect(averageGap).toBe(10);
@@ -70,16 +105,42 @@ describe("calculateAverageGap", () => {
 
   test("calculates the average gap for timestamps with varying gaps", () => {
     const snapshots = [
-      { timestamp: "2024-03-17 08:00:00" },
-      { timestamp: "2024-03-17 08:00:10" },
-      { timestamp: "2024-03-17 08:00:30" },
+      {
+        timestamp: parse(
+          "2024-03-17 08:00:00",
+          "yyyy-MM-dd hh:mm:ss",
+          new Date(),
+        ),
+      },
+      {
+        timestamp: parse(
+          "2024-03-17 08:00:10",
+          "yyyy-MM-dd hh:mm:ss",
+          new Date(),
+        ),
+      },
+      {
+        timestamp: parse(
+          "2024-03-17 08:00:30",
+          "yyyy-MM-dd hh:mm:ss",
+          new Date(),
+        ),
+      },
     ];
     const averageGap = calculateAverageSnapshotGap(snapshots);
     expect(averageGap).toBe(15);
   });
 
   test("returns undefined for a single timestamp", () => {
-    const snapshots = [{ timestamp: "2024-03-17 08:00:00" }];
+    const snapshots = [
+      {
+        timestamp: parse(
+          "2024-03-17 08:00:00",
+          "yyyy-MM-dd hh:mm:ss",
+          new Date(),
+        ),
+      },
+    ];
     const averageGap = calculateAverageSnapshotGap(snapshots);
     expect(averageGap).toBe(undefined);
   });

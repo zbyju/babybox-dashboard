@@ -122,11 +122,7 @@ export const columns: ColumnDef<Babybox>[] = [
     header: () => <div className="text-right">Čas dat</div>,
     cell: ({ row }) => {
       const timestamp = format(
-        parse(
-          row.getValue("lastData_timestamp"),
-          "yyyy-MM-dd HH:mm:ss",
-          new Date(),
-        ),
+        row.getValue("lastData_timestamp"),
         "HH:mm dd.MM.yyyy",
       );
       return <div className="text-right">{timestamp}</div>;
@@ -136,11 +132,7 @@ export const columns: ColumnDef<Babybox>[] = [
     accessorKey: "lastData.status",
     header: () => <div className="text-center">Status</div>,
     cell: ({ row }) => {
-      const d = parse(
-        row.getValue("lastData_timestamp"),
-        "yyyy-MM-dd HH:mm:ss",
-        new Date(),
-      );
+      const d = row.getValue("lastData_timestamp") as Date;
       const now = new Date();
       if (differenceInMinutes(now, d) >= 12) {
         return (
@@ -215,19 +207,12 @@ export const columns: ColumnDef<Babybox>[] = [
   },
 ];
 
-export default function BabyboxesTable() {
-  const babyboxes = useContext(BabyboxesContext) as Babybox[];
+export default function BabyboxesTable({
+  babyboxes,
+}: {
+  babyboxes: Babybox[];
+}) {
   const router = useRouter();
-
-  function setRowClassName(row: Row<Babybox>): string {
-    const _d = parse(
-      row.getValue("lastData_timestamp"),
-      "yyyy-MM-dd HH:mm:ss",
-      new Date(),
-    );
-    const _now = new Date();
-    return "";
-  }
 
   function onRowClick(row: Row<Babybox>) {
     router.push("/dashboard/babybox/" + row.getValue("slug"));
@@ -238,7 +223,6 @@ export default function BabyboxesTable() {
       columns={columns}
       data={babyboxes}
       sorting={[{ id: "name", desc: false }]}
-      rowClassNameAccessor={setRowClassName}
       rowClickAccessor={onRowClick}
       hideColumns={["slug"]}
       filterColumnName="name"

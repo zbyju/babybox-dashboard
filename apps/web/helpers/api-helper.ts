@@ -17,6 +17,24 @@ export const fetcherWithToken = (url: string, token: string) =>
     return r.json();
   });
 
+export const snapshotFetcher = async (
+  url: string,
+  token: string,
+): Promise<Snapshot[] | null> => {
+  try {
+    const res = await fetcherWithToken(url, token);
+
+    if (!res || !res.data || !Array.isArray(res.data)) return null;
+
+    return res.data.map((d: Snapshot) => ({
+      ...d,
+      timestamp: new Date(d.timestamp),
+    }));
+  } catch (err) {
+    return null;
+  }
+};
+
 export const authenticateUser = async (
   username: string,
   password: string,
@@ -41,102 +59,3 @@ export const authenticateUser = async (
     return Promise.reject(error);
   }
 };
-
-export async function fetchBabyboxNames(token: string): Promise<BabyboxBase[]> {
-  try {
-    const response = await fetch(API_BABYBOX_SERVICE + "/babyboxes", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    if (!response.ok) {
-      return Promise.reject("API error");
-    }
-
-    const data: ApiResponse<BabyboxBase[]> = await response.json();
-    return data.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
-
-export async function fetchBabyboxDetail(slug: string): Promise<BabyboxDetail> {
-  try {
-    const response = await fetch(API_BABYBOX_SERVICE + "/babyboxes/" + slug);
-    if (!response.ok) {
-      return Promise.reject("API error");
-    }
-
-    const data: ApiResponse<BabyboxDetail> = await response.json();
-    return data.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
-
-export async function fetchAllSnapshots(): Promise<Snapshot[]> {
-  try {
-    const response = await fetch(API_SNAPSHOT_HANDLER + "/snapshots");
-    if (!response.ok) {
-      return Promise.reject("API error");
-    }
-
-    const data: ApiResponse<Snapshot[]> = await response.json();
-    return data.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
-
-export async function fetchSnapshotsBySlug(slug: string): Promise<Snapshot[]> {
-  try {
-    const response = await fetch(API_SNAPSHOT_HANDLER + "/snapshots/" + slug);
-    if (!response.ok) {
-      return Promise.reject("API error");
-    }
-
-    const data: ApiResponse<Snapshot[]> = await response.json();
-    return data.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
-
-export async function fetchSnapshotsBySlugAndTime(
-  slug: string,
-  from: string,
-  to: string,
-): Promise<Snapshot[]> {
-  try {
-    const response = await fetch(
-      `${API_SNAPSHOT_HANDLER}/snapshots/${slug}?from=${from}&to=${to}`,
-    );
-    if (!response.ok) {
-      return Promise.reject("API error");
-    }
-
-    const data: ApiResponse<Snapshot[]> = await response.json();
-    return data.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}
-
-export async function fetchSnapshotsBySlugAndN(
-  slug: string,
-  n: number,
-): Promise<Snapshot[]> {
-  try {
-    const response = await fetch(
-      `${API_SNAPSHOT_HANDLER}/snapshots/${slug}?n=${n}`,
-    );
-    if (!response.ok) {
-      return Promise.reject("API error");
-    }
-
-    const data: ApiResponse<Snapshot[]> = await response.json();
-    return data.data;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-}

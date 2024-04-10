@@ -13,26 +13,30 @@ import { calculateSnapshotStats } from "@/utils/stats";
 import TextualSnapshotStats from "@/components/misc/textual-snapshot-stats";
 import { Separator } from "@/components/ui/separator";
 import VariableOverview from "@/components/widgets/variable-overview";
-import { fetcherWithToken } from "@/helpers/api-helper";
+import { fetcherWithToken, snapshotFetcher } from "@/helpers/api-helper";
 import { addDays, format } from "date-fns";
 import useSWR from "swr";
 import { useAuth } from "@/components/contexts/auth-context";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { BabyboxesContext } from "@/components/contexts/babyboxes-context";
 import { Babybox } from "@/components/tables/babyboxes-table";
+import { BabyboxBase } from "@/types/babybox.types.js";
+import { Button } from "@/components/ui/button";
+import { RefreshCcw } from "lucide-react";
 
 export default function BabyboxPage({ params }: { params: { slug: string } }) {
   const { token } = useAuth();
-  const babyboxServiceURL = process.env.NEXT_PUBLIC_URL_BABYBOX_SERVICE;
   const snapshotServiceURL = process.env.NEXT_PUBLIC_URL_SNAPSHOT_HANDLER;
-  const babyboxes = useContext(BabyboxesContext) as Babybox[];
+  const babyboxes = useContext(BabyboxesContext) as BabyboxBase[];
   const babybox = babyboxes.find((x) => x.slug === params.slug);
+  const [updated, setUpdated] = useState<Date>(new Date());
 
   const {
     data: eventsData,
     error: eventsError,
     isLoading: eventsLoading,
+    mutate: eventsMutate,
   } = useSWR(
     [`${snapshotServiceURL}/v1/events/${params.slug}?n=10`, token],
     ([url, token]) => fetcherWithToken(url, token),
@@ -44,49 +48,58 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
   const last3DaysDate = format(addDays(today, -2), "yyyy-MM-dd");
 
   const {
-    data: snapshotsWeekData,
+    data: snapshotsWeek,
     error: snapshotsWeekError,
     isLoading: snapshotsWeekIsLoading,
+    mutate: snapshotsWeekMutate,
   } = useSWR(
     [
       `${snapshotServiceURL}/v1/snapshots/${params.slug}?from=${lastWeekDate}&to=${todayDate}`,
       token,
     ],
-    ([url, token]) => fetcherWithToken(url, token),
+    ([url, token]) => snapshotFetcher(url, token),
   );
 
   const {
-    data: snapshots3DaysData,
+    data: snapshots3Days,
     error: snapshots3DaysError,
     isLoading: snapshots3DaysIsLoading,
+    mutate: snapshots3DaysMutate,
   } = useSWR(
     [
       `${snapshotServiceURL}/v1/snapshots/${params.slug}?from=${last3DaysDate}&to=${todayDate}`,
       token,
     ],
-    ([url, token]) => fetcherWithToken(url, token),
+    ([url, token]) => snapshotFetcher(url, token),
   );
 
   const {
-    data: snapshotsDayData,
+    data: snapshotsDay,
     error: snapshotsDayError,
     isLoading: snapshotsDayIsLoading,
+    mutate: snapshotsDayMutate,
   } = useSWR(
     [
       `${snapshotServiceURL}/v1/snapshots/${params.slug}?from=${todayDate}&to=${todayDate}`,
       token,
     ],
-    ([url, token]) => fetcherWithToken(url, token),
+    ([url, token]) => snapshotFetcher(url, token),
   );
 
-  const stats = snapshotsWeekData
-    ? calculateSnapshotStats(snapshotsWeekData.data)
+  function refreshData() {
+    eventsMutate();
+    snapshotsDayMutate();
+    snapshots3DaysMutate();
+    snapshotsWeekMutate();
+    setUpdated(new Date());
+  }
+
+  const stats = snapshotsWeek ? calculateSnapshotStats(snapshotsWeek) : null;
+  const statsSmall = snapshots3Days
+    ? calculateSnapshotStats(snapshots3Days)
     : null;
-  const statsSmall = snapshots3DaysData
-    ? calculateSnapshotStats(snapshots3DaysData.data)
-    : null;
-  const statsSmaller = snapshotsDayData
-    ? calculateSnapshotStats(snapshotsDayData.data)
+  const statsSmaller = snapshotsDay
+    ? calculateSnapshotStats(snapshotsDay)
     : null;
 
   const temperatureVariableOverviews = [
@@ -106,9 +119,13 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
           <Skeleton className="h-4 w-[250px]" />
           <Skeleton className="h-4 w-[250px]" />
         </div>
-      ) : stats?.temperature === undefined ||
+      ) : snapshotsDayError ||
+        snapshotsWeekError ||
+        snapshots3DaysError ||
+        stats?.temperature === undefined ||
         statsSmall?.temperature === undefined ||
-        statsSmaller?.temperature === undefined ? (
+        statsSmaller?.temperature === undefined ||
+        !snapshotsDay ? (
         <>Statistiky nejsou dostupné</>
       ) : (
         <VariableOverview
@@ -121,7 +138,7 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
           lastWeek={(stats.temperature as SnapshotGroupStat)[o.key]}
           last3Days={(statsSmall.temperature as SnapshotGroupStat)[o.key]}
           lastDay={(statsSmaller.temperature as SnapshotGroupStat)[o.key]}
-          snapshots={snapshotsDayData.data}
+          snapshots={snapshotsDay}
         />
       )}
     </Widget>
@@ -143,7 +160,8 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
         </div>
       ) : stats?.voltage === undefined ||
         statsSmall?.voltage === undefined ||
-        statsSmaller?.voltage === undefined ? (
+        statsSmaller?.voltage === undefined ||
+        !snapshotsDay ? (
         <>Statistiky nejsou dostupné</>
       ) : (
         <VariableOverview
@@ -156,7 +174,7 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
           lastWeek={(stats.voltage as SnapshotGroupStat)[o.key]}
           last3Days={(statsSmall.voltage as SnapshotGroupStat)[o.key]}
           lastDay={(statsSmaller.voltage as SnapshotGroupStat)[o.key]}
-          snapshots={snapshotsDayData.data}
+          snapshots={snapshotsDay}
         />
       )}
     </Widget>
@@ -172,7 +190,23 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
       <div className="lg:ml-main mb-1 mt-5 flex-grow">
         <div className="mx-auto flex w-11/12 flex-col">
           <div className="mb-4">
-            <h4 className="ml-1 text-3xl font-black leading-6">Teploty</h4>
+            <h4 className="ml-1 text-4xl font-black leading-8">
+              Babybox {babybox?.name || ""}
+            </h4>
+            <div className="mb-6 flex flex-row flex-wrap items-center gap-2">
+              <h4 className=" ml-1 text-lg leading-8 text-muted-foreground">
+                Ukazuji data načtené v: {format(updated, "dd:mm:ss")}
+              </h4>
+              <Button
+                size="icon"
+                variant="ghost"
+                className="h-7 w-7"
+                onClick={refreshData}
+              >
+                <RefreshCcw className="h-4 w-4" />
+              </Button>
+            </div>
+            <h4 className="ml-1 text-3xl font-bold leading-6">Teploty</h4>
             <h5 className="mb-3 ml-1 text-xl text-muted-foreground">
               Minimum, Průměr, Maximum
             </h5>
@@ -183,7 +217,7 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
           </div>
 
           <div className="mb-4">
-            <h4 className="ml-1 text-3xl font-black leading-6">Napětí</h4>
+            <h4 className="ml-1 text-3xl font-bold leading-6">Napětí</h4>
             <h5 className="mb-3 ml-1 text-xl text-muted-foreground">
               Minimum, Průměr, Maximum
             </h5>
@@ -193,7 +227,7 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
             </div>
           </div>
 
-          <h4 className="mb-3 ml-1 text-3xl font-black">Data</h4>
+          <h4 className="mb-3 ml-1 text-3xl font-bold">Data</h4>
           <div className="mb-4 flex flex-row flex-wrap justify-center justify-items-center gap-4 md:justify-start">
             <Widget title="Nejnovější data">
               {snapshotsDayIsLoading ? (
@@ -202,13 +236,10 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
                 <div>Error</div>
               ) : (
                 <>
-                  <LatestSnapshots
-                    snapshots={snapshotsDayData.data as Snapshot[]}
-                    take={11}
-                  />
+                  <LatestSnapshots snapshots={snapshotsWeek || []} take={11} />
                   <Separator className="my-2" />
                   <TextualSnapshotStats
-                    snapshots={snapshotsDayData.data as Snapshot[]}
+                    snapshots={snapshotsWeek || []}
                     take={11}
                   />
                 </>
@@ -221,13 +252,16 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
                 <div>Error</div>
               ) : (
                 <>
-                  <LatestEvents events={eventsData.data as Event[]} take={11} />
+                  <LatestEvents
+                    events={eventsData?.data as Event[]}
+                    take={11}
+                  />
                 </>
               )}
             </Widget>
           </div>
 
-          <h4 className="mb-3 ml-1 text-3xl font-black">Notifikace</h4>
+          <h4 className="mb-3 ml-1 text-3xl font-bold">Notifikace</h4>
           <div className="grid grid-cols-2 gap-4"></div>
         </div>
       </div>

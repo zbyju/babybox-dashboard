@@ -53,8 +53,7 @@ func (service *DBService) QuerySnapshotsBySlug(
 	n uint,
 ) ([]domain.Snapshot, error) {
 	var fluxQuery string
-	if n == 1 {
-		fluxQuery = fmt.Sprintf(`
+	fluxQuery = fmt.Sprintf(`
     import "date"
     from(bucket: "%s")
       |> range(start: %s, stop: %s)
@@ -62,17 +61,6 @@ func (service *DBService) QuerySnapshotsBySlug(
       |> pivot(rowKey: ["_time"], columnKey: ["_field"], valueColumn: "_value")
       |> sort(columns: ["_time"], desc: true)
       |> limit(n: %d)`, service.bucket, from.Format(time.RFC3339), to.Format(time.RFC3339), measurementNameThermal, slug, n)
-	} else {
-		fluxQuery = fmt.Sprintf(`
-    import "date"
-    from(bucket: "%s")
-      |> range(start: %s, stop: %s)
-      |> filter(fn: (r) => r._measurement == "%s" and r.slug == "%s")
-      |> pivot(rowKey: ["_time"], columnKey: ["_field"], valueColumn: "_value")
-      |> sort(columns: ["_time"], desc: true)
-      |> limit(n: %d)`, service.bucket, from.Format(time.RFC3339), to.Format(time.RFC3339), measurementNameThermal, slug, n)
-
-	}
 
 	result, err := service.QueryData(fluxQuery)
 	if err != nil {
@@ -223,10 +211,6 @@ func (service *DBService) ConvertToInfluxDBPoint(
 	s *domain.Snapshot,
 	measurementName string,
 ) (*write.Point, error) {
-	parsedTime, err := time.ParseInLocation("2006-01-02 15:04:05", s.Timestamp, service.location)
-	if err != nil {
-		return nil, err
-	}
 
 	point := influxdb2.NewPointWithMeasurement(measurementName).
 		AddTag("slug", s.Slug).
@@ -238,7 +222,7 @@ func (service *DBService) ConvertToInfluxDBPoint(
 		AddField("temperature_bottom", *s.Temperature.Bottom).
 		AddField("voltage_in", *s.Voltage.In).
 		AddField("voltage_battery", *s.Voltage.Battery).
-		SetTime(parsedTime)
+		SetTime(s.Timestamp)
 
 	return point, nil
 }
@@ -279,7 +263,7 @@ func (service *DBService) ConvertRecordToSnapshot(
 ) (domain.Snapshot, error) {
 	snapshot := domain.Snapshot{
 		Slug:      record.ValueByKey("slug").(string),
-		Timestamp: record.Time().In(service.location).Format("2006-01-02 15:04:05"),
+		Timestamp: record.Time(),
 	}
 	snapshot.Temperature.Inside = float64PointerFromRecord(record, "temperature_inside")
 	snapshot.Temperature.Outside = float64PointerFromRecord(record, "temperature_outside")

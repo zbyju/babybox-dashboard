@@ -13,10 +13,9 @@ export default function TextualSnapshotStats(props: Props) {
   const snapshotsFirst = props.snapshots.slice(0, props.take || 5);
   const averageGap =
     calculateAverageSnapshotGap(snapshotsFirst)?.toFixed(0) ?? 0;
-  const lastSnapshotGap = formatDistanceToNow(
-    parse(snapshotsFirst[0].timestamp, "yyyy-MM-dd HH:mm:ss", new Date()),
-    { locale: cs },
-  );
+  const lastSnapshotGap = formatDistanceToNow(snapshotsFirst[0].timestamp, {
+    locale: cs,
+  });
   return (
     <div className="flex flex-col leading-5">
       {snapshotsFirst.length > 0 ? (
