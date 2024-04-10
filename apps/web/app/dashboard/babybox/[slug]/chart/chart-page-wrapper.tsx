@@ -235,7 +235,7 @@ export default function ChartPageWrapper({
     },
     FanBottom: {
       borderColor: "hsl(var(--battery))",
-      fillColor: "hsl(var(--battery))",
+      fillColor: "hsl(va(--battery))",
     },
     Doors: {
       borderColor: "hsl(var(--outside))",
@@ -265,7 +265,7 @@ export default function ChartPageWrapper({
   const eventsDecoded =
     !eventsError || !eventsIsLoading || !eventsData || !("data" in eventsData)
       ? []
-      : eventsData?.data.map((e: any) => decodeEvent(e));
+      : eventsData?.data.map((e: unknown) => decodeEvent(e as Event));
   console.timeEnd("decode")
   console.time("interval")
   const intervals = combineIntervals(generateIntervals(eventsDecoded));

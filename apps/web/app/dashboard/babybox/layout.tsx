@@ -1,18 +1,12 @@
 "use client";
 
 import {
-  fetchBabyboxNames,
-  fetchSnapshotsBySlugAndN,
   fetcherWithToken,
 } from "@/helpers/api-helper";
 import { BabyboxesProvider } from "../../../components/contexts/babyboxes-context";
 import Navbar from "@/components/navbar";
 import { useAuth } from "@/components/contexts/auth-context";
 import useSWR from "swr";
-import { ApiResponse } from "@/types/api.types";
-import { BabyboxBase } from "@/types/babybox.types";
-import { useEffect, useState } from "react";
-import { Babybox } from "@/components/tables/babyboxes-table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";

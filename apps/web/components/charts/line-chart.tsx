@@ -78,7 +78,7 @@ export default function LineChart(props: Props) {
         theme: theme,
         x: {
           format: "dd.MM.yyyy HH:mm",
-          formatter: (val: Date) =>
+          formatter: (val: number) =>
             format(val, "dd.MM.yyyy HH:mm:ss", { locale: cs }),
         },
       },
@@ -97,7 +97,7 @@ export default function LineChart(props: Props) {
         labels: {
           show: config.showXaxisLabels,
           format: "dd.MM HH:mm",
-          formatter: (val: Date) => format(val, "d.M.yy HH:mm", { locale: cs }),
+          formatter: (val: string) => format(val, "d.M.yy HH:mm", { locale: cs }),
         },
         axisBorder: {
           offsetX: -1,
