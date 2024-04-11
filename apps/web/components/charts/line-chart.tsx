@@ -4,7 +4,6 @@ import { format } from "date-fns";
 import { cs } from "date-fns/locale";
 import { useTheme } from "next-themes";
 import Chart from "react-apexcharts";
-import { formatWithOptions } from "util";
 
 interface Props {
   id: string;
@@ -51,12 +50,17 @@ export default function LineChart(props: Props) {
 
   const config = { ...defaultConfig, ...props };
 
+  const markerSize = props.series.length > 100 ? 0 : 1;
+
   const state = {
     options: {
       chart: {
         id: config.id,
         zoom: {
           enabled: config.zoom,
+        },
+        animations: {
+          enabled: false,
         },
         toolbar: {
           show: config.showToolbar,
@@ -97,7 +101,8 @@ export default function LineChart(props: Props) {
         labels: {
           show: config.showXaxisLabels,
           format: "dd.MM HH:mm",
-          formatter: (val: string) => format(val, "d.M.yy HH:mm", { locale: cs }),
+          formatter: (val: string) =>
+            format(val, "d.M.yy HH:mm", { locale: cs }),
         },
         axisBorder: {
           offsetX: -1,
@@ -144,7 +149,7 @@ export default function LineChart(props: Props) {
         },
       },
       markers: {
-        size: 1,
+        size: markerSize,
         strokeColors: "hsl(var(--border))",
         strokeWidth: 0,
       },

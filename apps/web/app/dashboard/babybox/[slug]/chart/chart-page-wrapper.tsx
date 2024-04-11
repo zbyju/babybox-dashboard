@@ -5,7 +5,7 @@ import LineChart from "@/components/charts/line-chart";
 import ChartStats from "@/components/charts/main-chart/chart-stats";
 import LatestSnapshots from "@/components/widgets/latest-snapshots";
 import { Snapshot } from "@/types/snapshot.types";
-import { addDays, parse } from "date-fns";
+import { addDays } from "date-fns";
 import { ChartSourcesObject } from "@/components/charts/main-chart/chart-sources";
 import { ChartSettingsObject } from "@/components/charts/main-chart/chart-settings";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -45,8 +45,8 @@ function calculateStrokeType(
   const n = series.length > 0 ? series[0].data.length : 0;
   if (n > 144) {
     return "straight";
-  } 
-    return "smooth";
+  }
+  return "smooth";
 }
 
 function transformData(
@@ -167,27 +167,26 @@ export default function ChartPageWrapper({
   } = useSWR(
     sources.temperature || sources.voltage
       ? [
-        `${snapshotServiceURL}/v1/snapshots/${slug}?from=${from}&to=${to}&fill=lazy`,
-        token,
-      ]
+          `${snapshotServiceURL}/v1/snapshots/${slug}?from=${from}&to=${to}&fill=lazy`,
+          token,
+        ]
       : null,
     ([url, token]) => snapshotFetcher(url, token),
   );
 
-    const {
+  const {
     data: snapshotsTable,
     error: snapshotsTableError,
     isLoading: snapshotsTableIsLoading,
   } = useSWR(
     sources.temperature || sources.voltage
       ? [
-        `${snapshotServiceURL}/v1/snapshots/${slug}?from=${from}&to=${to}&fill=fill`,
-        token,
-      ]
+          `${snapshotServiceURL}/v1/snapshots/${slug}?from=${from}&to=${to}&fill=fill`,
+          token,
+        ]
       : null,
     ([url, token]) => snapshotFetcher(url, token),
   );
-
 
   const {
     data: eventsData,
@@ -200,9 +199,9 @@ export default function ChartPageWrapper({
     ([url, token]) => fetcherWithToken(url, token),
   );
 
-  console.time("transform")
+  console.time("transform");
   const series = transformData(snapshots || [], sourcesFiltered);
-  console.timeEnd("transform")
+  console.timeEnd("transform");
 
   const [dateRange, setDateRange] = useState<DateRange>({
     from: dateToStringDate(addDays(new Date(), -7)),
@@ -261,15 +260,15 @@ export default function ChartPageWrapper({
     }));
   }
 
-  console.time("decode")
+  console.time("decode");
   const eventsDecoded =
     !eventsError || !eventsIsLoading || !eventsData || !("data" in eventsData)
       ? []
       : eventsData?.data.map((e: unknown) => decodeEvent(e as Event));
-  console.timeEnd("decode")
-  console.time("interval")
+  console.timeEnd("decode");
+  console.time("interval");
   const intervals = combineIntervals(generateIntervals(eventsDecoded));
-  console.timeEnd("interval")
+  console.timeEnd("interval");
   const filteredIntervals = intervals.filter((i) => {
     if (
       i.type.toLowerCase().includes("heating") ||
@@ -346,7 +345,7 @@ export default function ChartPageWrapper({
       <div className="h-[92vh] min-h-[400px]">
         <div className="mb-5 flex h-full w-full flex-col gap-6">
           {snapshotsIsLoading || eventsIsLoading ? (
-            <div className="mt-4 flex w-full h-full flex-col items-center justify-center gap-3">
+            <div className="mt-4 flex h-full w-full flex-col items-center justify-center gap-3">
               <Skeleton className="h-full w-11/12" />
             </div>
           ) : snapshotsError || eventsError ? (
@@ -414,7 +413,7 @@ export default function ChartPageWrapper({
             <Skeleton className="h-4 w-11/12 max-w-full" />
             <Skeleton className="h-4 w-11/12 max-w-full" />
           </div>
-        ) : snapshotsTableError  ? (
+        ) : snapshotsTableError ? (
           <></>
         ) : (
           <LatestSnapshots
