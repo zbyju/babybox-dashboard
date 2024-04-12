@@ -3,6 +3,7 @@ import * as z from "zod";
 
 import {
   createUser,
+  deleteUserByUsername,
   findAllUsers,
   findUserByUsername,
 } from "../services/user.service";
@@ -35,10 +36,19 @@ const routes = new Elysia()
     const users = userO.unwrap();
     return ReturnOk(users);
   })
+  .delete("/:username", async ({ params: { username }, error }) => {
+    const success = await deleteUserByUsername(username);
+    if (!success)
+      return error(
+        500,
+        ReturnErr("There has been an error when deleting from the database"),
+      );
+    return ReturnOk({ success: true, username });
+  })
   .post("/", async ({ body, error }) => {
     const result = userSchema.safeParse(body);
 
-    if (!result.success) return ReturnErr(result.error.toString());
+    if (!result.success) return error(400, ReturnErr(result.error.toString()));
 
     const userO = await createUser(result.data);
     if (userO.isNone())

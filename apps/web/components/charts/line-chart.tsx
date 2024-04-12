@@ -1,9 +1,10 @@
 "use client";
 
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
+import Chart from "react-apexcharts";
 import { format } from "date-fns";
 import { cs } from "date-fns/locale";
-import { useTheme } from "next-themes";
-import Chart from "react-apexcharts";
 
 interface Props {
   id: string;
@@ -24,9 +25,16 @@ interface Props {
 }
 
 export default function LineChart(props: Props) {
+  const [display, setDisplay] = useState<boolean>(false);
   const theme = useTheme().resolvedTheme || "dark";
 
-  if (props.series.length === 0) {
+  useEffect(() => {
+    console.log("test");
+    setDisplay(false);
+    setTimeout(() => setDisplay(true), 1);
+  }, []);
+
+  if (props.series.length === 0 || display === false) {
     return (
       <div className="flex h-full max-h-full w-full overflow-x-hidden overflow-y-hidden">
         <h4 className="mx-auto self-center text-center text-3xl">
@@ -42,7 +50,7 @@ export default function LineChart(props: Props) {
     showGrid: false,
     showLegend: true,
     strokeWidth: 1,
-    strokeType: "smooth" as const,
+    strokeType: "straight" as const,
     showTooltip: true,
     showXaxisLabels: true,
     showXaxisTicks: true,
@@ -95,6 +103,9 @@ export default function LineChart(props: Props) {
         labels: {
           colors: "hsl(var(--muted-foreground))",
         },
+      },
+      dataLabels: {
+        enabled: false,
       },
       xaxis: {
         type: config.xaxisType,

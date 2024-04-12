@@ -34,6 +34,17 @@ export const findUserByUsername = async (
   return new Some(user);
 };
 
+export const deleteUserByUsername = async (
+  username: string,
+): Promise<boolean> => {
+  try {
+    await UserModel.deleteOne({ username });
+    return true;
+  } catch (err) {
+    return false;
+  }
+};
+
 export const findUserByUsernameWithPassword = async (
   username: string,
 ): Promise<Option<User>> => {

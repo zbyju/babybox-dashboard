@@ -105,10 +105,12 @@ export default function ChartSources(props: Props) {
           </div>
 
           <DrawerFooter>
-            <div className="flex flex-row flex-wrap justify-center gap-4">
+            <div className="mb-4 flex flex-row flex-wrap justify-center gap-4 lg:mb-0">
               <DrawerClose asChild>
                 <div className="flex flex-row flex-wrap gap-4">
-                  <Button onClick={() => props.onChange(sources)}>
+                  <Button
+                    onClick={() => setTimeout(() => props.onChange(sources), 1)}
+                  >
                     Načíst
                   </Button>
                   <Button

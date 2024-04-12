@@ -1,3 +1,10 @@
+import Navbar from "@/components/navbar";
+
 export default function Help() {
-  return <div>Hi</div>;
+  return (
+    <div>
+      <Navbar />
+      Hi
+    </div>
+  );
 }

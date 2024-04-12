@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"strconv"
 	"time"
+  "fmt"
+  "strings"
 
 	"github.com/labstack/echo/v4"
 
@@ -13,10 +15,14 @@ import (
 
 // Old snapshot handler
 func (app *Application) SnapshotHandler(c echo.Context) error {
+  path := strings.ToLower(c.Param("name"))
 	slug := utils.ToSlug(c.QueryParam("BB"))
 
 	if slug == "" {
 		return c.JSON(http.StatusBadRequest, ReturnErr("Slug is empty"))
+	}
+	if strings.Contains(path, strings.ToLower(c.QueryParam("BB"))) {
+		return c.JSON(http.StatusBadRequest, ReturnErr("Slug is not matching"))
 	}
 
 	outside := parseQueryParam(app, c, "T0") / 100

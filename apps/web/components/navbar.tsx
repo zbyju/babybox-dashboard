@@ -1,16 +1,19 @@
 import {
   Bell,
+  CircleEllipsis,
   Construction,
   HelpCircle,
   Home,
   LogIn,
   LogOut,
+  User,
 } from "lucide-react";
 import { ModeToggle } from "./buttons/darkmode-toggle";
 import { BabyboxCombo } from "./babybox-combo";
 import Link from "next/link";
 import { Button } from "./ui/button";
 import { useAuth } from "./contexts/auth-context";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 
 export default function Navbar() {
   const { isAuthenticated } = useAuth();
@@ -18,6 +21,10 @@ export default function Navbar() {
   const links = [
     { href: "/dashboard/babybox", name: "Domů", icon: <Home /> },
     { href: "/dashboard/notifications", name: "Notifikace", icon: <Bell /> },
+  ];
+
+  const otherLinks = [
+    { href: "/dashboard/users", name: "Uživatelé", icon: <User /> },
     { href: "/dashboard/help", name: "Nápověda", icon: <HelpCircle /> },
   ];
 
@@ -28,13 +35,33 @@ export default function Navbar() {
     <>
       <nav className="hidden w-screen border-collapse border-b border-b-slate-100 dark:border-b-slate-800 lg:block">
         <div className="flex flex-row items-center justify-start gap-10 py-2 md:px-4 lg:px-[16%]">
-          <div className="flex flex-grow flex-row justify-start gap-8">
+          <div className="flex flex-grow flex-row justify-start gap-6">
             {links.map((l) => (
               <Link className={linkClass} key={l.href} href={l.href}>
                 {l.icon}
                 {l.name}
               </Link>
             ))}
+            <Popover>
+              <PopoverTrigger className={linkClass}>
+                <CircleEllipsis />
+                Další
+              </PopoverTrigger>
+              <PopoverContent className="w-auto">
+                <div className="mx-auto flex flex-col items-center justify-start gap-4">
+                  {otherLinks.map((l) => (
+                    <Link
+                      className={linkClass + " self-start"}
+                      key={l.href}
+                      href={l.href}
+                    >
+                      {l.icon}
+                      {l.name}
+                    </Link>
+                  ))}
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
           <div className="flex flex-row items-center justify-between gap-4">
             <BabyboxCombo />
@@ -44,13 +71,13 @@ export default function Navbar() {
             {!isAuthenticated && (
               <Link href="/auth/login" className={linkClass}>
                 <LogIn />
-                Login
+                Přihlásit se
               </Link>
             )}
             {isAuthenticated && (
               <Link href="/auth/logout" className={linkClass}>
                 <LogOut />
-                Logout
+                Odhlásit se
               </Link>
             )}
           </div>
@@ -67,6 +94,25 @@ export default function Navbar() {
                 </Button>
               </Link>
             ))}
+            <Popover>
+              <PopoverTrigger className={linkClass}>
+                <CircleEllipsis />
+              </PopoverTrigger>
+              <PopoverContent className="w-auto">
+                <div className="mx-auto flex flex-col items-center justify-start gap-4">
+                  {otherLinks.map((l) => (
+                    <Link
+                      className={linkClass + " self-start"}
+                      key={l.href}
+                      href={l.href}
+                    >
+                      {l.icon}
+                      {l.name}
+                    </Link>
+                  ))}
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
           <div className="flex flex-row items-center justify-between gap-2">
             <ModeToggle />

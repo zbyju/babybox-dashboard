@@ -4,7 +4,7 @@ import Link from "next/link";
 export default function Custom404() {
   return (
     <div>
-      <div className="flex h-full min-h-[80vh] w-full flex-col items-center justify-center">
+      <div className="flex h-full min-h-[80vh] w-full flex-col items-center justify-center text-center">
         <h1 className="text-3xl">
           <span className="font-bold">404</span> - Stránka nebyla nalezena
         </h1>

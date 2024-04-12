@@ -39,16 +39,6 @@ function calculateStrokeWidth(series: ApexAxisChartSeries): number {
   return 4;
 }
 
-function calculateStrokeType(
-  series: ApexAxisChartSeries,
-): "straight" | "smooth" | "monotoneCubic" {
-  const n = series.length > 0 ? series[0].data.length : 0;
-  if (n > 144) {
-    return "straight";
-  }
-  return "smooth";
-}
-
 function transformData(
   originalData: Snapshot[],
   fieldsToExtract: {
@@ -210,7 +200,7 @@ export default function ChartPageWrapper({
 
   const [chartSettings, setChartSettings] = useState<ChartSettingsObject>({
     strokeWidth: calculateStrokeWidth(series),
-    strokeType: calculateStrokeType(series),
+    strokeType: "straight",
   });
 
   const eventColors: {

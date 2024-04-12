@@ -30,3 +30,5 @@ dist/
 letsencrypt/
 
 .DS_Store
+
+**.pnp*
