@@ -82,6 +82,5 @@
     "tsconfig-paths-jest": "^0.0.1",
     "typescript": "^5.3.3",
     "typescript-eslint": "^7.0.2"
-  },
-  "packageManager": "yarn@4.1.1"
+  }
 }

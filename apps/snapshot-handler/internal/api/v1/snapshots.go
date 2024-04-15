@@ -4,8 +4,7 @@ import (
 	"net/http"
 	"strconv"
 	"time"
-  "fmt"
-  "strings"
+  	"strings"
 
 	"github.com/labstack/echo/v4"
 
