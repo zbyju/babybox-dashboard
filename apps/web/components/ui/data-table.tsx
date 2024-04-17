@@ -24,6 +24,8 @@ import {
 import { useState } from "react";
 import { Input } from "./input";
 import { Button } from "./button";
+import { RotateCcw } from "lucide-react";
+import RefreshButton from "../buttons/refresh";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -35,6 +37,7 @@ interface DataTableProps<TData, TValue> {
   rowClassNameAccessor?: (row: Row<TData>) => string;
   rowClickAccessor?: (row: Row<TData>) => unknown;
   className?: string;
+  onRefresh?: () => void;
 }
 
 export function DataTable<TData, TValue>({
@@ -47,6 +50,7 @@ export function DataTable<TData, TValue>({
   rowClickAccessor,
   className = "",
   hideColumns = [],
+  onRefresh,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>(defaultSorting);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -65,21 +69,26 @@ export function DataTable<TData, TValue>({
 
   return (
     <>
-      {filterColumnName ? (
-        <div className="flex items-center py-4">
-          <Input
-            placeholder="Vyhledejte Babybox..."
-            value={
-              (table.getColumn(filterColumnName)?.getFilterValue() as string) ??
-              ""
-            }
-            onChange={(event) =>
-              table
-                .getColumn(filterColumnName)
-                ?.setFilterValue(event.target.value)
-            }
-            className="max-w-sm"
-          />
+      {filterColumnName || onRefresh ? (
+        <div className="flex items-center py-4 gap-4">
+          {filterColumnName ? 
+            <Input 
+              placeholder="Vyhledejte Babybox..."
+              value={
+                (table.getColumn(filterColumnName)?.getFilterValue() as string) ??
+                ""
+              }
+              onChange={(event) =>
+                table
+                  .getColumn(filterColumnName)
+                  ?.setFilterValue(event.target.value)
+              }
+              className="max-w-sm"
+            /> : null
+          }
+          {
+            onRefresh ? <RefreshButton onClick={onRefresh} /> : null
+          }
         </div>
       ) : null}
       <div className={"overflow-hidden rounded-md border" + " " + className}>

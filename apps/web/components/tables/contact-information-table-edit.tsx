@@ -8,68 +8,74 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { useState } from "react";
 import { Button } from "../ui/button";
+import { v4 as uuidv4 } from 'uuid';
 import { toast } from "sonner";
 
 interface Props {
   contacts: BabyboxContact[];
+  onClick: (contacts: BabyboxContact[]) => void;
+  onRemove: (id: string) => void;
 }
-
-function handleRemoveClicked(id: string): void {
-  console.log(id);
-}
-
-export const columns: ColumnDef<BabyboxContact>[] = [
-  {
-    accessorKey: "name",
-    header: () => <div className="">Jméno</div>,
-  },
-  {
-    accessorKey: "email",
-    header: () => <div className="">Email</div>,
-  },
-  {
-    accessorKey: "phone",
-    header: () => <div className="">Telefon</div>,
-  },
-  {
-    accessorKey: "note",
-    header: () => <div className="">Poznámka</div>,
-  },
-  {
-    accessorKey: "id",
-    header: () => <div className="text-center">Akce</div>,
-    cell: ({ getValue }) => {
-      const id = getValue() as string;
-
-      return (
-        <div className="flex w-full flex-row justify-center">
-          <Button
-            variant="destructive"
-            size="icon"
-            className="h-6 w-6"
-            onClick={() => handleRemoveClicked(id)}
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        </div>
-      );
-    },
-  },
-];
 
 export default function ContactInformationTableEdit(props: Props) {
+  const columns: ColumnDef<BabyboxContact>[] = [
+    {
+      accessorKey: "firstname",
+      header: () => <div className="">Jméno</div>,
+    },
+    {
+      accessorKey: "lastname",
+      header: () => <div className="">Příjmení</div>,
+    },
+    {
+      accessorKey: "position",
+      header: () => <div className="">Role</div>,
+    },
+    {
+      accessorKey: "email",
+      header: () => <div className="">Email</div>,
+    },
+    {
+      accessorKey: "phone",
+      header: () => <div className="">Telefon</div>,
+    },
+    {
+      accessorKey: "note",
+      header: () => <div className="">Poznámka</div>,
+    },
+    {
+      accessorKey: "id",
+      header: () => <div className="text-center">Akce</div>,
+      cell: ({ getValue}) => {
+        const id = getValue() as string;
+
+        return (
+          <div className="flex w-full flex-row justify-center">
+            <Button
+              variant="destructive"
+              size="icon"
+              className="h-6 w-6"
+              onClick={() => props.onRemove(id)}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
+        );
+      },
+    },
+  ];
+
+
   const [contact, setContact] = useState<BabyboxContact>({
-    id: "",
-    name: "",
+    id: uuidv4(),
+    firstname: "",
+    lastname: "",
+    position: "",
     email: "",
     phone: "",
     note: "",
   });
 
-  function handleAddClicked(): void {
-    console.log(contact);
-    toast.error("Error when adding");
-  }
 
   return (
     <div>
@@ -87,14 +93,31 @@ export default function ContactInformationTableEdit(props: Props) {
         <div className="flex flex-col gap-1">
           <Label className="ml-1 text-muted-foreground">Jméno</Label>
           <Input
-            value={contact.name}
-            onChange={(e) => setContact({ ...contact, name: e.target.value })}
+            value={contact.firstname}
+            onChange={(e) => setContact({ ...contact, firstname: e.target.value })}
+            className="h-[30px] w-[150px] rounded-sm text-xs"
+          />
+        </div>
+        <div className="flex flex-col gap-1">
+          <Label className="ml-1 text-muted-foreground">Příjmení</Label>
+          <Input
+            value={contact.lastname}
+            onChange={(e) => setContact({ ...contact, lastname: e.target.value })}
+            className="h-[30px] w-[150px] rounded-sm text-xs"
+          />
+        </div>
+        <div className="flex flex-col gap-1">
+          <Label className="ml-1 text-muted-foreground">Role</Label>
+          <Input
+            value={contact.position}
+            onChange={(e) => setContact({ ...contact, position: e.target.value })}
             className="h-[30px] w-[150px] rounded-sm text-xs"
           />
         </div>
         <div className="flex flex-col gap-1">
           <Label className="ml-1 text-muted-foreground">Email</Label>
           <Input
+            type="email"
             value={contact.email}
             onChange={(e) => setContact({ ...contact, email: e.target.value })}
             className="h-[30px] w-[160px] rounded-sm text-xs"
@@ -103,6 +126,7 @@ export default function ContactInformationTableEdit(props: Props) {
         <div className="flex flex-col gap-1">
           <Label className="ml-1 text-muted-foreground">Telefon</Label>
           <Input
+            type="phone"
             value={contact.phone}
             onChange={(e) => setContact({ ...contact, phone: e.target.value })}
             className="h-[30px] w-[100px] rounded-sm text-xs"
@@ -119,7 +143,22 @@ export default function ContactInformationTableEdit(props: Props) {
       </div>
 
       <div className="flex flex-row flex-wrap gap-4">
-        <Button size="sm" onClick={() => handleAddClicked()}>
+        <Button size="sm" onClick={() => {
+          if(contact.firstname.length > 1 && contact.lastname.length > 1) {
+            props.onClick(props.contacts.concat(contact));
+            setContact({
+              id: uuidv4(),
+              firstname: "",
+              lastname: "",
+              position: "",
+              email: "",
+              phone: "",
+              note: ""
+            })
+          } else {
+            toast.error("Kontakt musí mít vyplněné jméno a příjmení.")
+          }}
+        }>
           Přidat
         </Button>
       </div>

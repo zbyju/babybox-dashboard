@@ -13,6 +13,7 @@ type Babybox struct {
 	CreatedAt     time.Time             `json:"created_at" bson:"created_at"`
 	Location      *Location             `json:"location,omitempty" bson:"location,omitempty"`
 	NetworkConfig *NetworkConfiguration `json:"network_configuration,omitempty" bson:"network_configuration,omitempty"`
+  Contacts      *[]Contact             `json:"contacts,omitempty" bson:"contacts,omitempty"`
 }
 
 // Location struct with optional Coordinates
@@ -44,4 +45,14 @@ type IPConfig struct {
 	Camera      string `json:"camera" bson:"camera"`
 	PC          string `json:"pc" bson:"pc"`
 	Gateway     string `json:"gateway" bson:"gateway"`
+}
+
+type Contact struct {
+  ID        string `json:"id"`
+  FirstName string `json:"firstname"`
+  LastName  string `json:"lastname"`
+  Email     string `json:"email"`
+  Phone     string `json:"phone"`
+  Position  string `json:"position"`
+  Note      string `json:"note"`
 }

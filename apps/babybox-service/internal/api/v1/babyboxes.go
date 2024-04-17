@@ -30,11 +30,14 @@ func (app *Application) GetBabyboxBySlug(c echo.Context) error {
 	slug := c.Param("slug")
 
 	babybox, err := app.DBService.FindBabyboxBySlug(slug)
+
 	if err == mongo.ErrNoDocuments {
 		return c.JSON(http.StatusNotFound, ReturnErr(fmt.Sprintf("Babybox with slug: '%s' was not found.", slug)))
 	} else if err != nil {
 		return c.JSON(http.StatusInternalServerError, ReturnErr(err))
-	}
+	} else if babybox == nil {
+    return c.JSON(http.StatusNotFound, ReturnErr(fmt.Sprintf("Babybox with slug: '%s' was not found.", slug)))
+  }
 
 	return c.JSON(http.StatusOK, ReturnOk(babybox))
 }

@@ -11,8 +11,16 @@ interface Props {
 
 export const columns: ColumnDef<BabyboxContact>[] = [
   {
-    accessorKey: "name",
+    accessorKey: "firstname",
     header: () => <div className="">Jméno</div>,
+  },
+  {
+    accessorKey: "lastname",
+    header: () => <div className="">Příjmení</div>,
+  },
+  {
+    accessorKey: "position",
+    header: () => <div className="">Role</div>,
   },
   {
     accessorKey: "email",

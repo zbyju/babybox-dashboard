@@ -209,15 +209,14 @@ export default function NetworkConfigurationEdit(props: Props) {
           <Textarea
             className=""
             id="note"
+            value={networkConfiguration.note || ""}
             onChange={(e) =>
               setNetworkConfiguration({
                 ...networkConfiguration,
                 note: e.target.value,
               })
             }
-          >
-            {networkConfiguration?.note || ""}
-          </Textarea>
+          />
         </div>
       </CardContent>
       <CardFooter>

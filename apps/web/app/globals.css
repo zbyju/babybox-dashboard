@@ -141,3 +141,16 @@ div.ghost tbody tr td {
     padding-bottom: 18px;
   }
 }
+
+@keyframes spin {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+.spin {
+  animation: spin 1s ease-in-out;
+}

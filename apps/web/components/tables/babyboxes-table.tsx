@@ -209,8 +209,10 @@ export const columns: ColumnDef<Babybox>[] = [
 
 export default function BabyboxesTable({
   babyboxes,
+  onRefresh,
 }: {
   babyboxes: Babybox[];
+  onRefresh: () => void;
 }) {
   const router = useRouter();
 
@@ -226,6 +228,7 @@ export default function BabyboxesTable({
       rowClickAccessor={onRowClick}
       hideColumns={["slug"]}
       filterColumnName="name"
+      onRefresh={onRefresh}
     />
   );
 }

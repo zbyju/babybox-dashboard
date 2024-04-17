@@ -4,9 +4,8 @@ import BabyboxSideMenu from "@/components/babybox-side-menu";
 
 import Widget from "@/components/ui/widget";
 
-import { events } from "../../../../data/heating_cooling_events.js";
 import LatestSnapshots from "@/components/widgets/latest-snapshots";
-import { Snapshot, SnapshotGroupStat } from "@/types/snapshot.types";
+import { SnapshotGroupStat } from "@/types/snapshot.types";
 import { Event } from "@/types/event.types";
 import LatestEvents from "@/components/widgets/latest-events";
 import { calculateSnapshotStats } from "@/utils/stats";
@@ -20,10 +19,10 @@ import { useAuth } from "@/components/contexts/auth-context";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useContext, useState } from "react";
 import { BabyboxesContext } from "@/components/contexts/babyboxes-context";
-import { Babybox } from "@/components/tables/babyboxes-table";
 import { BabyboxBase } from "@/types/babybox.types.js";
 import { Button } from "@/components/ui/button";
 import { RefreshCcw } from "lucide-react";
+import RefreshButton from "@/components/buttons/refresh";
 
 export default function BabyboxPage({ params }: { params: { slug: string } }) {
   const { token } = useAuth();
@@ -197,14 +196,7 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
               <h4 className=" ml-1 text-lg leading-8 text-muted-foreground">
                 Ukazuji data načtené v: {format(updated, "dd:mm:ss")}
               </h4>
-              <Button
-                size="icon"
-                variant="ghost"
-                className="h-7 w-7"
-                onClick={refreshData}
-              >
-                <RefreshCcw className="h-4 w-4" />
-              </Button>
+              <RefreshButton onClick={refreshData} />
             </div>
             <h4 className="ml-1 text-3xl font-bold leading-6">Teploty</h4>
             <h5 className="mb-3 ml-1 text-xl text-muted-foreground">

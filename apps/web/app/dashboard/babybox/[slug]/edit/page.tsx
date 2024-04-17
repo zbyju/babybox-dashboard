@@ -3,12 +3,13 @@
 import { useAuth } from "@/components/contexts/auth-context";
 import LocationInformationEdit from "@/components/location-information-edit";
 import NetworkConfigurationEdit from "@/components/network-configuration-edit";
+import ContactInformationTableEdit from "@/components/tables/contact-information-table-edit";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { fetcherWithToken } from "@/helpers/api-helper";
 import { ApiResponse } from "@/types/api.types";
-import { BabyboxDetail } from "@/types/babybox.types";
+import { BabyboxContact, BabyboxDetail } from "@/types/babybox.types";
 import { ArrowLeft, Info, Pencil } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -127,6 +128,26 @@ export default function Home({ params }: { params: { slug: string } }) {
             })
           }
         />
+
+        <ContactInformationTableEdit 
+          contacts={data?.data?.contacts || []}
+          onClick={(contacts) =>
+            updateBabybox({
+              ...data.data,
+              contacts: contacts,
+            })
+          }
+          onRemove={(id) => {
+            console.log({
+            ...data.data,
+            contacts: data.data.contacts.filter((c: BabyboxContact) => c.id !== id)
+          })
+          updateBabybox({
+            ...data.data,
+            contacts: data.data.contacts.filter((c: BabyboxContact) => c.id !== id)
+          })}}
+        />
+
       </div>
     </div>
   );

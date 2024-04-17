@@ -28,7 +28,9 @@ export type BabyboxAddress = {
 
 export type BabyboxContact = {
   id: string;
-  name: string;
+  firstname: string;
+  lastname: string;
+  position: string;
   email?: string;
   phone?: string;
   note?: string;

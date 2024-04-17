@@ -3,6 +3,7 @@
 import { useAuth } from "@/components/contexts/auth-context";
 import LocationInformation from "@/components/location-information";
 import NetworkConfiguration from "@/components/network-configuration";
+import ContactInformationTable from "@/components/tables/contact-information-table";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -77,6 +78,16 @@ export default function Home({ params }: { params: { slug: string } }) {
               babyboxData.data.network_configuration && (
                 <NetworkConfiguration
                   networkConfiguration={babyboxData.data.network_configuration}
+                />
+              )
+            )}
+
+            {babyboxIsLoading ? (
+              <Skeleton className="h-[400px] w-[250px]" />
+            ) : (
+              babyboxData?.data.contacts && (
+                <ContactInformationTable
+                  contacts={babyboxData?.data.contacts}
                 />
               )
             )}

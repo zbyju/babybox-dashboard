@@ -40,6 +40,10 @@ func (db *DBService) InsertBabybox(slug string, name string) (*domain.Babybox, e
 func (db *DBService) UpdateBabybox(babybox domain.Babybox) (*domain.Babybox, error) {
 	collection := db.Client.Database(db.DatabaseName).Collection(babyboxCollectionName)
 
+  if len(*babybox.Contacts) == 0 {
+    babybox.Contacts = &[]domain.Contact{}
+  }
+
 	filter := bson.M{"slug": babybox.Slug}
 	update := bson.M{"$set": babybox}
 

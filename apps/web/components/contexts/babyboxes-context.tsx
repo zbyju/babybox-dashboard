@@ -14,7 +14,7 @@ export function BabyboxesProvider({
 }>) {
   return (
     <BabyboxesContext.Provider
-      value={babyboxes.sort((a: unknown, b: unknown) =>
+      value={(babyboxes ?? []).sort((a: unknown, b: unknown) =>
         //@ts-expect-error temp
         a.slug.localeCompare(b.slug),
       )}
