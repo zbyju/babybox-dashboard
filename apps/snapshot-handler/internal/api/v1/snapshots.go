@@ -4,8 +4,7 @@ import (
 	"net/http"
 	"strconv"
 	"time"
-  "fmt"
-  "strings"
+ 	"strings"
 
 	"github.com/labstack/echo/v4"
 
@@ -21,7 +20,7 @@ func (app *Application) SnapshotHandler(c echo.Context) error {
 	if slug == "" {
 		return c.JSON(http.StatusBadRequest, ReturnErr("Slug is empty"))
 	}
-	if strings.Contains(path, strings.ToLower(c.QueryParam("BB"))) {
+	if !strings.Contains(path, strings.ToLower(c.QueryParam("BB"))) {
 		return c.JSON(http.StatusBadRequest, ReturnErr("Slug is not matching"))
 	}
 
