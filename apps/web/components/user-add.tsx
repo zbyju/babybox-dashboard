@@ -24,13 +24,6 @@ export default function UserAdd(props: Props) {
 
   async function handleUserAdd(user: UserWithPassword) {
     try {
-      console.log(token);
-      console.log({
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
       const res = await fetch(`${userServiceURL}/v1/users/`, {
         method: "POST",
         headers: {
@@ -39,7 +32,6 @@ export default function UserAdd(props: Props) {
         },
         body: JSON.stringify(user),
       });
-      console.log(res.status);
       const data = await res.json();
       if (res.ok && !data?.metadata?.err) {
         props.onAdd && props.onAdd(user);

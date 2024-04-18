@@ -37,7 +37,6 @@ export default function MaintenanceTableEdit(props: Props) {
   }>({ timestamp: new Date(), note: "" });
 
   function handleAddClicked(): void {
-    console.log(maintenance);
     toast.error("Chyba");
   }
 

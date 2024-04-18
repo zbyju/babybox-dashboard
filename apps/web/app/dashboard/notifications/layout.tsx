@@ -80,7 +80,6 @@ export default function BabyboxLayout({
       </div>
     );
 
-  console.log(babyboxes);
   return (
     <div>
       <BabyboxesProvider babyboxes={babyboxes}>

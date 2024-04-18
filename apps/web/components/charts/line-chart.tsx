@@ -29,7 +29,6 @@ export default function LineChart(props: Props) {
   const theme = useTheme().resolvedTheme || "dark";
 
   useEffect(() => {
-    console.log("test");
     setDisplay(false);
     setTimeout(() => setDisplay(true), 1);
   }, []);

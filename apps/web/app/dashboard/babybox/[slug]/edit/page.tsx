@@ -138,14 +138,11 @@ export default function Home({ params }: { params: { slug: string } }) {
             })
           }
           onRemove={(id) => {
-            console.log({
-            ...data.data,
-            contacts: data.data.contacts.filter((c: BabyboxContact) => c.id !== id)
-          })
-          updateBabybox({
-            ...data.data,
-            contacts: data.data.contacts.filter((c: BabyboxContact) => c.id !== id)
-          })}}
+            updateBabybox({
+              ...data.data,
+              contacts: data.data.contacts.filter((c: BabyboxContact) => c.id !== id)
+            })
+          }}
         />
 
       </div>

@@ -85,7 +85,7 @@ export default function Home({ params }: { params: { slug: string } }) {
             {babyboxIsLoading ? (
               <Skeleton className="h-[400px] w-[250px]" />
             ) : (
-              babyboxData?.data.contacts && (
+              babyboxData?.data.contacts && babyboxData?.data.contacts.length > 0 && (
                 <ContactInformationTable
                   contacts={babyboxData?.data.contacts}
                 />

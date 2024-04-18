@@ -27,18 +27,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 
-function calculateStrokeWidth(series: ApexAxisChartSeries): number {
-  const n = series.length > 0 ? series[0].data.length : 0;
-  if (n > 1000) {
-    return 1;
-  } else if (n > 144) {
-    return 2;
-  } else if (n > 70) {
-    return 3;
-  }
-  return 4;
-}
-
 function transformData(
   originalData: Snapshot[],
   fieldsToExtract: {
@@ -189,17 +177,14 @@ export default function ChartPageWrapper({
     ([url, token]) => fetcherWithToken(url, token),
   );
 
-  console.time("transform");
   const series = transformData(snapshots || [], sourcesFiltered);
-  console.timeEnd("transform");
 
   const [dateRange, setDateRange] = useState<DateRange>({
     from: dateToStringDate(addDays(new Date(), -7)),
     to: dateToStringDate(new Date()),
   });
-
   const [chartSettings, setChartSettings] = useState<ChartSettingsObject>({
-    strokeWidth: calculateStrokeWidth(series),
+    strokeWidth: 1,
     strokeType: "straight",
   });
 
@@ -250,15 +235,11 @@ export default function ChartPageWrapper({
     }));
   }
 
-  console.time("decode");
   const eventsDecoded =
     !eventsError || !eventsIsLoading || !eventsData || !("data" in eventsData)
       ? []
       : eventsData?.data.map((e: unknown) => decodeEvent(e as Event));
-  console.timeEnd("decode");
-  console.time("interval");
   const intervals = combineIntervals(generateIntervals(eventsDecoded));
-  console.timeEnd("interval");
   const filteredIntervals = intervals.filter((i) => {
     if (
       i.type.toLowerCase().includes("heating") ||
