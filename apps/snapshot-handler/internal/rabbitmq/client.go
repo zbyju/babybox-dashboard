@@ -40,8 +40,8 @@ func NewClient() (*Client, error) {
 
 	// Queue Declaration
 	err = ch.ExchangeDeclare(
-		"new_snapshots",              // Queue exchange
-		"fanout",                     //Type of exchange
+		"snapshot.received",              // Queue exchange
+		"fanout",                     // Type of exchange
 		true,                         // Durable
 		false,                        // Delete when unused
 		false,                        // Exclusive
@@ -52,7 +52,7 @@ func NewClient() (*Client, error) {
 		return nil, err
 	}
 
-	fmt.Println("Created new_snapshots")
+	fmt.Println("Created the exchange snapshot.received")
 
 	return &Client{conn: conn, newSnapshotsChannel: ch}, nil
 }

@@ -17,7 +17,7 @@ func (p *Client) PublishSnapshot(snapshot domain.Snapshot) error {
 
 	// Publish the serialized Snapshot to the declared queue
 	err = p.newSnapshotsChannel.Publish(
-		"new_snapshots", // Exchange
+		"snapshot.received", // Exchange
 		"",              // Routing key (queue name)
 		false,           // Mandatory
 		false,           // Immediate

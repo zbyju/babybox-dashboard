@@ -36,7 +36,7 @@ func NewClient() (*Client, error) {
 	}
 
 	err = ch.ExchangeDeclare(
-		"logs",   // name
+		"snapshot.received",   // name
 		"fanout", // type
 		true,     // durable
 		false,    // auto-deleted
@@ -50,10 +50,10 @@ func NewClient() (*Client, error) {
 	}
 
 	q, err := ch.QueueDeclare(
-		"new_snapshots_queue", // name
+		"babybox-service.snapshot.processor", // name
 		false,                 // durable
 		false,                 // delete when unused
-		true,                  // exclusive
+		false,                  // exclusive
 		false,                 // no-wait
 		nil,                   // arguments
 	)
@@ -64,7 +64,7 @@ func NewClient() (*Client, error) {
 	err = ch.QueueBind(
 		q.Name,          // queue name
 		"",              // routing key
-		"new_snapshots", // exchange
+		"snapshot.received", // exchange
 		false,
 		nil,
 	)
@@ -74,7 +74,7 @@ func NewClient() (*Client, error) {
 
 	// Set up a consumer
 	delivery, err := ch.Consume(
-		"new_snapshots_queue", // Queue name
+		q.Name, // Queue name
 		"babybox-service",     // Consumer name
 		true,                  // Auto-ack
 		false,                 // Exclusive
