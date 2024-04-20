@@ -1,10 +1,10 @@
-FROM python:3.9-slim  # Start with a slim Python base image
+FROM python:3.9-slim
 
-WORKDIR /app     # Set the working directory
+WORKDIR /app
 
-COPY requirements.txt requirements.txt  # Copy the requirements first
+COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
-COPY . .         # Copy the project files
+COPY . .
 
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8083"] 
