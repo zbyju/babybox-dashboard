@@ -119,6 +119,31 @@ services:
     restart: always
     depends_on:
       - mongodb
+
+  notification-service:
+    build:
+      context: ./apps/notification-service
+      dockerfile: Dockerfile
+    ports:
+      - "8083:8083"
+    environment:
+      - APP_ENV=production
+      - JWT_SECRET=${JWT_SECRET}
+      - MONGODB_USERNAME=${MONGODB_USERNAME}
+      - MONGODB_PASSWORD=${MONGODB_PASSWORD}
+      - MONGODB_DATABASE=${MONGODB_DATABASE}
+      - RABBITMQ_USERNAME=${RABBITMQ_USERNAME}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+    labels:
+      - "traefik.enable=true"
+      - "t.http.routers.notification-service.entrypoints=web"
+      - "traefik.http.routers.notification-service.rule=Host(`notification.${DOMAIN}`)"
+      - traefik.http.services.notification-service.loadbalancer.server.port=8083
+    restart: always
+    depends_on:
+      - snapshot-handler
+      - mongodb
+      - rabbitmq
   # ------------------- SERVICES ------------------
   mongodb:
     image: mongo:latest

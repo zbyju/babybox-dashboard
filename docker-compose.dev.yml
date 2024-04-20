@@ -48,3 +48,16 @@ services:
       - traefik.http.routers.user-service.rule=Host(`user-service.localhost`)
       - traefik.http.routers.user-service.entrypoints=web
       - traefik.http.services.user-service.loadbalancer.server.port=8082
+
+  notification-service:
+    build:
+      context: ./apps/notification-service
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./apps/notification-service:/app
+    environment:
+      - APP_ENV=development
+    labels:
+      - traefik.http.routers.notification-service.rule=Host(`notification-service.localhost`)
+      - traefik.http.routers.notification-service.entrypoints=web
+      - traefik.http.services.notification-service.loadbalancer.server.port=8083
