@@ -28,6 +28,7 @@ func RegisterRoutes(e *echo.Echo, app *v1.Application) {
 
 	// Support old endpoint
 	e.GET("/BB.:name", app.SnapshotHandler)
+	e.GET("/bb.:name", app.SnapshotHandler)
 
 	// New endpoints
 	e.GET("/send/events/:slug", app.EventsHandler)
