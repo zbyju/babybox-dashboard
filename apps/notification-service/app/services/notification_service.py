@@ -4,6 +4,8 @@ from app.models.notification import Notification
 import logging
 from bson import ObjectId
 from datetime import datetime, timedelta
+import pytz
+
 
 logger = logging.getLogger(__name__)
 
@@ -20,49 +22,24 @@ async def fetch_all_notifications():
 
 async def find_notifications_by_template_slug(
     slug: str,
-    global_flag: bool = True,
-    from_date: datetime = (datetime.now() - timedelta(days=30)).replace(hour=0, minute=0, second=0, microsecond=0),
-    to_date: datetime = datetime.now().replace(hour=23, minute=59, second=59, microsecond=999999),
+    from_date: datetime = (datetime.now(pytz.timezone("Europe/Prague")) - timedelta(days=30)).replace(
+        hour=0, minute=0, second=0, microsecond=0
+    ),
+    to_date: datetime = datetime.now(pytz.timezone("Europe/Prague")).replace(
+        hour=23, minute=59, second=59, microsecond=999999
+    ),
 ):
-    """Finds all notifications linked to a notification template with a given slug, possibly including global templates."""
+    """Finds all notifications linked to a notification template with a given slug."""
+    query = {"slug": slug, "timestamp": {"$gte": from_date, "$lte": to_date}}
 
-    match_date = {
-        "$match": {
-            "timestamp": {"$gte": from_date, "$lte": to_date},
-        }
-    }
-    match_scope = {
-        "$match": {
-            "template_info.scope": {"$in": [slug, "global"]} if global_flag else slug,
-        }
-    }
-
-    pipeline = [
-        match_date,
-        {
-            "$lookup": {
-                "from": "notification_templates",  # Join with notification templates collection
-                "localField": "template",  # Field from notifications
-                "foreignField": "_id",  # Field from templates
-                "as": "template_info",  # Output array field
-            }
-        },
-        {"$unwind": "$template_info"},
-        match_scope,
-    ]
-    cursor = db.client[db.db_name]["notifications"].aggregate(pipeline)
+    cursor = db.client[db.db_name]["notifications"].find(query)
     notifications = []
     async for document in cursor:
-        notification = Notification(
-            _id=document["_id"],
-            template=document["template"],
-            timestamp=document["timestamp"],
-        )
-        notifications.append(notification)
+        notifications.append(Notification(**document))
     return notifications
 
 
-async def create_notification(template_id: str, timestamp: datetime = datetime.now()):
+async def create_notification(template_id: str, slug: str, timestamp: datetime = datetime.now()):
     """Creates a new notification for a given template ID with a specified timestamp."""
 
     # Verify that the template ID exists
@@ -72,7 +49,7 @@ async def create_notification(template_id: str, timestamp: datetime = datetime.n
         raise ValueError("Template ID does not exist")
 
     # Create the notification
-    notification = Notification(template=PyObjectId(template_id), timestamp=timestamp)
+    notification = Notification(template=PyObjectId(template_id), slug=slug, timestamp=timestamp)
     result = await db.client[db.db_name]["notifications"].insert_one(notification.model_dump(by_alias=True))
     logger.info(f"Created Notification with ID: {result.inserted_id}")
     return result.inserted_id

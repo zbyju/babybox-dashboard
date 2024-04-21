@@ -13,7 +13,7 @@ class NotificationTemplate(BaseModel):
     severity: str  # low medium high
     variable: str
     comparison: str
-    value: int
+    value: float
     notify_new_error: bool
     delay: int
     streak: int
@@ -26,6 +26,7 @@ class NotificationTemplate(BaseModel):
 
 class Notification(BaseModel):
     id: Optional[PyObjectId] = Field(default_factory=PyObjectId, alias="_id")
+    slug: str
     template: PyObjectId
     timestamp: datetime
 

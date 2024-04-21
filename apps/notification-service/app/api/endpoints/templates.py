@@ -26,6 +26,20 @@ async def get_templates(
     return templates
 
 
+@router.get("/id/{id}", response_model=NotificationTemplate)
+async def get_template_by_id(
+    id: str = Path(..., description="The ID of the template to retrieve"),
+    user=Depends(get_current_user),
+):
+    """
+    Retrieves a notification template by its ID.
+    """
+    template = await template_service.fetch_template_by_id(id)
+    if not template:
+        raise HTTPException(status_code=404, detail="Template not found")
+    return template
+
+
 @router.post("/", response_model=NotificationTemplate)
 async def create_template(template_data: NotificationTemplate = Body(...), _=Depends(get_current_user)):
     template_id = await template_service.insert_template(template_data)

@@ -17,7 +17,7 @@ async def insert_template(template: NotificationTemplate):
 
 async def find_templates_by_scope(scope: str, global_flag: bool = True):
     """Finds notification templates by scope, optionally including global templates."""
-    query = {"scope": scope}
+    query: dict = {"scope": scope}
     if global_flag:
         query = {"$or": [{"scope": scope}, {"scope": "global"}]}
 
@@ -26,6 +26,14 @@ async def find_templates_by_scope(scope: str, global_flag: bool = True):
     async for document in cursor:
         templates.append(NotificationTemplate(**document))
     return templates
+
+
+async def fetch_template_by_id(template_id: str):
+    """Fetches a notification template by its ID from the database."""
+    document = await db.client[db.db_name]["notification_templates"].find_one({"_id": ObjectId(template_id)})
+    if document:
+        return NotificationTemplate(**document)
+    return None
 
 
 async def fetch_all_templates():

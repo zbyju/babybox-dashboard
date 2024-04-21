@@ -22,7 +22,6 @@ async def get_all_notifications(_=Depends(get_current_user)):
 @router.get("/{slug}", response_model=List[Notification])
 async def get_notifications(
     slug: str,
-    global_flag: bool = Query(True, alias="global"),
     start: str = Query(None, description="Start date (YYYY-MM-DD)"),
     end: str = Query(None, description="End date (YYYY-MM-DD)"),
     _=Depends(get_current_user),
@@ -42,17 +41,16 @@ async def get_notifications(
         to_date = datetime.now(prague_timezone)
         to_date = to_date.replace(hour=23, minute=59, second=59, microsecond=999999)
 
-    notifications = await notification_service.find_notifications_by_template_slug(
-        slug, global_flag, from_date, to_date
-    )
+    notifications = await notification_service.find_notifications_by_template_slug(slug, from_date, to_date)
     if not notifications:
         return []
     return notifications
 
 
-@router.post("/{template_id}", response_model=Notification)
+@router.post("/{template_id}/{slug}", response_model=Notification)
 async def create_notification(
     template_id: str = Path(..., description="The ID of the template to create a notification for"),
+    slug: str = Path(..., description="The slug of the babybox that the notification is for"),
     _=Depends(get_current_user),
 ):
     """
@@ -61,8 +59,13 @@ async def create_notification(
     """
     try:
         now = datetime.now()
-        notification_id = await notification_service.create_notification(template_id, now)
-        notification = Notification(_id=notification_id, template=PyObjectId(template_id), timestamp=now)
+        notification_id = await notification_service.create_notification(template_id, slug, now)
+        notification = Notification(
+            _id=notification_id,
+            slug=slug,
+            template=PyObjectId(template_id),
+            timestamp=now,
+        )
         return notification
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
