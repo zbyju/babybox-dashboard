@@ -28,7 +28,6 @@ export default function Home() {
     }
   };
 
-
   const fetchBabyboxes = async () => {
     try {
       const promises = babyboxBases.map((b: BabyboxBase) =>
@@ -45,7 +44,6 @@ export default function Home() {
     }
   };
 
-
   useEffect(() => {
     if (!babyboxBases || babyboxBases.length === 0) return;
 
@@ -54,7 +52,10 @@ export default function Home() {
 
   return (
     <div className="mb-10 mt-2 px-4 lg:px-[16%]">
-      <BabyboxesTable babyboxes={babyboxes} onRefresh={() => fetchBabyboxes()} />
+      <BabyboxesTable
+        babyboxes={babyboxes}
+        onRefresh={() => fetchBabyboxes()}
+      />
     </div>
   );
 }

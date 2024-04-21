@@ -16,6 +16,7 @@ COPY . .
 ENV NEXT_PUBLIC_URL_SNAPSHOT_HANDLER=http://snapshot-handler.localhost
 ENV NEXT_PUBLIC_URL_BABYBOX_SERVICE=http://babybox-service.localhost
 ENV NEXT_PUBLIC_URL_USER_SERVICE=http://user-service.localhost
+ENV NEXT_PUBLIC_URL_NOTIFICATION_SERVICE=http://notification-service.localhost
 
 
 # Build for production 

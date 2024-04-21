@@ -20,16 +20,27 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useContext, useState } from "react";
 import { BabyboxesContext } from "@/components/contexts/babyboxes-context";
 import { BabyboxBase } from "@/types/babybox.types.js";
-import { Button } from "@/components/ui/button";
-import { RefreshCcw } from "lucide-react";
 import RefreshButton from "@/components/buttons/refresh";
+import LatestNotifications from "@/components/widgets/latest-notifications";
 
 export default function BabyboxPage({ params }: { params: { slug: string } }) {
   const { token } = useAuth();
   const snapshotServiceURL = process.env.NEXT_PUBLIC_URL_SNAPSHOT_HANDLER;
+  const notificationServiceURL =
+    process.env.NEXT_PUBLIC_URL_NOTIFICATION_SERVICE;
   const babyboxes = useContext(BabyboxesContext) as BabyboxBase[];
   const babybox = babyboxes.find((x) => x.slug === params.slug);
   const [updated, setUpdated] = useState<Date>(new Date());
+
+  const {
+    data: notificationsData,
+    error: notificationsError,
+    isLoading: notificationsLoading,
+    mutate: notificationsMutate,
+  } = useSWR(
+    [`${notificationServiceURL}/v1/notifications/${params.slug}`, token],
+    ([url, token]) => fetcherWithToken(url, token),
+  );
 
   const {
     data: eventsData,
@@ -90,6 +101,7 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
     snapshotsDayMutate();
     snapshots3DaysMutate();
     snapshotsWeekMutate();
+    notificationsMutate();
     setUpdated(new Date());
   }
 
@@ -194,7 +206,7 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
             </h4>
             <div className="mb-6 flex flex-row flex-wrap items-center gap-2">
               <h4 className=" ml-1 text-lg leading-8 text-muted-foreground">
-                Ukazuji data načtené v: {format(updated, "dd:mm:ss")}
+                Data byly načtené v: {format(updated, "dd:mm:ss")}
               </h4>
               <RefreshButton onClick={refreshData} />
             </div>
@@ -254,6 +266,15 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
           </div>
 
           <h4 className="mb-3 ml-1 text-3xl font-bold">Notifikace</h4>
+          {notificationsLoading ? (
+            <div>Loading</div>
+          ) : notificationsError ? (
+            <div>Error</div>
+          ) : (
+            <>
+              <LatestNotifications notifications={notificationsData} />
+            </>
+          )}
           <div className="grid grid-cols-2 gap-4"></div>
         </div>
       </div>

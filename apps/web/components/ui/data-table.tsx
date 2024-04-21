@@ -70,13 +70,14 @@ export function DataTable<TData, TValue>({
   return (
     <>
       {filterColumnName || onRefresh ? (
-        <div className="flex items-center py-4 gap-4">
-          {filterColumnName ? 
-            <Input 
-              placeholder="Vyhledejte Babybox..."
+        <div className="flex items-center gap-4 py-4">
+          {filterColumnName ? (
+            <Input
+              placeholder="Vyhledejte..."
               value={
-                (table.getColumn(filterColumnName)?.getFilterValue() as string) ??
-                ""
+                (table
+                  .getColumn(filterColumnName)
+                  ?.getFilterValue() as string) ?? ""
               }
               onChange={(event) =>
                 table
@@ -84,11 +85,9 @@ export function DataTable<TData, TValue>({
                   ?.setFilterValue(event.target.value)
               }
               className="max-w-sm"
-            /> : null
-          }
-          {
-            onRefresh ? <RefreshButton onClick={onRefresh} /> : null
-          }
+            />
+          ) : null}
+          {onRefresh ? <RefreshButton onClick={onRefresh} /> : null}
         </div>
       ) : null}
       <div className={"overflow-hidden rounded-md border" + " " + className}>

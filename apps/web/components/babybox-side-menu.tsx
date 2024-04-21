@@ -99,8 +99,11 @@ export default function BabyboxSideMenu(props: Props) {
     {
       group: "Notifikace",
       links: [
-        { href: "/dashboard/babybox", text: "Přehled", icon: <Bell /> },
-        { href: "/dashboard/babybox", text: "Nastavení", icon: <BellDot /> },
+        {
+          href: "/dashboard/babybox/" + props.babybox.slug + "/templates",
+          text: "Nastavení",
+          icon: <BellDot />,
+        },
       ],
     },
   ];

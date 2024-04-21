@@ -1,23 +1,31 @@
 "use client";
 
 import { useAuth } from "@/components/contexts/auth-context";
+import { BabyboxesContext } from "@/components/contexts/babyboxes-context";
 import NotificationTemplateTable from "@/components/tables/notification-template-table";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { fetcherWithToken } from "@/helpers/api-helper";
-import { NotificationTemplate } from "@/types/notification.types";
+import { BabyboxBase } from "@/types/babybox.types";
 import { Plus } from "lucide-react";
 import Link from "next/link";
+import { useContext } from "react";
 import { toast } from "sonner";
 import useSWR from "swr";
 
-export default function NotificationsPage() {
+export default function NotificationsPage({
+  params,
+}: {
+  params: { slug: string };
+}) {
   const { token } = useAuth();
   const notificationServiceURL =
     process.env.NEXT_PUBLIC_URL_NOTIFICATION_SERVICE;
+  const babyboxes = useContext(BabyboxesContext) as BabyboxBase[];
+  const babybox = babyboxes.find((x) => x.slug === params.slug);
 
   const { data, error, isLoading, mutate } = useSWR(
-    [`${notificationServiceURL}/v1/templates`, token],
+    [`${notificationServiceURL}/v1/templates/${params.slug}`, token],
     ([url, token]) => fetcherWithToken(url, token),
   );
 
@@ -45,11 +53,18 @@ export default function NotificationsPage() {
   return (
     <div className="mb-10 mt-2 w-full px-4 lg:px-[16%]">
       <div className="mt-4 flex w-full flex-row items-center justify-between gap-4">
-        <h2 className="text-3xl font-bold">Notifikační šablony</h2>
+        <div>
+          <h2 className="text-3xl font-bold">Notifikační šablony</h2>
+          {babybox && (
+            <h3 className="text-2xl font-semibold text-muted-foreground">
+              Babybox {babybox?.name}
+            </h3>
+          )}
+        </div>
         <Link href="/dashboard/notifications/add">
           <Button className="flex flex-row items-center justify-between gap-1">
             <Plus />
-            Přídat
+            Přidat
           </Button>
         </Link>
       </div>
