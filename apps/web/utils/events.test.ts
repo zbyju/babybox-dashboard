@@ -1,19 +1,28 @@
-import { Event, Interval } from "@/types/event.types";
+import { EventDecoded, Interval } from "@/types/event.types";
 import { parse } from "date-fns";
 
 import { combineIntervals, generateIntervals } from "./events";
-import { Snapshot } from "@/types/snapshot.types";
-import { calculateAverageSnapshotGap } from "./stats";
 
 describe("generateIntervals function", () => {
   it("should generate intervals for only heating events", () => {
-    const events: Event[] = [
-      { timestamp: "2024-03-10 10:00:00", event: "Heating on" },
-      { timestamp: "2024-03-10 12:00:00", event: "Heating off" },
+    const events: EventDecoded[] = [
+      {
+        slug: "",
+        timestamp: "2024-03-10 10:00:00",
+        event: "te0201",
+        label: "",
+      },
+      {
+        slug: "",
+        timestamp: "2024-03-10 12:00:00",
+        event: "te0200",
+        label: "",
+      },
     ];
 
     const expectedIntervals: Interval[] = [
       {
+        label: "Heating",
         type: "Heating",
         from: parse("2024-03-10 10:00:00", "yyyy-MM-dd HH:mm:ss", new Date()),
         to: parse("2024-03-10 12:00:00", "yyyy-MM-dd HH:mm:ss", new Date()),
@@ -23,29 +32,62 @@ describe("generateIntervals function", () => {
     expect(generateIntervals(events)).toEqual(expectedIntervals);
   });
 
-  it("should generate intervals for heating, cooling, and doors events", () => {
-    const events: Event[] = [
-      { timestamp: "2024-03-10 10:00:00", event: "Heating on" },
-      { timestamp: "2024-03-10 12:00:00", event: "Heating off" },
-      { timestamp: "2024-03-10 14:00:00", event: "Cooling on" },
-      { timestamp: "2024-03-10 16:00:00", event: "Cooling off" },
-      { timestamp: "2024-03-10 18:00:00", event: "Doors opening" },
-      { timestamp: "2024-03-10 20:00:00", event: "Doors closing" },
+  it("should generate intervals for heating, cooling, and fan events", () => {
+    const events: EventDecoded[] = [
+      {
+        timestamp: "2024-03-10 10:00:00",
+        event: "te0201",
+        label: "",
+        slug: "",
+      },
+      {
+        timestamp: "2024-03-10 12:00:00",
+        event: "te0200",
+        label: "",
+        slug: "",
+      },
+      {
+        timestamp: "2024-03-10 14:00:00",
+        event: "te0301",
+        label: "",
+        slug: "",
+      },
+      {
+        timestamp: "2024-03-10 16:00:00",
+        event: "te0300",
+        label: "",
+        slug: "",
+      },
+      {
+        timestamp: "2024-03-10 18:00:00",
+        event: "te0401",
+        label: "",
+        slug: "",
+      },
+      {
+        timestamp: "2024-03-10 20:00:00",
+        event: "te0400",
+        label: "",
+        slug: "",
+      },
     ];
 
     const expectedIntervals: Interval[] = [
       {
+        label: "Heating",
         type: "Heating",
         from: parse("2024-03-10 10:00:00", "yyyy-MM-dd HH:mm:ss", new Date()),
         to: parse("2024-03-10 12:00:00", "yyyy-MM-dd HH:mm:ss", new Date()),
       },
       {
+        label: "Cooling",
         type: "Cooling",
         from: parse("2024-03-10 14:00:00", "yyyy-MM-dd HH:mm:ss", new Date()),
         to: parse("2024-03-10 16:00:00", "yyyy-MM-dd HH:mm:ss", new Date()),
       },
       {
-        type: "Doors",
+        label: "FanTop",
+        type: "FanTop",
         from: parse("2024-03-10 18:00:00", "yyyy-MM-dd HH:mm:ss", new Date()),
         to: parse("2024-03-10 20:00:00", "yyyy-MM-dd HH:mm:ss", new Date()),
       },
@@ -56,29 +98,67 @@ describe("generateIntervals function", () => {
 
   // Test for device on at the end
   it("should generate intervals when device on event is at the end", () => {
-    const events: Event[] = [
-      { timestamp: "2024-03-10 10:00:00", event: "Heating on" },
-      { timestamp: "2024-03-10 12:00:00", event: "Heating off" },
-      { timestamp: "2024-03-10 14:00:00", event: "Cooling on" },
-      { timestamp: "2024-03-10 16:00:00", event: "Cooling off" },
-      { timestamp: "2024-03-10 18:00:00", event: "Doors opening" },
-      { timestamp: "2024-03-10 20:00:00", event: "Doors closing" },
-      { timestamp: "2024-03-10 22:00:00", event: "Device on" },
+    const events: EventDecoded[] = [
+      {
+        timestamp: "2024-03-10 10:00:00",
+        event: "te0201",
+        label: "",
+        slug: "",
+      },
+      {
+        timestamp: "2024-03-10 12:00:00",
+        event: "te0200",
+        label: "",
+        slug: "",
+      },
+      {
+        timestamp: "2024-03-10 14:00:00",
+        event: "te0301",
+        label: "",
+        slug: "",
+      },
+      {
+        timestamp: "2024-03-10 16:00:00",
+        event: "te0300",
+        label: "",
+        slug: "",
+      },
+      {
+        timestamp: "2024-03-10 18:00:00",
+        event: "te0401",
+        label: "",
+        slug: "",
+      },
+      {
+        timestamp: "2024-03-10 20:00:00",
+        event: "te0400",
+        label: "",
+        slug: "",
+      },
+      {
+        timestamp: "2024-03-10 22:00:00",
+        event: "te0000",
+        label: "",
+        slug: "",
+      },
     ];
 
     const expectedIntervals: Interval[] = [
       {
+        label: "Heating",
         type: "Heating",
         from: parse("2024-03-10 10:00:00", "yyyy-MM-dd HH:mm:ss", new Date()),
         to: parse("2024-03-10 12:00:00", "yyyy-MM-dd HH:mm:ss", new Date()),
       },
       {
+        label: "Cooling",
         type: "Cooling",
         from: parse("2024-03-10 14:00:00", "yyyy-MM-dd HH:mm:ss", new Date()),
         to: parse("2024-03-10 16:00:00", "yyyy-MM-dd HH:mm:ss", new Date()),
       },
       {
-        type: "Doors",
+        label: "FanTop",
+        type: "FanTop",
         from: parse("2024-03-10 18:00:00", "yyyy-MM-dd HH:mm:ss", new Date()),
         to: parse("2024-03-10 20:00:00", "yyyy-MM-dd HH:mm:ss", new Date()),
       },
@@ -89,32 +169,67 @@ describe("generateIntervals function", () => {
 
   // Test for device on randomly in the middle
   it("should generate intervals when device on event is randomly in the middle", () => {
-    const events: Event[] = [
-      { timestamp: "2024-03-10 10:00:00", event: "Heating on" },
-      { timestamp: "2024-03-10 12:00:00", event: "Heating off" },
-      { timestamp: "2024-03-10 14:00:00", event: "Cooling on" },
-      { timestamp: "2024-03-10 15:30:00", event: "Device on" },
+    const events: EventDecoded[] = [
+      {
+        timestamp: "2024-03-10 10:00:00",
+        event: "te0201",
+        label: "",
+        slug: "",
+      },
+      {
+        timestamp: "2024-03-10 12:00:00",
+        event: "te0200",
+        label: "",
+        slug: "",
+      },
+      {
+        timestamp: "2024-03-10 14:00:00",
+        event: "te0301",
+        label: "",
+        slug: "",
+      },
+      {
+        timestamp: "2024-03-10 15:30:00",
+        event: "te0000",
+        label: "",
+        slug: "",
+      },
       {
         timestamp: "2024-03-10 16:00:00",
-        event: "Cooling off",
+        event: "te0300",
+        label: "",
+        slug: "",
       },
-      { timestamp: "2024-03-10 18:00:00", event: "Doors opening" },
-      { timestamp: "2024-03-10 20:00:00", event: "Doors closing" },
+      {
+        timestamp: "2024-03-10 18:00:00",
+        event: "te0401",
+        label: "",
+        slug: "",
+      },
+      {
+        timestamp: "2024-03-10 20:00:00",
+        event: "te0400",
+        label: "",
+        slug: "",
+      },
     ];
 
     const expectedIntervals: Interval[] = [
       {
+        label: "Heating",
         type: "Heating",
         from: parse("2024-03-10 10:00:00", "yyyy-MM-dd HH:mm:ss", new Date()),
         to: parse("2024-03-10 12:00:00", "yyyy-MM-dd HH:mm:ss", new Date()),
       },
       {
+        label: "Cooling",
         type: "Cooling",
         from: parse("2024-03-10 14:00:00", "yyyy-MM-dd HH:mm:ss", new Date()),
         to: parse("2024-03-10 15:30:00", "yyyy-MM-dd HH:mm:ss", new Date()),
       },
       {
-        type: "Doors",
+        label: "FanTop",
+        type: "FanTop",
         from: parse("2024-03-10 18:00:00", "yyyy-MM-dd HH:mm:ss", new Date()),
         to: parse("2024-03-10 20:00:00", "yyyy-MM-dd HH:mm:ss", new Date()),
       },
@@ -125,24 +240,20 @@ describe("generateIntervals function", () => {
 
   // Test for no events
   it("should return an empty array when there are no events", () => {
-    const events: Event[] = [];
+    const events: EventDecoded[] = [];
 
     expect(generateIntervals(events)).toEqual([]);
   });
 
   // Test for single device on event
   it("should return an empty array when there is only a single device on event", () => {
-    const events: Event[] = [
-      { timestamp: "2024-03-10 10:00:00", event: "Device on" },
-    ];
-
-    expect(generateIntervals(events)).toEqual([]);
-  });
-
-  // Test for single device off event
-  it("should return an empty array when there is only a single device off event", () => {
-    const events: Event[] = [
-      { timestamp: "2024-03-10 10:00:00", event: "Device off" },
+    const events: EventDecoded[] = [
+      {
+        timestamp: "2024-03-10 10:00:00",
+        event: "te0000",
+        label: "",
+        slug: "",
+      },
     ];
 
     expect(generateIntervals(events)).toEqual([]);
@@ -151,15 +262,36 @@ describe("generateIntervals function", () => {
   // Test for multiple consecutive heating on events followed by one heating off
   // event
   it("should generate intervals for multiple consecutive heating on events followed by one heating off event", () => {
-    const events: Event[] = [
-      { timestamp: "2024-03-10 10:00:00", event: "Heating on" },
-      { timestamp: "2024-03-10 12:00:00", event: "Heating on" },
-      { timestamp: "2024-03-10 14:00:00", event: "Heating on" },
-      { timestamp: "2024-03-10 16:00:00", event: "Heating off" },
+    const events: EventDecoded[] = [
+      {
+        timestamp: "2024-03-10 10:00:00",
+        event: "te0201",
+        label: "",
+        slug: "",
+      },
+      {
+        timestamp: "2024-03-10 12:00:00",
+        event: "te0201",
+        label: "",
+        slug: "",
+      },
+      {
+        timestamp: "2024-03-10 14:00:00",
+        event: "te0201",
+        label: "",
+        slug: "",
+      },
+      {
+        timestamp: "2024-03-10 16:00:00",
+        event: "te0200",
+        label: "",
+        slug: "",
+      },
     ];
 
     const expectedIntervals: Interval[] = [
       {
+        label: "Heating",
         type: "Heating",
         from: parse("2024-03-10 10:00:00", "yyyy-MM-dd HH:mm:ss", new Date()),
         to: parse("2024-03-10 16:00:00", "yyyy-MM-dd HH:mm:ss", new Date()),
@@ -170,8 +302,13 @@ describe("generateIntervals function", () => {
   });
 
   it("should include the start of the heating until now for incomplete heating interval", () => {
-    const events: Event[] = [
-      { timestamp: "2024-03-10 10:00:00", event: "Heating on" },
+    const events: EventDecoded[] = [
+      {
+        timestamp: "2024-03-10 10:00:00",
+        event: "te0201",
+        label: "",
+        slug: "",
+      },
       // No heating off event yet
     ];
 
@@ -197,11 +334,13 @@ describe("combineIntervals function", () => {
   it("should combine intervals correctly", () => {
     const intervals: Interval[] = [
       {
+        label: "Heating",
         type: "Heating",
         from: new Date("2024-03-10T12:00:00"),
         to: new Date("2024-03-10T14:00:00"),
       },
       {
+        label: "Heating",
         type: "Heating",
         from: new Date("2024-03-10T14:00:00"),
         to: new Date("2024-03-10T17:00:00"),
@@ -212,6 +351,7 @@ describe("combineIntervals function", () => {
 
     const expectedCombinedIntervals: Interval[] = [
       {
+        label: "Heating",
         type: "Heating",
         from: new Date("2024-03-10T12:00:00"),
         to: new Date("2024-03-10T17:00:00"),
@@ -223,16 +363,19 @@ describe("combineIntervals function", () => {
   it("should combine intervals that are separated by another interval of different kind", () => {
     const intervals: Interval[] = [
       {
+        label: "Heating",
         type: "Heating",
         from: new Date("2024-03-10T12:00:00"),
         to: new Date("2024-03-10T14:00:00"),
       },
       {
+        label: "Cooling",
         type: "Cooling",
         from: new Date("2024-03-10T14:00:00"),
         to: new Date("2024-03-10T16:00:00"),
       },
       {
+        label: "Heating",
         type: "Heating",
         from: new Date("2024-03-10T14:00:00"),
         to: new Date("2024-03-10T17:00:00"),
@@ -243,11 +386,13 @@ describe("combineIntervals function", () => {
 
     const expectedCombinedIntervals: Interval[] = [
       {
+        label: "Heating",
         type: "Heating",
         from: new Date("2024-03-10T12:00:00"),
         to: new Date("2024-03-10T17:00:00"),
       },
       {
+        label: "Cooling",
         type: "Cooling",
         from: new Date("2024-03-10T14:00:00"),
         to: new Date("2024-03-10T16:00:00"),
@@ -268,6 +413,7 @@ describe("combineIntervals function", () => {
   it("should handle single interval", () => {
     const intervals: Interval[] = [
       {
+        label: "Heating",
         type: "Heating",
         from: new Date("2024-03-10T12:00:00"),
         to: new Date("2024-03-10T14:00:00"),
