@@ -75,11 +75,11 @@ export default function GroupNotificationAccordionItem(props: Props) {
               <h3 className="text-muted-foreground">{templateData.message}</h3>
             </div>
           </AccordionTrigger>
-          <AccordionContent className="px-2">
+          <AccordionContent className="px-4">
             {props.groupedNotifications.days.map((d) => (
               <div
                 key={d.day}
-                className="flex flex-col gap-4 border-l border-l-muted px-4"
+                className={"flex flex-col gap-4 border-l px-4 " + color}
               >
                 <h5 className="text-[1.06rem]">{d.day}:</h5>
                 <div className="flex flex-row flex-wrap items-center gap-2">
@@ -88,11 +88,11 @@ export default function GroupNotificationAccordionItem(props: Props) {
                       <Tooltip delayDuration={100}>
                         <TooltipTrigger>
                           <Badge variant="outline" className={color}>
-                            {format(parseISO(n.timestamp), "hh:mm")}
+                            {format(parseISO(n.timestamp), "HH:mm")}
                           </Badge>
                         </TooltipTrigger>
                         <TooltipContent>
-                          {format(parseISO(n.timestamp), "dd.MM.yyyy hh:mm:ss")}
+                          {format(parseISO(n.timestamp), "dd.MM.yyyy HH:mm:ss")}
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>

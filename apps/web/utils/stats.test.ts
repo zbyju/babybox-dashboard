@@ -14,7 +14,7 @@ describe("Snapshot utilities", () => {
       {
         timestamp: parse(
           "2024-02-28 12:00:00",
-          "yyyy-MM-dd hh:mm:ss",
+          "yyyy-MM-dd HH:mm:ss",
           new Date(),
         ),
         var1: 100,
