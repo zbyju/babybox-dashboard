@@ -22,9 +22,13 @@ async def find_templates_by_scope(scope: str, global_flag: bool = True):
         query = {"$or": [{"scope": scope}, {"scope": "global"}]}
 
     cursor = db.client[db.db_name]["notification_templates"].find(query)
+    logger.info(cursor)
     templates = []
-    async for document in cursor:
-        templates.append(NotificationTemplate(**document))
+    try:
+        async for document in cursor:
+            templates.append(NotificationTemplate(**document))
+    except Exception as err:
+        logger.error(err)
     return templates
 
 

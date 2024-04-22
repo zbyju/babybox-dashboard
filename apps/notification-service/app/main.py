@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+import asyncio
 
 from app.api.endpoints import healthcheck
 from app.api.endpoints import notifications
@@ -12,8 +13,8 @@ import logging
 logging.basicConfig(level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
-
 app = FastAPI()
+
 
 app.add_middleware(
     CORSMiddleware,

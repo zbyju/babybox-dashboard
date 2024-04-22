@@ -1,90 +1,89 @@
-import sys
 import os
-import pika
-import threading
-import time
+import sys
+import json
+import asyncio
+from aio_pika.abc import AbstractChannel, AbstractConnection
 from fastapi import FastAPI
-from pika.adapters.blocking_connection import BlockingChannel
+from aio_pika import ExchangeType, Message, connect
+from aio_pika.robust_connection import RobustConnection
+from aio_pika.robust_channel import RobustChannel
 from app.core.logger import get_logger
+from app.models.snapshot import Snapshot
+from app.services.snapshot_service import process_snapshot
 
 logger = get_logger(__name__)
 
 
 class RabbitMQ:
     MAX_RETRIES = 5
-    RETRY_DELAY = 5
+    RETRY_DELAY = 5  # seconds
 
     def __init__(self) -> None:
-        self.connection = None
-        self.channel: BlockingChannel | None = None
+        self.connection: AbstractConnection | None = None
+        self.channel: AbstractChannel | None = None
 
-    def connect(self):
+    async def connect(self):
+        username = os.getenv("RABBITMQ_USERNAME", "")
+        password = os.getenv("RABBITMQ_PASSWORD", "")
         attempt = 0
+
         while attempt < self.MAX_RETRIES:
             try:
-                username = os.getenv("RABBITMQ_USERNAME", "")
-                password = os.getenv("RABBITMQ_PASSWORD", "")
-                credentials = pika.PlainCredentials(username, password)
-                parameters = pika.ConnectionParameters(host="rabbitmq", port=5672, credentials=credentials)
+                # Creating connection
+                self.connection = await connect(f"amqp://{username}:{password}@rabbitmq:5672/")
 
-                self.connection = pika.BlockingConnection(parameters)
-                self.channel = self.connection.channel()
+                # Creating channel
+                self.channel = await self.connection.channel()
 
-                # Declare a queue and bind it to the exchange
-                self.channel.queue_declare(queue="notification-service.snapshot.processor")
-                self.channel.queue_bind(
-                    queue="notification-service.snapshot.processor",
-                    exchange="snapshot.received",
-                    routing_key="",
-                )
-                self.channel.basic_consume(
-                    queue="notification-service.snapshot.processor",
-                    on_message_callback=on_message,
-                    auto_ack=True,
-                )
-                self.channel.start_consuming()
+                # Declare the queue and exchange and perform bindings
+                await self.channel.declare_queue("notification-service.snapshot.processor")
+                exchange = await self.channel.declare_exchange("snapshot.received", ExchangeType.FANOUT, durable=True)
+                queue = await self.channel.get_queue("notification-service.snapshot.processor")
+                await queue.bind(exchange, routing_key="")
+
+                # Start consuming
+                await queue.consume(self.on_message, no_ack=True)
+                break
             except Exception as e:
                 logger.error(f"Failed to connect to RabbitMQ: {e}")
                 attempt += 1
                 if attempt < self.MAX_RETRIES:
                     logger.info(f"Retrying in {self.RETRY_DELAY} seconds...")
-                    time.sleep(self.RETRY_DELAY)
+                    await asyncio.sleep(self.RETRY_DELAY)
                 else:
                     logger.error("Max retries reached, service will exit.")
                     sys.exit(1)
 
-    def close(self):
+    async def close(self):
         if self.connection:
-            self.connection.close()
+            await self.connection.close()
 
-    def publish(self, message):
-        if self.channel is None:
+    async def publish(self, message: str):
+        if not self.channel:
             return
-        self.channel.basic_publish(exchange="snapshot.received", routing_key="", body=message)
+        await self.channel.default_exchange.publish(
+            Message(body=message.encode()),
+            routing_key="",
+        )
+
+    async def on_message(self, message):
+        logger.info("Received message from RabbitMQ.")
+        try:
+            body = message.body.decode()
+            snapshot_data = json.loads(body)
+            snapshot = Snapshot(**snapshot_data)
+            logger.info(f"Processed snapshot: {snapshot.id}")
+
+            await process_snapshot(snapshot)
+        except Exception as e:
+            logger.error(f"Error processing message: {str(e)}")
+        finally:
+            message.ack()
 
 
 rabbitmq = RabbitMQ()
 
 
-def on_message(ch, method, properties, body):
-    x = body.decode()
-    logger.info(x)
-
-
-def start_rabbitmq():
-    rabbitmq.connect()
-
-
-def stop_rabbitmq():
-    rabbitmq.close()
-
-
-def send_message(message):
-    rabbitmq.publish(message)
-
-
 def setup_rabbitmq(app: FastAPI):
-    # Run RabbitMQ connection in a separate thread to avoid blocking
-    thread = threading.Thread(target=start_rabbitmq)
-    app.add_event_handler("startup", thread.start)
-    app.add_event_handler("shutdown", stop_rabbitmq)
+    app.add_event_handler("startup", rabbitmq.connect)
+    app.add_event_handler("shutdown", rabbitmq.close)

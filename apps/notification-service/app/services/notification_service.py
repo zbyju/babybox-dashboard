@@ -39,6 +39,19 @@ async def find_notifications_by_template_slug(
     return notifications
 
 
+async def fetch_latest_notifications(template_id, slug, n=1):
+    # Query the database for the last 'n' notifications
+    cursor = (
+        db.client[db.db_name]["notifications"]
+        .find({"template": template_id, "slug": slug}, sort=[("timestamp", -1)])
+        .limit(n)
+    )
+    notifications = []
+    async for document in cursor:
+        notifications.append(Notification(**document))
+    return notifications
+
+
 async def create_notification(template_id: str, slug: str, timestamp: datetime = datetime.now()):
     """Creates a new notification for a given template ID with a specified timestamp."""
 
