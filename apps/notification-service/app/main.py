@@ -1,12 +1,14 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import asyncio
 
 from app.api.endpoints import healthcheck
 from app.api.endpoints import notifications
 from app.api.endpoints import templates
 from app.core.database import startup_db_client
 from app.core.messaging import setup_rabbitmq
+from app.services.snapshot_service import email_sender
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.cron import CronTrigger
 
 import logging
 
@@ -39,3 +41,19 @@ app.include_router(
 
 startup_db_client(app)
 setup_rabbitmq(app)
+
+scheduler = None
+
+
+@app.on_event("startup")
+def schedule_email_jobs():
+    scheduler = AsyncIOScheduler()
+    # Schedule to send emails every 5 minutes at :02, :07, :12, etc.
+    scheduler.add_job(email_sender.send_emails, trigger=CronTrigger(minute="2/1"))
+    scheduler.start()
+
+
+@app.on_event("shutdown")
+def shutdown_scheduler():
+    if scheduler is not None:
+        scheduler.shutdown()

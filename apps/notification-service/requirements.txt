@@ -1,5 +1,6 @@
 aio-pika==9.4.1
 annotated-types==0.6.0
+APScheduler==3.10.4
 black==24.3.0
 blinker==1.7.0
 fastapi==0.110.1
@@ -14,4 +15,5 @@ pymongo==4.6.3
 pynvim==0.4.3
 pytz==2024.1
 virtualenv==20.25.1
+urllib3==1.25.8
 uvicorn==0.29.0

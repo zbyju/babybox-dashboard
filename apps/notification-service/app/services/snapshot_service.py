@@ -1,5 +1,6 @@
 from app.models.snapshot import Snapshot
 from app.services import notification_service
+from app.services.email_service import EmailSender
 from app.services.template_service import find_templates_by_scope
 from app.core.logger import get_logger
 from app.services.notification_checker import (
@@ -10,7 +11,7 @@ from app.services.notification_checker import (
     FinalDecisionHandler,
 )
 
-
+email_sender = EmailSender()
 logger = get_logger(__name__)
 
 
@@ -50,3 +51,4 @@ async def process_snapshot(snapshot: Snapshot):
         # If notification should be sent, this can be where we also handle the sending
         if should_notify:
             await notification_service.create_notification(template.id, snapshot.slug, snapshot.timestamp)
+            email_sender.add_notification(template.id, snapshot.slug)

@@ -154,11 +154,9 @@ class StreakChecker(NotificationCheckHandler):
         key = generate_key(snapshot, template)
         condition_met = evaluate_condition(snapshot, template.variable, template.comparison, template.value)
 
-        current_streak = self.consecutive_counts.get(key, 0)
-
         if condition_met:
-            self.consecutive_counts[key] = current_streak + 1
-            if current_streak >= template.streak:
+            self.consecutive_counts[key] = self.consecutive_counts.get(key, 0) + 1
+            if self.consecutive_counts.get(key, 0) >= template.streak:
                 return await super().handle(snapshot, template)
             else:
                 return await super().announce(snapshot, template, False)
