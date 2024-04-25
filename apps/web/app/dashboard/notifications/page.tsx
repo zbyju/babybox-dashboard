@@ -21,6 +21,10 @@ export default function NotificationsPage() {
     ([url, token]) => fetcherWithToken(url, token),
   );
 
+  if (error) {
+    console.log(error);
+  }
+
   async function handleRemove(id: string) {
     try {
       const res = await fetch(`${notificationServiceURL}/v1/templates/${id}`, {

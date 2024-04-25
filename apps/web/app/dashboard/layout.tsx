@@ -7,5 +7,9 @@ export default function AppLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <div className="pb-8 lg:pb-2">{children}</div>;
+  return (
+    <div className="pb-8 lg:pb-2">
+      <ProtectedRoute>{children}</ProtectedRoute>
+    </div>
+  );
 }
