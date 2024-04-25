@@ -27,6 +27,11 @@ services:
     build:
       context: ./apps/web
       dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_URL_SNAPSHOT_HANDLER: ${URL_SNAPSHOT_HANDLER}
+        NEXT_PUBLIC_URL_BABYBOX_SERVICE: ${URL_BABYBOX_SERVICE}
+        NEXT_PUBLIC_URL_USER_SERVICE: ${URL_USER_SERVICE}
+        NEXT_PUBLIC_URL_NOTIFICATION_SERVICE: ${URL_NOTIFICATION_SERVICE}
     ports:
       - "3000:3000"
     environment:
@@ -135,6 +140,10 @@ services:
       - MONGODB_DATABASE=${MONGODB_DATABASE}
       - RABBITMQ_USERNAME=${RABBITMQ_USERNAME}
       - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+      - EMAIL=${EMAIL}
+      - EMAIL_PASSWORD=${EMAIL_PASSWORD}
+      - SMTP_SERVER=${SMTP_SERVER}
+      - SMTP_PORT=${SMTP_PORT}
     labels:
       - "traefik.enable=true"
       - "t.http.routers.notification-service.entrypoints=web"
