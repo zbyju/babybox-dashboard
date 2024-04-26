@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { fetcherWithToken } from "@/helpers/api-helper";
 import { BabyboxBase } from "@/types/babybox.types";
-import { Plus } from "lucide-react";
+import { ChevronLeft, Plus } from "lucide-react";
 import Link from "next/link";
 import { useContext } from "react";
 import { toast } from "sonner";
@@ -61,12 +61,23 @@ export default function NotificationsPage({
             </h3>
           )}
         </div>
-        <Link href="/dashboard/notifications/add">
-          <Button className="flex flex-row items-center justify-between gap-1">
-            <Plus />
-            Přidat
-          </Button>
-        </Link>
+        <div className="flex flex-row flex-wrap gap-2">
+          <Link href="/dashboard/notifications/add">
+            <Button className="flex flex-row items-center justify-between gap-1">
+              <Plus />
+              Přidat
+            </Button>
+          </Link>
+          <Link href={"/dashboard/babybox/" + params.slug}>
+            <Button
+              className="flex flex-row items-center justify-between gap-1"
+              variant="secondary"
+            >
+              <ChevronLeft />
+              Zpět
+            </Button>
+          </Link>
+        </div>
       </div>
       {isLoading ? (
         <div className="mt-4 flex w-full flex-col items-center justify-center gap-2 lg:items-start lg:px-[16%]">

@@ -4,7 +4,6 @@ import {
   ArrowLeft,
   ArrowRight,
   BatteryCharging,
-  Bell,
   BellDot,
   Cable,
   Fan,
@@ -89,11 +88,10 @@ export default function BabyboxSideMenu(props: Props) {
       group: "Analýza",
       links: [
         {
-          href: "/dashboard/babybox",
+          href: "/dashboard/babybox/" + props.babybox.slug + "/battery",
           text: "Akumulátor",
           icon: <BatteryCharging />,
         },
-        { href: "/dashboard/babybox", text: "Větráky", icon: <Fan /> },
       ],
     },
     {

@@ -22,6 +22,8 @@ interface Props {
   strokeWidth?: number;
   strokeType?: "straight" | "smooth" | "monotoneCubic" | "stepline";
   forecastNumber?: number;
+  min?: number;
+  max?: number;
 }
 
 export default function LineChart(props: Props) {
@@ -53,6 +55,8 @@ export default function LineChart(props: Props) {
     showTooltip: true,
     showXaxisLabels: true,
     showXaxisTicks: true,
+    min: undefined,
+    max: undefined,
   };
 
   const config = { ...defaultConfig, ...props };
@@ -131,6 +135,8 @@ export default function LineChart(props: Props) {
       },
       yaxis: {
         showAlways: true,
+        min: config.min,
+        max: config.max,
         labels: {
           style: {
             colors: "hsl(var(--muted-foreground))",
