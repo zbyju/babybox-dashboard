@@ -49,7 +49,7 @@ scheduler = None
 def schedule_email_jobs():
     scheduler = AsyncIOScheduler()
     # Schedule to send emails every 5 minutes at :02, :07, :12, etc.
-    scheduler.add_job(email_sender.send_emails, trigger=CronTrigger(minute="2/1"))
+    scheduler.add_job(email_sender.send_emails, trigger=CronTrigger(minute="2/5"))
     scheduler.start()
 
 
