@@ -1,6 +1,6 @@
 # Babybox Dashboard
 
-Babybox Dashboard is a microservice application that provides a platform for managing data around managing babyboxes. It mainly focuses on retrieving structured data from babyboxes and provide them to the staff in a useful way (using visualization, aggregation and analytical techniques). The application also manages additional information about each babybox (location, configuration, contact information). There is also information about maintenances. The application generates notifications for users.
+Babybox Dashboard is a microservice application that provides a platform for managing data around managing babyboxes. It mainly focuses on retrieving structured data from babyboxes and provide them to the staff in a useful way (using visualization, aggregation and analytical techniques). The application also manages additional information about each babybox (location, configuration, contact information). The application generates notifications for users. Another feature is analyzing battery quality of babyboxes.
 
 ## How to run
 
