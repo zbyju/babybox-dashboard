@@ -28,18 +28,22 @@ services:
       context: ./apps/web
       dockerfile: Dockerfile
       args:
+        NEXT_PUBLIC_NODE_ENV: ${NODE_ENV}
         NEXT_PUBLIC_URL_SNAPSHOT_HANDLER: ${URL_SNAPSHOT_HANDLER}
         NEXT_PUBLIC_URL_BABYBOX_SERVICE: ${URL_BABYBOX_SERVICE}
         NEXT_PUBLIC_URL_USER_SERVICE: ${URL_USER_SERVICE}
         NEXT_PUBLIC_URL_NOTIFICATION_SERVICE: ${URL_NOTIFICATION_SERVICE}
+        NEXT_PUBLIC_URL_BATTERY_ANALYZER: ${URL_BATTERY_ANALYZER}
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=production
+      - NEXT_PUBLIC_URL_NODE_ENV=production
       - NEXT_PUBLIC_URL_SNAPSHOT_HANDLER=${URL_SNAPSHOT_HANDLER}
       - NEXT_PUBLIC_URL_BABYBOX_SERVICE=${URL_BABYBOX_SERVICE}
       - NEXT_PUBLIC_URL_USER_SERVICE=${URL_USER_SERVICE}
       - NEXT_PUBLIC_URL_NOTIFICATION_SERVICE=${URL_NOTIFICATION_SERVICE}
+      - NEXT_PUBLIC_URL_BATTERY_ANALYZER=${URL_BATTERY_ANALYZER}
     restart: always
     labels:
       - "traefik.enable=true"
@@ -146,9 +150,34 @@ services:
       - SMTP_PORT=${SMTP_PORT}
     labels:
       - "traefik.enable=true"
-      - "t.http.routers.notification-service.entrypoints=web"
-      - "traefik.http.routers.notification-service.rule=Host(`notification.${DOMAIN}`)"
+      - "traefik.http.routers.notification-service.entrypoints=web"
+      - "traefik.http.routers.notification-service.rule=Host(`notification-service.${DOMAIN}`)"
       - traefik.http.services.notification-service.loadbalancer.server.port=8083
+    restart: always
+    depends_on:
+      - snapshot-handler
+      - mongodb
+      - rabbitmq
+
+  battery-analyzer:
+    build:
+      context: ./apps/battery-analyzer
+      dockerfile: Dockerfile
+    ports:
+      - "8084:8084"
+    environment:
+      - APP_ENV=production
+      - JWT_SECRET=${JWT_SECRET}
+      - MONGODB_USERNAME=${MONGODB_USERNAME}
+      - MONGODB_PASSWORD=${MONGODB_PASSWORD}
+      - MONGODB_DATABASE=${MONGODB_DATABASE}
+      - RABBITMQ_USERNAME=${RABBITMQ_USERNAME}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.battery-analyzer.entrypoints=web"
+      - "traefik.http.routers.battery-analyzer.rule=Host(`battery-analyzer.${DOMAIN}`)"
+      - traefik.http.services.battery-analyzer.loadbalancer.server.port=8084
     restart: always
     depends_on:
       - snapshot-handler

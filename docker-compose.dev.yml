@@ -9,6 +9,7 @@ services:
       - ./apps/web:/app
     environment:
       - NODE_ENV=development
+      - NEXT_PUBLIC_NODE_ENV=development
 
   snapshot-handler:
     build:
@@ -61,3 +62,16 @@ services:
       - traefik.http.routers.notification-service.rule=Host(`notification-service.localhost`)
       - traefik.http.routers.notification-service.entrypoints=web
       - traefik.http.services.notification-service.loadbalancer.server.port=8083
+
+  battery-analyzer:
+    build:
+      context: ./apps/battery-analyzer
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./apps/battery-analyzer:/app
+    environment:
+      - APP_ENV=development
+    labels:
+      - traefik.http.routers.battery-analyzer.rule=Host(`battery-analyzer.localhost`)
+      - traefik.http.routers.battery-analyzer.entrypoints=web
+      - traefik.http.services.battery-analyzer.loadbalancer.server.port=8084
