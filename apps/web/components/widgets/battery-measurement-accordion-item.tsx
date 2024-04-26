@@ -1,21 +1,10 @@
-import { Info, XCircle, AlertTriangle } from "lucide-react";
-import { useAuth } from "../contexts/auth-context";
-import useSWR from "swr";
-import { fetcherWithToken } from "@/helpers/api-helper";
 import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "../ui/accordion";
-import { Skeleton } from "../ui/skeleton";
 import { Badge } from "../ui/badge";
 import { format, parseISO } from "date-fns";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "../ui/tooltip";
 import { BatteryMeasurement } from "@/types/battery-measurement.types";
 import LineChart from "../charts/line-chart";
 
