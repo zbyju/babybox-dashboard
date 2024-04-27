@@ -8,7 +8,7 @@ interface Props {
 
 export default function BatteryMeasurements(props: Props) {
   return (
-    <div className="flex w-full flex-col gap-4">
+    <div className="flex w-full flex-col gap-4 mt-4">
       {props.batteryMeasurements.length > 0 ? (
         <>
           {props.batteryMeasurements.map((b: BatteryMeasurement) => (

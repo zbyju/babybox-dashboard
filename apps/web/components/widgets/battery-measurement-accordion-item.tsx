@@ -65,8 +65,8 @@ export default function BatteryMeasurementAccordionItem({
         <AccordionContent className="px-4">
           <LineChart
             id={batteryMeasurement._id}
-            max={16}
-            min={0}
+            max={15.5}
+            min={10.5}
             strokeWidth={3}
             xaxisType="datetime"
             annotations={{}}
