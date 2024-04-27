@@ -79,10 +79,10 @@ export default function GroupNotificationAccordionItem(props: Props) {
             {props.groupedNotifications.days.map((d) => (
               <div
                 key={d.day}
-                className={"flex flex-col gap-4 border-l px-4 " + color}
+                className={"flex flex-col gap-2 border-l px-4 pt-1 " + color}
               >
                 <h5 className="text-[1.06rem]">{d.day}:</h5>
-                <div className="flex flex-row flex-wrap items-center gap-2">
+                <div className="mb-4 flex flex-row flex-wrap items-center gap-2">
                   {d.notifications.map((n) => (
                     <TooltipProvider key={n.id}>
                       <Tooltip delayDuration={100}>
