@@ -39,12 +39,6 @@ class BatteryAnalyzer:
         if slug in self.active_measurements:
             measurements = self.active_measurements[slug]
 
-            # Remove first measurement (with input voltage still on) if the voltage is close to the first power outage
-            first = measurements[0]
-            second = measurements[1]
-            if abs(first[1] - second[1]) < 0.1:
-                measurements = measurements[1:]
-
             if len(measurements) < 2:
                 return
 
