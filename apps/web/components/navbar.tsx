@@ -1,7 +1,6 @@
 import {
   Bell,
   CircleEllipsis,
-  Construction,
   HelpCircle,
   Home,
   LogIn,

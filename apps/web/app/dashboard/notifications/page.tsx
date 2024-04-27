@@ -5,7 +5,6 @@ import NotificationTemplateTable from "@/components/tables/notification-template
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { fetcherWithToken } from "@/helpers/api-helper";
-import { NotificationTemplate } from "@/types/notification.types";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
