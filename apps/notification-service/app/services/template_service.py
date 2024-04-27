@@ -60,7 +60,9 @@ async def update_template(id: str, template: NotificationTemplate):
 
 async def delete_template(template_id: str):
     """Deletes a template by its ID."""
-    result = await db.client[db.db_name]["notification_templates"].delete_one({"_id": ObjectId(template_id)})
+    id = ObjectId(template_id)
+    result = await db.client[db.db_name]["notification_templates"].delete_one({"_id": id})
     if result.deleted_count == 0:
         return False
+    await db.client[db.db_name]["notifications"].delete_many({"template": id})
     return True
