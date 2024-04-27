@@ -24,11 +24,14 @@ def evaluate_condition(snapshot: Snapshot, variable: str, comparison: str, value
     bool: True if the condition is met, False otherwise.
     """
     # Access the nested attribute if needed
-    attribute_value = snapshot
+    attribute_value = None
     for attr in variable.split("."):
-        attribute_value = getattr(attribute_value, attr, None)
-        if attribute_value is None:
-            raise AttributeError(f"Attribute {variable} not found in the snapshot.")
+        attribute_value = getattr(snapshot, attr, None)
+        if attribute_value is not None:
+            break
+
+    if attribute_value is None:
+        raise AttributeError(f"Attribute {variable} not found in the snapshot.")
 
     # Prepare the condition statement and evaluate it
     condition = f"{attribute_value} {comparison} {value}"
