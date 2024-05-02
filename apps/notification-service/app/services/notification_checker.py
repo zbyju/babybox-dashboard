@@ -25,11 +25,16 @@ def evaluate_condition(snapshot: Snapshot, variable: str, comparison: str, value
     """
     # Access the nested attribute if needed
     attribute_value = None
-    for attr in variable.split("."):
+    split = variable.split(".")
+    logger.info(split)
+    logger.info(snapshot)
+    for attr in split:
         attribute_value = getattr(snapshot, attr, None)
-        if attribute_value is not None:
-            break
+        logger.info(attr)
+        logger.info(attribute_value)
 
+    logger.info("attribute value:")
+    logger.info(attribute_value)
     if attribute_value is None:
         raise AttributeError(f"Attribute {variable} not found in the snapshot.")
 
