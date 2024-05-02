@@ -24,14 +24,14 @@ def evaluate_condition(snapshot: Snapshot, variable: str, comparison: str, value
     bool: True if the condition is met, False otherwise.
     """
     # Access the nested attribute if needed
-    attribute_value = None
+    attribute_value = snapshot
     split = variable.split(".")
     logger.info(split)
     logger.info(snapshot)
     for attr in split:
         if attr == "in":
             attr = "in_"
-        attribute_value = getattr(snapshot, attr, None)
+        attribute_value = getattr(attribute_value, attr, None)
         logger.info(attr)
         logger.info(attribute_value)
 
