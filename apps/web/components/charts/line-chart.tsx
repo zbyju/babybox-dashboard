@@ -61,7 +61,7 @@ export default function LineChart(props: Props) {
 
   const config = { ...defaultConfig, ...props };
 
-  const markerSize = props.series.length > 100 ? 0 : 1;
+  const markerSize = 0;
 
   const state = {
     options: {

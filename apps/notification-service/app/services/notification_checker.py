@@ -29,6 +29,8 @@ def evaluate_condition(snapshot: Snapshot, variable: str, comparison: str, value
     logger.info(split)
     logger.info(snapshot)
     for attr in split:
+        if attr == "in":
+            attr = "in_"
         attribute_value = getattr(snapshot, attr, None)
         logger.info(attr)
         logger.info(attribute_value)
@@ -36,7 +38,8 @@ def evaluate_condition(snapshot: Snapshot, variable: str, comparison: str, value
     logger.info("attribute value:")
     logger.info(attribute_value)
     if attribute_value is None:
-        raise AttributeError(f"Attribute {variable} not found in the snapshot.")
+        logger.error("Attribute " + variable + " not found!!!")
+        return False
 
     # Prepare the condition statement and evaluate it
     condition = f"{attribute_value} {comparison} {value}"
