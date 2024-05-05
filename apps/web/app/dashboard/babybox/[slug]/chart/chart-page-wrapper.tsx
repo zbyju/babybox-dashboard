@@ -236,7 +236,7 @@ export default function ChartPageWrapper({
   }
 
   const eventsDecoded =
-    !eventsError || !eventsIsLoading || !eventsData || !("data" in eventsData)
+    eventsError || eventsIsLoading || !eventsData || !("data" in eventsData)
       ? []
       : eventsData?.data.map((e: unknown) => decodeEvent(e as Event));
   const intervals = combineIntervals(generateIntervals(eventsDecoded));
