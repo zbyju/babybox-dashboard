@@ -16,7 +16,12 @@ async def get_current_user(
 ) -> dict:
     token = authorization.credentials
     try:
-        payload = jwt.decode(token, get_jwt_secret_key(), algorithms=["HS256"])
+        payload = jwt.decode(
+            token,
+            get_jwt_secret_key(),
+            algorithms=["HS256"],
+            options={"verify_exp": True},
+        )
         return payload
     except jwt.PyJWTError:
         raise HTTPException(
