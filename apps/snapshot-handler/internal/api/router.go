@@ -32,6 +32,6 @@ func RegisterRoutes(e *echo.Echo, app *v1.Application) {
 
 	// New endpoints
 	e.GET("/send/events/:slug", app.EventsHandler)
-	e.GET("/send/snapshots/thermal", app.SnapshotHandler)
-	e.GET("/send/snapshots/engine", app.SnapshotHandler)
+  e.GET("/send/snapshots/thermal/:slug", app.SnapshotHandler)
+  e.GET("/send/snapshots/engine/:slug", app.SnapshotHandler)
 }
