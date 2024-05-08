@@ -3,19 +3,25 @@ on:
     branches:
       - main
   workflow_dispatch:
-  
+
 jobs:
   run_pull:
-    name: run pull
+    name: Run Pull
     runs-on: ubuntu-latest
     
     steps:
-    - name: install ssh keys
-      # check this thread to understand why its needed:
-      # https://stackoverflow.com/a/70447517
+    - name: Install SSH Keys
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        SSH_SERVER_IP: ${{ secrets.SSH_SERVER_IP }}
+        SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
+        SSH_PORT: ${{ secrets.SSH_PORT }}
       run: |
-        install -m 600 -D /dev/null ~/.ssh/id_rsa
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        ssh-keyscan -H ${{ secrets.SSH_SERVER_IP }} > ~/.ssh/known_hosts
-    - name: connect and pull
+        mkdir -p ~/.ssh
+        echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H $SSH_SERVER_IP >> ~/.ssh/known_hosts
+    - name: Test SSH Connection
+      run: ssh -v -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_SERVER_IP }} "echo Connection Successful"
+    - name: Connect and Pull
       run: ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_SERVER_IP }} "cd /apps/babybox-dashboard && git checkout main && git pull && ./deploy.sh"
