@@ -1,0 +1,33 @@
+name: Deploy to Server via SSH
+on:
+  push:
+    branches:
+      - main  # Adjust to your desired branch
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v2
+
+      - name: Set up SSH Agent
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Add known hosts
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Deploy via SSH
+        env:
+          USERNAME: ${{ secrets.SSH_USERNAME }}
+          SERVER_IP: ${{ secrets.SSH_SERVER_IP }}
+          PORT: ${{ secrets.SSH_PORT }}
+        run: |
+          ssh -p $PORT $USERNAME@$SERVER_IP "cd /apps/babybox-dashboard && ./deploy.sh"
