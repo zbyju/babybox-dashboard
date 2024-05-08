@@ -28,6 +28,8 @@ jobs:
         chmod 644 ~/.ssh/known_hosts
 
     - name: connect and pull
+      eval $(ssh-agent -s)
+      ssh-add ~/.ssh/id_rsa
       run: ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && git checkout ${{ secrets.MAIN_BRANCH }} && git pull"
     
     - name: cleanup
