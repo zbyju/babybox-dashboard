@@ -10,16 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Configure SSH
-      uses: webfactory/ssh-agent@v0.9.0
-      with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
     - name: install ssh keys
       # check this thread to understand why its needed:
       # https://stackoverflow.com/a/70447517
       run: |
-        echo "${{ secrets.SSH_PRIVATE_KEY }}"
         mkdir -p ~/.ssh
         chmod 700 ~/.ssh
         install -m 600 -D /dev/null ~/.ssh/id_rsa
@@ -28,10 +22,7 @@ jobs:
         chmod 644 ~/.ssh/known_hosts
 
     - name: connect and pull
-      run: |
-        eval $(ssh-agent -s)
-        ssh-add ~/.ssh/id_rsa
-        ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && git checkout ${{ secrets.MAIN_BRANCH }} && git pull"
-    
+      run: ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && git checkout ${{ secrets.MAIN_BRANCH }} && git pull"
+      
     - name: cleanup
       run: rm -rf ~/.ssh
