@@ -17,12 +17,7 @@ def send_email_smtp(subject, content, emails):
     sender_email = os.getenv("EMAIL", "")
     sender_password = os.getenv("EMAIL_PASSWORD", "")
     smtp_server = os.getenv("SMTP_SERVER", "")
-    smtp_port = os.getenv("SMTP_PORT", 465)  # Default SMTP port is 587 for TLS
-
-    logger.info(sender_email)
-    logger.info(sender_password)
-    logger.info(smtp_server)
-    logger.info(", ".join(emails))
+    smtp_port = int(os.getenv("SMTP_PORT", "465"))
 
     # Create MIME multi-part message
     message = MIMEMultipart("alternative")
@@ -34,7 +29,7 @@ def send_email_smtp(subject, content, emails):
     message.attach(MIMEText(content, "html"))
 
     context = ssl.create_default_context()
-    with smtplib.SMTP_SSL("smtp.seznam.cz", 465, context=context) as server:
+    with smtplib.SMTP_SSL(smtp_server, smtp_port, context=context) as server:
         server.login(sender_email, sender_password)
         server.sendmail(sender_email, emails, message.as_string())
 

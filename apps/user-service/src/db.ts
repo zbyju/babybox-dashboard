@@ -22,7 +22,7 @@ const connectDB = async () => {
     const defaultEmail = process.env.DEFAULT_EMAIL;
     if (!defaultUser || !defaultPassword || !defaultEmail) {
       logger.error(
-        `Couldn't create default user: ${defaultUser} ${defaultPassword} ${defaultEmail}`,
+        `Couldn't create default user: ${defaultUser} ${defaultEmail}`,
       );
       return;
     }
