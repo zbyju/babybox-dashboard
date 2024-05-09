@@ -20,7 +20,7 @@ func TestToSlug(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			got := toSlug(c.input)
+			got := ToSlug(c.input)
 			if got != c.expected {
 				t.Errorf("toSlug(%q) == %q, want %q", c.input, got, c.expected)
 			}
