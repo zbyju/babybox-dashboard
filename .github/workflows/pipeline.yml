@@ -21,17 +21,17 @@ jobs:
         go-version: '1.22'
 
     - name: Run Tests in Web App
-      working-directory: apps/web
+      working-directory: ./apps/web
       run: |
         npm ci
         npm run test
 
     - name: Run Tests in Snapshot Handler
-      working-directory: apps/snapshot-handler
+      working-directory: ./apps/snapshot-handler
       run: go test ./...
 
     - name: Run Tests in Babybox Service
-      working-directory: apps/babybox-service
+      working-directory: ./apps/babybox-service
       run: go test ./...
 
     - name: install ssh keys
