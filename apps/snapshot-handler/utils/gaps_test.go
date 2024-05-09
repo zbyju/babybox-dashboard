@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"slices"
 	"testing"
 	"time"
 
@@ -49,6 +50,7 @@ func TestFillGapsBasic(t *testing.T) {
 		{Timestamp: time.Date(2024, time.April, 9, 10, 15, 0, 0, time.UTC)},
 		{Timestamp: time.Date(2024, time.April, 9, 10, 30, 0, 0, time.UTC)},
 	}
+  slices.Reverse(snapshots)
 	from := time.Date(2024, time.April, 9, 10, 0, 0, 0, time.UTC)
 	to := time.Date(2024, time.April, 9, 10, 30, 0, 0, time.UTC)
 	expectedSnapshots := []domain.Snapshot{
@@ -58,7 +60,6 @@ func TestFillGapsBasic(t *testing.T) {
 		{Timestamp: time.Date(2024, time.April, 9, 10, 25, 0, 0, time.UTC)}, // Placeholder
 		{Timestamp: time.Date(2024, time.April, 9, 10, 30, 0, 0, time.UTC)},
 	}
-
 	result := FillGaps(snapshots, "", from, to)
 
 	compareSnapshots(t, expectedSnapshots, result)
@@ -71,6 +72,7 @@ func TestFillGapsNoFill(t *testing.T) {
 		{Timestamp: time.Date(2024, time.April, 9, 10, 20, 0, 0, time.UTC)},
 		{Timestamp: time.Date(2024, time.April, 9, 10, 30, 0, 0, time.UTC)},
 	}
+  slices.Reverse(snapshots)
 	from := time.Date(2024, time.April, 9, 10, 0, 0, 0, time.UTC)
 	to := time.Date(2024, time.April, 9, 10, 30, 0, 0, time.UTC)
 
@@ -86,6 +88,7 @@ func TestFillGapsMoreComplex(t *testing.T) {
 		{Timestamp: time.Date(2024, time.April, 9, 10, 25, 0, 0, time.UTC)},
 		{Timestamp: time.Date(2024, time.April, 9, 10, 40, 0, 0, time.UTC)},
 	}
+  slices.Reverse(snapshots)
 	from := time.Date(2024, time.April, 9, 10, 0, 0, 0, time.UTC)
 	to := time.Date(2024, time.April, 9, 10, 40, 0, 0, time.UTC)
 	expectedSnapshots := []domain.Snapshot{
@@ -112,6 +115,7 @@ func TestFillGapsMoreComplex2(t *testing.T) {
 		{Timestamp: time.Date(2024, time.April, 9, 11, 20, 0, 0, time.UTC)},
 		{Timestamp: time.Date(2024, time.April, 9, 11, 30, 0, 0, time.UTC)},
 	}
+  slices.Reverse(snapshots)
 	from := time.Date(2024, time.April, 9, 10, 0, 0, 0, time.UTC)
 	to := time.Date(2024, time.April, 9, 12, 0, 0, 0, time.UTC)
 	expectedSnapshots := []domain.Snapshot{
@@ -141,6 +145,7 @@ func TestFillGapsGapAtEnd(t *testing.T) {
 		{Timestamp: time.Date(2024, time.April, 9, 10, 10, 0, 0, time.UTC)},
 		{Timestamp: time.Date(2024, time.April, 9, 10, 20, 0, 0, time.UTC)},
 	}
+  slices.Reverse(snapshots)
 	from := time.Date(2024, time.April, 9, 10, 0, 0, 0, time.UTC)
 	to := time.Date(2024, time.April, 9, 10, 35, 0, 0, time.UTC)
 	expectedSnapshots := []domain.Snapshot{
@@ -160,6 +165,7 @@ func TestFillGapsGapAtStart(t *testing.T) {
 		{Timestamp: time.Date(2024, time.April, 9, 10, 15, 0, 0, time.UTC)},
 		{Timestamp: time.Date(2024, time.April, 9, 10, 20, 0, 0, time.UTC)},
 	}
+  slices.Reverse(snapshots)
 	from := time.Date(2024, time.April, 9, 10, 0, 0, 0, time.UTC)
 	to := time.Date(2024, time.April, 9, 10, 20, 0, 0, time.UTC)
 	expectedSnapshots := []domain.Snapshot{
@@ -180,6 +186,7 @@ func TestFillGapsGapAtBothEnds(t *testing.T) {
 		{Timestamp: time.Date(2024, time.April, 9, 10, 30, 0, 0, time.UTC)},
 		{Timestamp: time.Date(2024, time.April, 9, 10, 40, 0, 0, time.UTC)},
 	}
+  slices.Reverse(snapshots)
 	from := time.Date(2024, time.April, 9, 10, 0, 0, 0, time.UTC)
 	to := time.Date(2024, time.April, 9, 11, 0, 0, 0, time.UTC)
 	expectedSnapshots := []domain.Snapshot{
@@ -219,6 +226,7 @@ func TestFillGapsLazyBasic(t *testing.T) {
 		{Timestamp: time.Date(2024, time.April, 9, 10, 10, 0, 0, time.UTC)},
 		{Timestamp: time.Date(2024, time.April, 9, 10, 30, 0, 0, time.UTC)},
 	}
+  slices.Reverse(snapshots)
 	from := time.Date(2024, time.April, 9, 10, 0, 0, 0, time.UTC)
 	to := time.Date(2024, time.April, 9, 10, 30, 0, 0, time.UTC)
 	expectedSnapshots := []domain.Snapshot{
@@ -237,6 +245,7 @@ func TestFillGapsLazyComplex(t *testing.T) {
 	snapshots := []domain.Snapshot{
 		{Timestamp: time.Date(2024, time.April, 9, 10, 30, 0, 0, time.UTC)},
 	}
+  slices.Reverse(snapshots)
 	from := time.Date(2024, time.April, 9, 10, 0, 0, 0, time.UTC)
 	to := time.Date(2024, time.April, 9, 12, 0, 0, 0, time.UTC)
 	expectedSnapshots := []domain.Snapshot{
