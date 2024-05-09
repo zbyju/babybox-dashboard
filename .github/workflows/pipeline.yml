@@ -10,6 +10,30 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: '1.22'
+
+    - name: Run Tests in Web App
+      working-directory: apps/web
+      run: |
+        npm ci
+        npm run test
+
+    - name: Run Tests in Snapshot Handler
+      working-directory: apps/snapshot-handler
+      run: go test ./...
+
+    - name: Run Tests in Babybox Service
+      working-directory: apps/babybox-service
+      run: go test ./...
+
     - name: install ssh keys
       # check this thread to understand why its needed:
       # https://stackoverflow.com/a/70447517
