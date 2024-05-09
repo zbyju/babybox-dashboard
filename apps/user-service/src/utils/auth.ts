@@ -9,7 +9,7 @@ export function signJWT(user: UserSanitized) {
   const payload = { username: user.username, email: user.email };
   const options = { expiresIn: "7d" };
 
-  const secret = process.env.JWT_SECRET || "secret";
+  const secret = process.env.JWT_SECRET || "";
   const token = jwt.sign(payload, secret, options);
 
   return token;
