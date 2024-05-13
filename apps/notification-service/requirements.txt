@@ -2,7 +2,7 @@ aio-pika==9.4.1
 annotated-types==0.6.0
 APScheduler==3.10.4
 black==24.3.0
-blinker==1.7.0
+blinker==1.8.2
 fastapi==0.111.0
 flake8==7.0.0
 motor==3.4.0
