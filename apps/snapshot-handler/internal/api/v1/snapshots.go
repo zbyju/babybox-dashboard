@@ -14,7 +14,7 @@ import (
 
 // Old snapshot handler
 func (app *Application) SnapshotHandler(c echo.Context) error {
-  path := strings.ToLower(c.Param("name"))
+  	path := strings.ToLower(c.Param("slug"))
 	slug := utils.ToSlug(c.QueryParam("BB"))
 
 	if slug == "" {
