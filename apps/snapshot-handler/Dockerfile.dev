@@ -3,7 +3,7 @@ FROM golang:1.22
 WORKDIR /app
 
 # Install air for live reloading
-RUN go install github.com/cosmtrek/air@latest
+RUN go install github.com/air-verse/air@latest
 
 # Copy go mod and sum files
 COPY go.mod go.sum ./
