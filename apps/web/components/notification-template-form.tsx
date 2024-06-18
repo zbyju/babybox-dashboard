@@ -393,6 +393,7 @@ export default function NotificationTemplateForm(props: Props) {
         />
         <div className="flex flex-row items-center justify-center gap-2">
           <Input
+            type="email"
             placeholder="email@email.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
