@@ -46,14 +46,13 @@ export function DateRangePicker({
                 format(date.from, "LLL dd, y", { locale: cs })
               )
             ) : (
-              <span>Pick a date</span>
+              <span>Vyberte datum</span>
             )}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
           <Calendar
             locale={cs}
-            initialFocus
             mode="range"
             defaultMonth={date?.from}
             selected={date}
