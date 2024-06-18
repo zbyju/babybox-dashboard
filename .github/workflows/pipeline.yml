@@ -51,7 +51,7 @@ jobs:
           chmod 644 ~/.ssh/known_hosts
 
       - name: Connect and Pull
-        run: ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && git checkout ${{ secrets.MAIN_BRANCH }} && git pull && docker compose up --detach --build && exit"
+        run: ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && git checkout ${{ secrets.MAIN_BRANCH }} && git pull && docker compose up --detach --build --force-recreate && exit"
 
       - name: Cleanup
         run: rm -rf ~/.ssh
