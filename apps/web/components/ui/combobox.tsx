@@ -11,7 +11,7 @@ import { Button } from "../ui/button";
 import { useState } from "react";
 
 interface Props {
-  values: { value: string; label: string }[];
+  values: { value: string; label: string }[] | string[];
   selected: { value: string; label: string } | undefined;
   onSelect: (selectedValue: string) => void;
   searchLabel?: string;
@@ -28,6 +28,11 @@ export default function Combobox({
   chooseLabel = "Vyberte...",
 }: Props) {
   const [open, setOpen] = useState(false);
+
+  const normalizedValues =
+    typeof values[0] === "string"
+      ? (values as string[]).map((v) => ({ value: v, label: v }))
+      : (values as { label: string; value: string }[]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -47,7 +52,7 @@ export default function Combobox({
           <CommandInput placeholder={searchLabel} />
           <CommandEmpty>{emptyLabel}</CommandEmpty>
           <CommandGroup className="max-h-[300px] overflow-y-auto">
-            {values.map((value) => (
+            {normalizedValues.map((value) => (
               <CommandItem
                 key={value.value}
                 value={value.value}

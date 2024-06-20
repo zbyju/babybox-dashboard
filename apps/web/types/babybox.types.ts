@@ -1,4 +1,5 @@
 import { Snapshot } from "./snapshot.types";
+import { z } from "zod"
 
 export type BabyboxBase = {
   slug: string;
@@ -55,3 +56,54 @@ export type BabyboxMaintenance = {
   timestamp: Date;
   note?: string;
 };
+
+export type BabyboxIssue = {
+  id?: string;
+  timestamp: Date;
+  slug: string;
+  priority: string;
+  severity: string;
+  assignee: string;
+  issue: BabyboxIssueDescription;
+  createdAt: Date;
+  isSolved: boolean;
+  solvedAt?: Date | undefined;
+}
+
+export type BabyboxIssueDescription = {
+  type: string;
+  subtype: string;
+  description: string;
+  context: string;
+}
+
+const requiredLabel = "Povinné"
+
+export const BabyboxIssueDescriptionSchema = z.object({
+  type: z.string().min(1, requiredLabel),
+  subtype: z.string().min(1, requiredLabel),
+  description: z.string().optional(),
+  context: z.string().optional(),
+});
+
+export const BabyboxIssueSchema = z.object({
+  timestamp: z.date({
+    required_error: requiredLabel,
+  }),
+  slug: z.string({
+    required_error: requiredLabel
+  }).min(1, requiredLabel),
+  priority: z.string().min(1, requiredLabel),
+  severity: z.string().min(1, requiredLabel),
+  assignee: z.string().optional(),
+  issue: BabyboxIssueDescriptionSchema,
+  isSolved: z.boolean(),
+  solvedAt: z.date({
+    errorMap: (issue, { defaultError }) => ({
+      message: issue.code === "invalid_date" ? "Špatné datum" : defaultError,
+    }),
+  }).optional(),
+}).refine(data => data.solvedAt === undefined || data.isSolved, {
+  message: "Chyba má uvedené datum, kdy byla vyřešena, ale je označena jako nevyřešená.",
+  path: ["isSolved"],
+});

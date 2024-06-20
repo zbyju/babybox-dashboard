@@ -5,6 +5,7 @@ import {
   Home,
   LogIn,
   LogOut,
+  MessageSquareWarning,
   User,
 } from "lucide-react";
 import { ModeToggle } from "./buttons/darkmode-toggle";
@@ -19,10 +20,15 @@ export default function Navbar() {
 
   const links = [
     { href: "/dashboard/babybox", name: "Domů", icon: <Home /> },
-    { href: "/dashboard/notifications", name: "Notifikace", icon: <Bell /> },
+    {
+      href: "/dashboard/issues",
+      name: "Chyby",
+      icon: <MessageSquareWarning />,
+    },
   ];
 
   const otherLinks = [
+    { href: "/dashboard/notifications", name: "Notifikace", icon: <Bell /> },
     { href: "/dashboard/users", name: "Uživatelé", icon: <User /> },
     { href: "/dashboard/help", name: "Nápověda", icon: <HelpCircle /> },
   ];
