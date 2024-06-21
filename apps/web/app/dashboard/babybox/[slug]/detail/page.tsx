@@ -1,14 +1,14 @@
 "use client";
 
-import { useAuth } from "@/components/contexts/auth-context";
-import LocationInformation from "@/components/location-information";
-import NetworkConfiguration from "@/components/network-configuration";
 import ContactInformationTable from "@/components/tables/contact-information-table";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { fetcherWithToken } from "@/helpers/api-helper";
+import NetworkConfiguration from "@/components/network-configuration";
+import LocationInformation from "@/components/location-information";
 import { AlertCircle, ArrowLeft, FilePenLine } from "lucide-react";
+import { useAuth } from "@/components/contexts/auth-context";
+import { fetcherWithToken } from "@/helpers/api-helper";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import useSWR from "swr";
 
@@ -67,9 +67,10 @@ export default function Home({ params }: { params: { slug: string } }) {
             {babyboxIsLoading ? (
               <Skeleton className="h-[400px] w-[250px]" />
             ) : (
-              babyboxData.data.location && (
-                <LocationInformation address={babyboxData.data.location} />
-              )
+              <LocationInformation
+                address={babyboxData.data.location}
+                name={babyboxData?.data?.name || params.slug}
+              />
             )}
 
             {babyboxIsLoading ? (
@@ -85,7 +86,8 @@ export default function Home({ params }: { params: { slug: string } }) {
             {babyboxIsLoading ? (
               <Skeleton className="h-[400px] w-[250px]" />
             ) : (
-              babyboxData?.data.contacts && babyboxData?.data.contacts.length > 0 && (
+              babyboxData?.data.contacts &&
+              babyboxData?.data.contacts.length > 0 && (
                 <ContactInformationTable
                   contacts={babyboxData?.data.contacts}
                 />
