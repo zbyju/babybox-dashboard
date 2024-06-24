@@ -55,7 +55,7 @@
   },
   "devDependencies": {
     "@fsouza/prettierd": "^0.25.3",
-    "@testing-library/jest-dom": "^6.4.2",
+    "@testing-library/jest-dom": "^6.4.6",
     "@testing-library/react": "^15.0.7",
     "@types/jest": "^29.5.12",
     "@types/next-pwa": "^5",
