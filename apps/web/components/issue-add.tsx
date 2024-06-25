@@ -28,6 +28,7 @@ import Combobox from "./ui/combobox";
 import { Button } from "./ui/button";
 import { Switch } from "./ui/switch";
 import { useContext } from "react";
+import { toast } from "sonner";
 import { z } from "zod";
 
 export interface Props {
@@ -61,10 +62,30 @@ export default function IssueAdd({ onAdd, users }: Props) {
   const subtypes = getSubtypes(type);
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof BabyboxIssueSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
+  async function onSubmit(values: z.infer<typeof BabyboxIssueSchema>) {
     console.log(values);
+    console.log(JSON.stringify(values));
+    try {
+      const res = await fetch(`${babyboxServiceURL}/v1/issues`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
+      const data = await res.json();
+      if (res.ok && !data?.metadata?.err) {
+        onAdd(values);
+        form.reset();
+        toast.success("Chyba úspěšně vytvořena.");
+      } else {
+        throw "err";
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error("Chyba nebyla vytvořena.");
+    }
   }
 
   const cRow = "flex flex-row items-center gap-4";

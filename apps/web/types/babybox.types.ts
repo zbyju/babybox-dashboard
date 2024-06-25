@@ -22,8 +22,8 @@ export type BabyboxAddress = {
   street?: string;
 
   coordinates?: {
-    latitude: number;
-    longitude: number;
+    latitude: number | string;
+    longitude: number | string;
   };
 };
 
@@ -52,20 +52,15 @@ export type BabyboxNetworkConfiguration = {
   note?: string;
 };
 
-export type BabyboxMaintenance = {
-  timestamp: Date;
-  note?: string;
-};
-
 export type BabyboxIssue = {
   id?: string;
   timestamp: Date;
   slug: string;
   priority: string;
   severity: string;
-  assignee: string;
+  assignee?: string;
   issue: BabyboxIssueDescription;
-  createdAt: Date;
+  createdAt?: Date;
   isSolved: boolean;
   solvedAt?: Date | undefined;
 }
@@ -73,8 +68,8 @@ export type BabyboxIssue = {
 export type BabyboxIssueDescription = {
   type: string;
   subtype: string;
-  description: string;
-  context: string;
+  description?: string;
+  context?: string;
 }
 
 const requiredLabel = "Povinné"
@@ -106,4 +101,33 @@ export const BabyboxIssueSchema = z.object({
 }).refine(data => data.solvedAt === undefined || data.isSolved, {
   message: "Chyba má uvedené datum, kdy byla vyřešena, ale je označena jako nevyřešená.",
   path: ["isSolved"],
+});
+
+export type BabyboxMaintenance = {
+  id?: string
+  state: string
+  start: Date
+  end?: Date
+  assignee?: string
+  slugs?: string[]
+  note?: string
+  distance?: number
+}
+
+export const BabyboxMaintenanceSchema = z.object({
+  state: z.string().min(1, requiredLabel),
+  start: z.date({
+    errorMap: (issue, { defaultError }) => ({
+      message: issue.code === "invalid_date" ? "Špatné datum" : defaultError,
+    }),
+  }),
+  end: z.date({
+    errorMap: (issue, { defaultError }) => ({
+      message: issue.code === "invalid_date" ? "Špatné datum" : defaultError,
+    }),
+  }).optional(),
+  assignee: z.string().optional(),
+  slugs: z.array(z.string()).optional(),
+  note: z.string().optional(),
+  distance: z.string().optional()
 });

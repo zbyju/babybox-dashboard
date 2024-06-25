@@ -6,14 +6,17 @@ import {
   CommandItem,
 } from "../ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { ChevronsUpDown } from "lucide-react";
+import { Check, ChevronsUpDown } from "lucide-react";
 import { Button } from "../ui/button";
 import { useState } from "react";
 
 interface Props {
   values: { value: string; label: string }[] | string[];
-  selected: { value: string; label: string } | undefined;
-  onSelect: (selectedValue: string) => void;
+  selected:
+    | { value: string; label: string }
+    | { value: string; label: string }[]
+    | undefined;
+  onSelect: (selectedValue: string | string[]) => void;
   searchLabel?: string;
   emptyLabel?: string;
   chooseLabel?: string;
@@ -43,7 +46,11 @@ export default function Combobox({
           aria-expanded={open}
           className="w-[200px] justify-between"
         >
-          {selected ? selected.label : chooseLabel}
+          {Array.isArray(selected)
+            ? "Počet vybraných: " + selected.length
+            : selected
+              ? selected.label
+              : chooseLabel}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -57,6 +64,22 @@ export default function Combobox({
                 key={value.value}
                 value={value.value}
                 onSelect={(currentValue) => {
+                  if (Array.isArray(selected)) {
+                    if (selected.find((x) => x.value === currentValue)) {
+                      onSelect(
+                        selected
+                          .filter((x) => x.value !== currentValue)
+                          .map((x) => x.value),
+                      );
+                    } else {
+                      onSelect(
+                        selected
+                          .concat({ value: currentValue, label: currentValue })
+                          .map((x) => x.value),
+                      );
+                    }
+                    return;
+                  }
                   onSelect(
                     currentValue === selected?.value ? "" : currentValue,
                   );
@@ -64,7 +87,14 @@ export default function Combobox({
                 }}
                 className="cursor-pointer"
               >
-                {value.label}
+                {Array.isArray(selected) &&
+                selected.find((x) => x.value === value.value) ? (
+                  <>
+                    <Check height="16" /> {value.label}
+                  </>
+                ) : (
+                  value.label
+                )}
               </CommandItem>
             ))}
           </CommandGroup>
