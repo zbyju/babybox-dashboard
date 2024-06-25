@@ -52,8 +52,7 @@ func (service *DBService) QuerySnapshotsBySlug(
 	from, to time.Time,
 	n uint,
 ) ([]domain.Snapshot, error) {
-	var fluxQuery string
-	fluxQuery = fmt.Sprintf(`
+	fluxQuery := fmt.Sprintf(`
     import "date"
     from(bucket: "%s")
       |> range(start: %s, stop: %s)
@@ -176,7 +175,7 @@ func (service *DBService) AggregateWeekdayAverageBySlug(
 		`, service.bucket, measurementNameThermal, field, slug)
 
 	result, err := service.QueryData(query)
-	if err != nil && result.Err != nil {
+	if err != nil {
 		return nil, err
 	}
 	defer result.Close()
