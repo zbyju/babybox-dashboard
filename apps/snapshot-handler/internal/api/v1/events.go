@@ -74,8 +74,10 @@ func (app *Application) GetAllEventsBySlugHandler(c echo.Context) error {
 	from := c.QueryParam("from")
 	to := c.QueryParam("to")
 	n := c.QueryParam("n")
+	sort := strings.ToLower(c.QueryParam("sort"))
 
 	now := time.Now().In(app.Config.TimeLocation)
+	var desc string
 
 	if from == "" {
 		from = now.AddDate(-1, 0, 0).Format("2006-01-02") // One year ago
@@ -85,6 +87,11 @@ func (app *Application) GetAllEventsBySlugHandler(c echo.Context) error {
 	}
 	if n == "" {
 		n = "99999999"
+	}
+	if sort == "" || sort == "asc" {
+		desc = "false"
+	} else {
+		desc = "true"
 	}
 
 	// Parse the dates from the query parameters
@@ -112,7 +119,7 @@ func (app *Application) GetAllEventsBySlugHandler(c echo.Context) error {
 		fromTime = now
 	}
 
-	events, err := app.DBService.QueryEventsBySlug(slug, fromTime, toTime, uint(nNum))
+	events, err := app.DBService.QueryEventsBySlug(slug, fromTime, toTime, uint(nNum), desc)
 	if err != nil {
 		// Log the error and return an appropriate error response
 		app.Logger.Error("Failed to query all events: ", err)

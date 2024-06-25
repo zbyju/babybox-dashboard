@@ -1,28 +1,40 @@
 import {
   Bell,
   CircleEllipsis,
+  Construction,
   HelpCircle,
   Home,
   LogIn,
   LogOut,
+  MessageSquareWarning,
   User,
 } from "lucide-react";
-import { ModeToggle } from "./buttons/darkmode-toggle";
-import { BabyboxCombo } from "./babybox-combo";
-import Link from "next/link";
-import { Button } from "./ui/button";
-import { useAuth } from "./contexts/auth-context";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { ModeToggle } from "./buttons/darkmode-toggle";
+import { useAuth } from "./contexts/auth-context";
+import { BabyboxCombo } from "./babybox-combo";
+import { Button } from "./ui/button";
+import Link from "next/link";
 
 export default function Navbar() {
   const { isAuthenticated } = useAuth();
 
   const links = [
     { href: "/dashboard/babybox", name: "Domů", icon: <Home /> },
-    { href: "/dashboard/notifications", name: "Notifikace", icon: <Bell /> },
+    {
+      href: "/dashboard/issues",
+      name: "Chyby",
+      icon: <MessageSquareWarning />,
+    },
   ];
 
   const otherLinks = [
+    {
+      href: "/dashboard/maintenances",
+      name: "Servisy",
+      icon: <Construction />,
+    },
+    { href: "/dashboard/notifications", name: "Notifikace", icon: <Bell /> },
     { href: "/dashboard/users", name: "Uživatelé", icon: <User /> },
     { href: "/dashboard/help", name: "Nápověda", icon: <HelpCircle /> },
   ];

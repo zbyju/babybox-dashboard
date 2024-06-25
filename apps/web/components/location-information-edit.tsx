@@ -1,6 +1,5 @@
 "use client";
 
-import { BabyboxAddress } from "@/types/babybox.types";
 import {
   Card,
   CardContent,
@@ -8,18 +7,18 @@ import {
   CardHeader,
   CardTitle,
 } from "./ui/card";
+import { BabyboxAddress } from "@/types/babybox.types";
 import { MapPin } from "lucide-react";
 import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { useState } from "react";
 import { Switch } from "./ui/switch";
+import { Input } from "./ui/input";
 import { Label } from "./ui/label";
+import { useState } from "react";
 
 interface Props {
   address: BabyboxAddress | undefined;
   onClick: (newAddress: BabyboxAddress) => void;
 }
-
 
 export default function LocationInformationEdit(props: Props) {
   const [address, setAddress] = useState<BabyboxAddress>(
@@ -125,9 +124,10 @@ export default function LocationInformationEdit(props: Props) {
                     coordinates:
                       val === true
                         ? {
-                            latitude: props.address?.coordinates?.latitude || 0,
+                            latitude:
+                              props.address?.coordinates?.latitude || "",
                             longitude:
-                              props.address?.coordinates?.longitude || 0,
+                              props.address?.coordinates?.longitude || "",
                           }
                         : undefined,
                   });
@@ -157,11 +157,8 @@ export default function LocationInformationEdit(props: Props) {
                     setAddress({
                       ...address,
                       coordinates: {
-                        latitude: parseFloat(e.target.value) || 0,
-                        longitude:
-                          address.coordinates?.longitude ||
-                          props.address?.coordinates?.longitude ||
-                          0,
+                        latitude: e.target.value || "",
+                        longitude: address.coordinates?.longitude || "",
                       },
                     })
                   }
@@ -180,11 +177,8 @@ export default function LocationInformationEdit(props: Props) {
                     setAddress({
                       ...address,
                       coordinates: {
-                        latitude:
-                          address.coordinates?.latitude ||
-                          props.address?.coordinates?.latitude ||
-                          0,
-                        longitude: parseFloat(e.target.value) || 0,
+                        latitude: address.coordinates?.latitude || "",
+                        longitude: e.target.value || "",
                       },
                     })
                   }
@@ -196,7 +190,30 @@ export default function LocationInformationEdit(props: Props) {
       </CardContent>
       <CardFooter>
         <div className="flex flex-row flex-wrap gap-2">
-          <Button onClick={() => props.onClick(address)}>Uložit</Button>
+          <Button
+            onClick={() => {
+              const addressToSave = { ...address };
+              if (
+                address.coordinates?.latitude &&
+                typeof address.coordinates.latitude === "string"
+              ) {
+                addressToSave.coordinates!.latitude = parseFloat(
+                  address.coordinates.latitude,
+                );
+              }
+              if (
+                address.coordinates?.longitude &&
+                typeof address.coordinates.longitude === "string"
+              ) {
+                addressToSave.coordinates!.longitude = parseFloat(
+                  address.coordinates.longitude,
+                );
+              }
+              props.onClick(address);
+            }}
+          >
+            Uložit
+          </Button>
           <Button
             onClick={() =>
               setAddress(

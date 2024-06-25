@@ -4,24 +4,24 @@ import BabyboxSideMenu from "@/components/babybox-side-menu";
 
 import Widget from "@/components/ui/widget";
 
-import LatestSnapshots from "@/components/widgets/latest-snapshots";
-import { SnapshotGroupStat } from "@/types/snapshot.types";
-import { Event } from "@/types/event.types";
-import LatestEvents from "@/components/widgets/latest-events";
-import { calculateSnapshotStats } from "@/utils/stats";
+import LatestNotifications from "@/components/widgets/latest-notifications";
 import TextualSnapshotStats from "@/components/misc/textual-snapshot-stats";
-import { Separator } from "@/components/ui/separator";
-import VariableOverview from "@/components/widgets/variable-overview";
+import { BabyboxesContext } from "@/components/contexts/babyboxes-context";
 import { fetcherWithToken, snapshotFetcher } from "@/helpers/api-helper";
-import { addDays, format } from "date-fns";
-import useSWR from "swr";
+import VariableOverview from "@/components/widgets/variable-overview";
+import LatestSnapshots from "@/components/widgets/latest-snapshots";
+import LatestEvents from "@/components/widgets/latest-events";
 import { useAuth } from "@/components/contexts/auth-context";
+import { SnapshotGroupStat } from "@/types/snapshot.types";
+import RefreshButton from "@/components/buttons/refresh";
+import { BabyboxBase } from "@/types/babybox.types.js";
+import { calculateSnapshotStats } from "@/utils/stats";
+import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useContext, useState } from "react";
-import { BabyboxesContext } from "@/components/contexts/babyboxes-context";
-import { BabyboxBase } from "@/types/babybox.types.js";
-import RefreshButton from "@/components/buttons/refresh";
-import LatestNotifications from "@/components/widgets/latest-notifications";
+import { Event } from "@/types/event.types";
+import { addDays, format } from "date-fns";
+import useSWR from "swr";
 
 export default function BabyboxPage({ params }: { params: { slug: string } }) {
   const { token } = useAuth();
@@ -48,7 +48,7 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
     isLoading: eventsLoading,
     mutate: eventsMutate,
   } = useSWR(
-    [`${snapshotServiceURL}/v1/events/${params.slug}?n=10`, token],
+    [`${snapshotServiceURL}/v1/events/${params.slug}?n=10&sort=desc`, token],
     ([url, token]) => fetcherWithToken(url, token),
   );
 
@@ -122,8 +122,8 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
   ].map((o) => (
     <Widget key={o.key} title={o.name} subtitle="Přehled">
       {snapshotsDayIsLoading ||
-        snapshots3DaysIsLoading ||
-        snapshotsWeekIsLoading ? (
+      snapshots3DaysIsLoading ||
+      snapshotsWeekIsLoading ? (
         <div className="flex flex-col items-center justify-center gap-2">
           <Skeleton className="h-[120px] w-[250px]" />
           <Skeleton className="h-4 w-[250px]" />
@@ -161,8 +161,8 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
   ].map((o) => (
     <Widget key={o.key} title={o.name} subtitle="Přehled">
       {snapshotsDayIsLoading ||
-        snapshots3DaysIsLoading ||
-        snapshotsWeekIsLoading ? (
+      snapshots3DaysIsLoading ||
+      snapshotsWeekIsLoading ? (
         <div className="flex flex-col items-center justify-center gap-2">
           <Skeleton className="h-[120px] w-[250px]" />
           <Skeleton className="h-4 w-[250px]" />
@@ -257,7 +257,7 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
               ) : (
                 <>
                   <LatestEvents
-                    events={eventsData?.data as Event[]}
+                    events={(eventsData?.data || []) as Event[]}
                     take={11}
                   />
                 </>

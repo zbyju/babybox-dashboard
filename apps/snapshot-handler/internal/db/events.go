@@ -45,16 +45,15 @@ from(bucket: "%s")
 	return events, nil
 }
 
-func (service *DBService) QueryEventsBySlug(slug string, from, to time.Time, n uint) ([]domain.Event, error) {
-	var fluxQuery string
-	fluxQuery = fmt.Sprintf(`
+func (service *DBService) QueryEventsBySlug(slug string, from, to time.Time, n uint, desc string) ([]domain.Event, error) {
+	fluxQuery := fmt.Sprintf(`
     import "date"
     from(bucket: "%s")
       |> range(start: %s, stop: %s)
       |> filter(fn: (r) => r._measurement == "%s" and r.slug == "%s")
       |> pivot(rowKey: ["_time"], columnKey: ["_field"], valueColumn: "_value")
-      |> sort(columns: ["_time"], desc: false)
-      |> limit(n: %d)`, service.bucket, from.Format(time.RFC3339), to.Format(time.RFC3339), measurementNameEvents, slug, n)
+      |> sort(columns: ["_time"], desc: %s)
+      |> limit(n: %d)`, service.bucket, from.Format(time.RFC3339), to.Format(time.RFC3339), measurementNameEvents, slug, desc, n)
 
 	result, err := service.QueryData(fluxQuery)
 	if err != nil {

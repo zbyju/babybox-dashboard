@@ -28,3 +28,10 @@ type Voltage struct {
 	In      *float64 `json:"in"`
 	Battery *float64 `json:"battery"`
 }
+
+// Agregate types
+
+type WeekdayTemperature struct {
+	Weekday         int
+	MeanTemperature float64
+}

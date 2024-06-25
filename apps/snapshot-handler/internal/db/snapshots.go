@@ -159,6 +159,39 @@ func (service *DBService) QuerySnapshotSummaryBySlug(
 	return summaryData, nil
 }
 
+func (service *DBService) AggregateWeekdayAverageBySlug(
+	slug string,
+	field string,
+) ([]domain.WeekdayTemperature, error) {
+	query := fmt.Sprintf(`
+		import "date"
+
+		from(bucket: "%s")
+				|> range(start: 0)
+				|> filter(fn: (r) => r._measurement == "%s" and r._field == "%s" and r.slug == "%s")
+				|> map(fn: (r) => ({ r with weekday: date.weekDay(t: r._time) }))
+				|> group(columns: ["weekday"])
+				|> mean()
+				|> yield(name: "mean_by_weekday")
+		`, service.bucket, measurementNameThermal, field, slug)
+
+	result, err := service.QueryData(query)
+	if err != nil && result.Err != nil {
+		return nil, err
+	}
+	defer result.Close()
+
+	var weekdayAverages []domain.WeekdayTemperature
+	for result.Next() {
+		record := result.Record()
+		weekday := int(record.ValueByKey("weekday").(int64))
+		meanTemp := record.Value().(float64)
+		weekdayAverages = append(weekdayAverages, domain.WeekdayTemperature{Weekday: weekday, MeanTemperature: meanTemp})
+	}
+
+	return weekdayAverages, nil
+}
+
 func (service *DBService) WriteSnapshot(snapshot domain.Snapshot) error {
 	// Convert your domain model (e.g., Snapshot) to an InfluxDB point
 	point, err := service.ConvertToInfluxDBPoint(&snapshot, measurementNameThermal)

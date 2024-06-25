@@ -1,0 +1,82 @@
+package v1
+
+import (
+	"fmt"
+	"net/http"
+
+	"github.com/labstack/echo/v4"
+	"github.com/zbyju/babybox-dashboard/apps/babybox-service/internal/domain"
+	"go.mongodb.org/mongo-driver/mongo"
+)
+
+// CreateMaintenance inserts a new BabyboxMaintenance
+func (app *Application) CreateMaintenance(c echo.Context) error {
+	maintenance := new(domain.BabyboxMaintenance)
+	if err := c.Bind(maintenance); err != nil {
+		return err
+	}
+
+	result, err := app.DBService.InsertMaintenance(*maintenance)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, ReturnErr(err))
+	}
+
+	return c.JSON(http.StatusCreated, ReturnOk(result))
+}
+
+// UpdateMaintenance updates an existing BabyboxMaintenance
+func (app *Application) UpdateMaintenance(c echo.Context) error {
+	idStr := c.Param("id")
+
+	maintenance := new(domain.BabyboxMaintenance)
+	if err := c.Bind(maintenance); err != nil {
+		return err
+	}
+
+	updatedMaintenance, err := app.DBService.UpdateMaintenance(*maintenance)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return c.JSON(http.StatusNotFound, ReturnErr(fmt.Sprintf("Maintenance with ID: '%s' was not found.", idStr)))
+		}
+		return c.JSON(http.StatusInternalServerError, ReturnErr(err))
+	}
+
+	return c.JSON(http.StatusOK, ReturnOk(updatedMaintenance))
+}
+
+// DeleteMaintenance deletes a BabyboxMaintenance by its ID
+func (app *Application) DeleteMaintenance(c echo.Context) error {
+	id := c.Param("id")
+
+	err := app.DBService.DeleteMaintenance(id, false)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return c.JSON(http.StatusNotFound, ReturnErr(fmt.Sprintf("Maintenance with ID: '%s' was not found.", id)))
+		}
+		return c.JSON(http.StatusInternalServerError, ReturnErr(err))
+	}
+
+	return c.NoContent(http.StatusNoContent)
+}
+
+// GetAllMaintenances gets all BabyboxMaintenances
+func (app *Application) GetAllMaintenances(c echo.Context) error {
+	maintenances, err := app.DBService.FindAllMaintenances()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, ReturnErr(err))
+	}
+
+	return c.JSON(http.StatusOK, ReturnOk(maintenances))
+}
+
+// GetMaintenancesBySlug finds all BabyboxMaintenances with a specific slug
+func (app *Application) GetMaintenancesBySlug(c echo.Context) error {
+	slug := c.Param("slug")
+
+	maintenances, err := app.DBService.FindMaintenancesBySlug(slug)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, ReturnErr(err))
+	}
+
+	return c.JSON(http.StatusOK, ReturnOk(maintenances))
+}

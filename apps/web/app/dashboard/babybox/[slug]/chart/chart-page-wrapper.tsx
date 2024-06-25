@@ -1,31 +1,31 @@
 "use client";
 
-import ChartControl from "@/components/charts/main-chart/chart-control";
-import LineChart from "@/components/charts/line-chart";
-import ChartStats from "@/components/charts/main-chart/chart-stats";
-import LatestSnapshots from "@/components/widgets/latest-snapshots";
-import { Snapshot } from "@/types/snapshot.types";
-import { addDays } from "date-fns";
-import { ChartSourcesObject } from "@/components/charts/main-chart/chart-sources";
-import { ChartSettingsObject } from "@/components/charts/main-chart/chart-settings";
-import { useRouter, useSearchParams } from "next/navigation";
 import {
   DateRange,
   dateToStringDate,
 } from "@/components/charts/main-chart/time-filter";
-import { Event, Interval } from "@/types/event.types";
 import {
   combineIntervals,
   decodeEvent,
   generateIntervals,
 } from "@/utils/events";
-import { useEffect, useState } from "react";
-import useSWR from "swr";
-import { useAuth } from "@/components/contexts/auth-context";
-import { fetcherWithToken, snapshotFetcher } from "@/helpers/api-helper";
-import { Skeleton } from "@/components/ui/skeleton";
+import { ChartSettingsObject } from "@/components/charts/main-chart/chart-settings";
+import { ChartSourcesObject } from "@/components/charts/main-chart/chart-sources";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { fetcherWithToken, snapshotFetcher } from "@/helpers/api-helper";
+import ChartControl from "@/components/charts/main-chart/chart-control";
+import ChartStats from "@/components/charts/main-chart/chart-stats";
+import LatestSnapshots from "@/components/widgets/latest-snapshots";
+import { useAuth } from "@/components/contexts/auth-context";
+import { useRouter, useSearchParams } from "next/navigation";
+import LineChart from "@/components/charts/line-chart";
+import { Event, Interval } from "@/types/event.types";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Snapshot } from "@/types/snapshot.types";
+import { useEffect, useState } from "react";
 import { AlertCircle } from "lucide-react";
+import { addDays } from "date-fns";
+import useSWR from "swr";
 
 function transformData(
   originalData: Snapshot[],
@@ -188,30 +188,36 @@ export default function ChartPageWrapper({
     strokeType: "straight",
   });
 
-  const eventColors: {
-    [key: string]: { borderColor: string; fillColor: string };
+  const eventMap: {
+    [key: string]: { borderColor: string; fillColor: string; label: string };
   } = {
     Heating: {
+      label: "Topení",
       borderColor: "hsl(var(--heating))",
       fillColor: "hsl(var(--heating))",
     },
     HeatingCasing: {
+      label: "Topení plášť",
       borderColor: "hsl(var(--casing))",
       fillColor: "hsl(var(--casing))",
     },
     Cooling: {
+      label: "Chlazení",
       borderColor: "hsl(var(--cooling))",
       fillColor: "hsl(var(--cooling))",
     },
     FanTop: {
+      label: "Větrák horní",
       borderColor: "hsl(var(--in))",
       fillColor: "hsl(var(--in))",
     },
     FanBottom: {
+      label: "Větrák spodní",
       borderColor: "hsl(var(--battery))",
       fillColor: "hsl(va(--battery))",
     },
     Doors: {
+      label: "Dveře",
       borderColor: "hsl(var(--outside))",
       fillColor: "hsl(var(--outside))",
     },
@@ -224,14 +230,15 @@ export default function ChartPageWrapper({
       x: interval.from.getTime(),
       x2: interval.to.getTime(),
       label: {
-        text: interval.type,
-        borderColor: eventColors[interval.type].borderColor,
+        text: eventMap[interval.type].label,
+        borderColor: eventMap[interval.type].borderColor,
         style: {
           fontSize: "8px",
+          fontWeight: "900",
         },
       },
-      borderColor: eventColors[interval.type].borderColor,
-      fillColor: eventColors[interval.type].fillColor,
+      borderColor: eventMap[interval.type].borderColor,
+      fillColor: eventMap[interval.type].fillColor,
     }));
   }
 

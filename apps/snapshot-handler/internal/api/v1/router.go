@@ -42,6 +42,7 @@ func ReturnErr(err interface{}) APIResponse {
 func RegisterRoutes(g *echo.Group, app *Application) {
 	g.GET("/healthcheck", app.HealthCheck)
 	g.GET("/snapshots", app.GetAllSnapshotsHandler)
+	g.GET("/snapshots/:slug/weekday", app.GetWeekdayAverageBySlugHandler)
 	g.GET("/snapshots/:slug/summary", app.GetSnapshotSummaryBySlugHandler)
 	g.GET("/snapshots/:slug", app.GetAllSnapshotsBySlugHandler)
 
