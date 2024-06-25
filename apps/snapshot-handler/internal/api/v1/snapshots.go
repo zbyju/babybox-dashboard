@@ -3,8 +3,8 @@ package v1
 import (
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
- 	"strings"
 
 	"github.com/labstack/echo/v4"
 
@@ -14,7 +14,7 @@ import (
 
 // Old snapshot handler
 func (app *Application) SnapshotHandler(c echo.Context) error {
-  	path := strings.ToLower(c.Param("slug"))
+	path := strings.ToLower(c.Param("slug"))
 	slug := utils.ToSlug(c.QueryParam("BB"))
 
 	if slug == "" {
@@ -176,6 +176,24 @@ func (app *Application) GetSnapshotSummaryBySlugHandler(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, ReturnOk(snapshots))
+}
+
+func (app *Application) GetWeekdayAverageBySlugHandler(c echo.Context) error {
+	slug := c.Param("slug")
+	field := c.QueryParam("field")
+
+	if field == "" {
+		return c.JSON(http.StatusInternalServerError, ReturnErr("Field not provided"))
+	}
+
+	result, err := app.DBService.AggregateWeekdayAverageBySlug(slug, field)
+	if err != nil {
+		// Log the error and return an appropriate error response
+		app.Logger.Error("Failed to query all snapshots: ", err)
+		return c.JSON(http.StatusInternalServerError, ReturnErr("Failed to fetch snapshots"))
+	}
+
+	return c.JSON(http.StatusOK, ReturnOk(result))
 }
 
 func parseQueryParam(app *Application, c echo.Context, param string) float64 {
