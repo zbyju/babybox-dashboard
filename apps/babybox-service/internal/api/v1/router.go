@@ -45,4 +45,16 @@ func RegisterRoutes(g *echo.Group, app *Application) {
 	g.GET("/babyboxes", app.GetAllBabyboxesNames)
 	g.GET("/babyboxes/:slug", app.GetBabyboxBySlug)
 	g.PUT("/babyboxes/:slug", app.UpdateBabybox)
+
+	g.POST("/issues", app.CreateIssue)
+	g.GET("/issues", app.GetAllIssues)
+	g.GET("/issues/unsolved", app.GetIssuesUnsolved)
+	g.GET("/issues/unsolved/:slug", app.GetIssuesUnsolvedBySlug)
+	g.GET("/issues/username/:username", app.GetIssuesByUsername)
+	g.GET("/issues/:slug", app.GetIssuesBySlug)
+	g.PUT("/issues/:id", app.UpdateIssue)
+
+	g.POST("/maintenances", app.CreateMaintenance)
+	g.GET("/maintenances", app.GetAllMaintenances)
+	g.GET("/maintenances/:slug", app.GetMaintenancesBySlug)
 }
