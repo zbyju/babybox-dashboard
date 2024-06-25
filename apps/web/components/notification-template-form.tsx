@@ -1,11 +1,5 @@
 "use client";
 
-import { BabyboxesContext } from "@/components/contexts/babyboxes-context";
-import { Babybox } from "@/components/tables/babyboxes-table";
-import { Button } from "@/components/ui/button";
-import Combobox from "@/components/ui/combobox";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -15,21 +9,27 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { BabyboxesContext } from "@/components/contexts/babyboxes-context";
 import { NotificationTemplate } from "@/types/notification.types";
-import { ArrowLeft, Info } from "lucide-react";
-import Link from "next/link";
-import { useContext, useState } from "react";
+import { Babybox } from "@/components/tables/babyboxes-table";
 import { DataTable } from "../components/ui/data-table";
+import { Textarea } from "@/components/ui/textarea";
 import { ColumnDef } from "@tanstack/react-table";
+import Combobox from "@/components/ui/combobox";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { ArrowLeft, Info } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useContext, useState } from "react";
 import { Trash2 } from "lucide-react";
+import Link from "next/link";
 
 interface Props {
   notificationTemplate?: NotificationTemplate;
@@ -145,7 +145,16 @@ export default function NotificationTemplateForm(props: Props) {
                   ? { value: selected.slug, label: selected.name }
                   : undefined
               }
-              onSelect={(val) => setTemplate({ ...template, scope: val })}
+              onSelect={(val) =>
+                setTemplate({
+                  ...template,
+                  scope: Array.isArray(val)
+                    ? val.length > 0
+                      ? val[0]
+                      : ""
+                    : val,
+                })
+              }
             />
           </div>
         ) : null}

@@ -152,7 +152,6 @@ export default function MaintenanceAdd({ onAdd, users }: Props) {
                           }));
                         })()}
                         onSelect={(selectedValue) => {
-                          console.log(selectedValue);
                           field.onChange(selectedValue);
                         }}
                       />
