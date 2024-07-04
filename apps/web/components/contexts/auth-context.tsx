@@ -1,7 +1,7 @@
 "use client";
 
-import { authenticateUser } from "@/helpers/api-helper";
 import { createContext, useContext, useState, useEffect } from "react";
+import { authenticateUser, refreshToken } from "@/helpers/api-helper";
 
 interface AuthContextType {
   token: string;
@@ -31,6 +31,9 @@ export default function AuthProvider({
     const loadedToken = localStorage.getItem("authToken");
     if (loadedToken) {
       setToken(loadedToken);
+
+      // Refresh token on app load
+      refresh(loadedToken);
     }
     setIsLoaded(true);
   }, []);
@@ -40,6 +43,21 @@ export default function AuthProvider({
     password: string,
   ): Promise<boolean> => {
     return authenticateUser(username, password)
+      .then((result) => {
+        const newToken = (result as { token: string }).token;
+        setToken(newToken);
+        localStorage.setItem("authToken", newToken);
+        return Promise.resolve(true);
+      })
+      .catch((error) => {
+        // Handle login error
+        console.error("Login error:", error);
+        return Promise.reject(false);
+      });
+  };
+
+  const refresh = async (token: string): Promise<boolean> => {
+    return refreshToken(token)
       .then((result) => {
         const newToken = (result as { token: string }).token;
         setToken(newToken);
