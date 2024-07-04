@@ -32,3 +32,5 @@ letsencrypt/
 .DS_Store
 
 **.pnp*
+
+*Zone.Identifier

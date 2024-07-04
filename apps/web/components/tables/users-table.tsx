@@ -1,10 +1,5 @@
 "use client";
 
-import { DataTable } from "../ui/data-table";
-import { ColumnDef } from "@tanstack/react-table";
-import { Trash2 } from "lucide-react";
-import { Button } from "../ui/button";
-import { User } from "@/types/user.types";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,6 +11,11 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../ui/alert-dialog";
+import { ColumnDef } from "@tanstack/react-table";
+import { DataTable } from "../ui/data-table";
+import { User } from "@/types/user.types";
+import { Trash2 } from "lucide-react";
+import { Button } from "../ui/button";
 
 interface Props {
   users: User[];

@@ -1,6 +1,6 @@
-import { ApiResponse } from "@/types/api.types";
 import { BabyboxBase, BabyboxDetail } from "@/types/babybox.types";
 import { Snapshot } from "@/types/snapshot.types";
+import { ApiResponse } from "@/types/api.types";
 
 export const API_SNAPSHOT_HANDLER = "http://snapshot-handler:8080/v1";
 export const API_BABYBOX_SERVICE = "http://babybox-service:8081/v1";
@@ -46,6 +46,32 @@ export const authenticateUser = async (
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      return Promise.resolve({ token: data.data.token });
+    } else {
+      const data = await response.json();
+      return Promise.reject(data.metadata.message);
+    }
+  } catch (error) {
+    return Promise.reject(error);
+  }
+};
+
+export const refreshToken = async (
+  token: string,
+): Promise<{ token: string } | Error> => {
+  const userServiceURL = process.env.NEXT_PUBLIC_URL_USER_SERVICE;
+
+  try {
+    const response = await fetch(`${userServiceURL}/v1/auth/refresh`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     if (response.ok) {

@@ -27,28 +27,39 @@ export interface JWTPayload {
   exp?: number;
 }
 
-export function isAuthenticated(headers: Record<string, string | undefined>): {
-  isAuth: boolean;
-  payload: JWTPayload | null;
-} {
+export function isValid(
+  headers: Record<string, string | undefined>,
+): JWTPayload | null {
   const token = extractToken(headers["authorization"]);
   if (token.isNone()) {
-    return { isAuth: false, payload: null };
+    return null;
   }
 
   const secret = process.env.JWT_SECRET || "secret";
   try {
     const res = jwt.verify(token.unwrap(), secret);
     const payload = jwtPayloadSchema.parse(res);
-
-    if (payload.exp && Date.now() >= payload.exp * 1000) {
-      return { isAuth: false, payload };
-    }
-
-    return { isAuth: true, payload };
-  } catch (error) {
-    return { isAuth: false, payload: null };
+    return payload;
+  } catch (erroe) {
+    return null;
   }
+}
+
+export function isAuthenticated(headers: Record<string, string | undefined>): {
+  isAuth: boolean;
+  payload: JWTPayload | null;
+} {
+  const payload = isValid(headers);
+
+  if (payload === null) {
+    return { isAuth: false, payload };
+  }
+
+  if (payload.exp && Date.now() >= payload.exp * 1000) {
+    return { isAuth: false, payload };
+  }
+
+  return { isAuth: true, payload };
 }
 
 export function extractToken(
