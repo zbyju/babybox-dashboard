@@ -23,6 +23,13 @@ const config = {
         sans: ["var(--font-sans)", ...fontFamily.sans],
       },
       colors: {
+        slate: {
+          920: "#091021",
+          930: "#050d1f",
+        },
+        pink: {
+          990: "#1a000a",
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

@@ -6,7 +6,6 @@ import {
   BatteryCharging,
   BellDot,
   Cable,
-  Fan,
   FilePenLine,
   Info,
   LineChart,
@@ -15,10 +14,10 @@ import {
 } from "lucide-react";
 import { BabyboxesContext } from "./contexts/babyboxes-context";
 import type { BabyboxBase } from "@/types/babybox.types";
+import { Babybox } from "./tables/babyboxes-table";
 import { Separator } from "./ui/separator";
 import { useContext } from "react";
 import Link from "next/link";
-import { Babybox } from "./tables/babyboxes-table";
 
 interface Props {
   babybox: BabyboxBase;
@@ -121,7 +120,7 @@ export default function BabyboxSideMenu(props: Props) {
   ];
 
   return (
-    <nav className="z-10 mx-auto block w-full min-w-[200px] flex-col overflow-y-auto rounded-r-xl border border-border bg-background pb-3 lg:fixed lg:left-0 lg:max-h-[75vh] lg:w-[16%]">
+    <nav className="z-10 mx-auto block w-full min-w-[200px] flex-col overflow-y-auto rounded-r-xl border border-border bg-slate-50 pb-3 dark:bg-slate-900 lg:fixed lg:left-0 lg:max-h-[75vh] lg:w-[16%]">
       <div className="sticky mt-2 flex flex-col items-start justify-start gap-2">
         <h2 className="ml-2 mt-1 text-wrap text-xl font-bold capitalize">
           <span className="text-pink-600 dark:text-pink-700">Babybox </span>
