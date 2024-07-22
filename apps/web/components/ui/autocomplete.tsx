@@ -2,13 +2,10 @@ import {
   Command,
   CommandEmpty,
   CommandGroup,
-  CommandInput,
   CommandItem,
   CommandList,
 } from "../ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { ChevronsUpDown } from "lucide-react";
-import { Button } from "../ui/button";
 import { useState } from "react";
 import { Input } from "./input";
 
@@ -16,9 +13,7 @@ interface Props {
   value: string;
   onChange: (value: string) => unknown;
   values: { value: string; label: string }[];
-  searchLabel?: string;
   emptyLabel?: string;
-  chooseLabel?: string;
 }
 
 export default function Autocomplete({
@@ -26,17 +21,21 @@ export default function Autocomplete({
   value,
   onChange,
   emptyLabel = "Nenalezeno",
-  searchLabel = "Vyhledejte...",
-  chooseLabel = "Vyberte...",
 }: Props) {
   const [open, setOpen] = useState(false);
   const filteredValues = values.filter(
     (v) => !value || v.value.toLowerCase().includes(value.toLowerCase()),
   );
 
+  const finalValues =
+    value.length > 0 &&
+    filteredValues.find((x) => x.value === value) === undefined
+      ? filteredValues.toSpliced(0, 0, { value, label: value })
+      : filteredValues;
+
   const items =
-    filteredValues && filteredValues.length > 0 ? (
-      filteredValues.map((value) => (
+    finalValues && finalValues.length > 0 ? (
+      finalValues.map((value) => (
         <CommandItem
           key={value.value}
           value={value.value}
