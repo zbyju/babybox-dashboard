@@ -21,11 +21,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import RefreshButton from "../buttons/refresh";
+import { RotateCcw } from "lucide-react";
+import { Button } from "./button";
 import { useState } from "react";
 import { Input } from "./input";
-import { Button } from "./button";
-import { RotateCcw } from "lucide-react";
-import RefreshButton from "../buttons/refresh";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -116,32 +116,34 @@ export function DataTable<TData, TValue>({
           </TableHeader>
           <TableBody className="overflow-hidden">
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                  className={
-                    (rowClassNameAccessor ? rowClassNameAccessor(row) : "") +
-                    (rowClickAccessor ? " cursor-pointer" : "") +
-                    " border-b-0 border-t-0"
-                  }
-                  onClick={() => rowClickAccessor && rowClickAccessor(row)}
-                >
-                  {row
-                    .getVisibleCells()
-                    .filter((cell) => {
-                      return !hideColumns.includes(cell.column.id);
-                    })
-                    .map((cell) => (
-                      <TableCell key={cell.id} className="py-2">
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </TableCell>
-                    ))}
-                </TableRow>
-              ))
+              table.getRowModel().rows.map((row) => {
+                return (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                    className={
+                      (rowClassNameAccessor ? rowClassNameAccessor(row) : "") +
+                      (rowClickAccessor ? " cursor-pointer" : "") +
+                      " border-b-0 border-t-0"
+                    }
+                    onClick={() => rowClickAccessor && rowClickAccessor(row)}
+                  >
+                    {row
+                      .getVisibleCells()
+                      .filter((cell) => {
+                        return !hideColumns.includes(cell.column.id);
+                      })
+                      .map((cell) => (
+                        <TableCell key={cell.id} className="py-2">
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
+                        </TableCell>
+                      ))}
+                  </TableRow>
+                );
+              })
             ) : (
               <TableRow>
                 <TableCell

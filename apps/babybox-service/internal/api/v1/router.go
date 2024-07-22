@@ -47,14 +47,19 @@ func RegisterRoutes(g *echo.Group, app *Application) {
 	g.PUT("/babyboxes/:slug", app.UpdateBabybox)
 
 	g.POST("/issues", app.CreateIssue)
+	g.DELETE("/issues/:id", app.DeleteIssue)
+	g.PUT("/issues/:id", app.UpdateIssue)
 	g.GET("/issues", app.GetAllIssues)
 	g.GET("/issues/unsolved", app.GetIssuesUnsolved)
 	g.GET("/issues/unsolved/:slug", app.GetIssuesUnsolvedBySlug)
 	g.GET("/issues/username/:username", app.GetIssuesByUsername)
-	g.GET("/issues/:slug", app.GetIssuesBySlug)
-	g.PUT("/issues/:id", app.UpdateIssue)
+	g.GET("/issues/slug/:slug", app.GetIssuesBySlug)
+	g.GET("/issues/maintenance/:id", app.GetIssuesByMaintenance)
+	g.GET("/issues/:id", app.GetIssueByID)
 
 	g.POST("/maintenances", app.CreateMaintenance)
+	g.DELETE("/maintenances/:id", app.DeleteMaintenance)
 	g.GET("/maintenances", app.GetAllMaintenances)
-	g.GET("/maintenances/:slug", app.GetMaintenancesBySlug)
+	g.GET("/maintenances/:id", app.GetMaintenanceByID)
+	g.GET("/maintenances/slug/:slug", app.GetMaintenancesBySlug)
 }

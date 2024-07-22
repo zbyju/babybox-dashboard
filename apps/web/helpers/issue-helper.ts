@@ -9,6 +9,7 @@ export const priorities = makeValueLabelList([
   "Střední",
   "Nízká",
   "Statistika",
+  "Neuvedena",
 ]);
 
 export const severities = makeValueLabelList([
@@ -17,6 +18,7 @@ export const severities = makeValueLabelList([
   "Mírná",
   "Kosmetická",
   "Statistika",
+  "Neuvedena",
 ]);
 
 export const types = [
@@ -40,23 +42,11 @@ export const getSubtypes = function (type: string) {
   const mapTypeSubtypes = new Map<IssueType, string[]>([
     [
       "Motorová jednotka",
-      [
-        "Software",
-        "Hardware",
-        "Síťové připojení",
-        "Email",
-        "Návrh na výměnu",
-      ],
+      ["Software", "Hardware", "Síťové připojení", "Email", "Návrh na výměnu"],
     ],
     [
       "Klimatizační jednotka",
-      [
-        "Software",
-        "Hardware",
-        "Síťové připojení",
-        "Email",
-        "Návrh na výměnu",
-      ],
+      ["Software", "Hardware", "Síťové připojení", "Email", "Návrh na výměnu"],
     ],
     [
       "Kamera",
@@ -115,3 +105,4 @@ export const getSubtypes = function (type: string) {
   const key = type.toLowerCase();
   return makeValueLabelList(lowerCaseMapTypeSubtypes.get(key) || []);
 };
+

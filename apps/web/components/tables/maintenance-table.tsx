@@ -11,10 +11,11 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../ui/alert-dialog";
-import { BabyboxMaintenance } from "@/types/babybox.types";
+import { translateMaintenanceState } from "@/utils/translations/maintenance";
+import { BabyboxMaintenance } from "@/types/maintenance.types";
 import { ColumnDef } from "@tanstack/react-table";
-import { FileClock, Trash2 } from "lucide-react";
 import { DataTable } from "../ui/data-table";
+import { Trash2 } from "lucide-react";
 import { Button } from "../ui/button";
 import { format } from "date-fns";
 
@@ -26,17 +27,34 @@ interface Props {
 export default function MaintenanceTable(props: Props) {
   const columns: ColumnDef<BabyboxMaintenance>[] = [
     {
-      accessorKey: "id",
-      header: () => <div className="">ID</div>,
+      accessorKey: "title",
+      header: () => <div className="">Název</div>,
+    },
+    {
+      accessorKey: "state",
+      header: () => <div className="">Stav</div>,
+      cell: ({ row }) => {
+        return <div>{translateMaintenanceState(row.original.state)}</div>;
+      },
     },
     {
       accessorKey: "start",
       header: () => <div className="">Datum</div>,
-      cell: ({ getValue }: { getValue: () => unknown }) => {
-        return format(getValue() as Date, "dd.MM.yyyy");
+      cell: ({ row }) => {
+        const start = row.original.start;
+        const end = row.original.end;
+        return (
+          <div>
+            {format(start, "dd.MM.yyyy")}
+            {end && <span> - {format(end, "dd.MM.yyyy")}</span>}
+          </div>
+        );
       },
     },
-    { accessorKey: "assignee", header: () => <div className=""></div> },
+    {
+      accessorKey: "assignee",
+      header: () => <div className="">Přiřazeno</div>,
+    },
     {
       accessorKey: "note",
       header: () => <div className="">Poznámka</div>,
@@ -45,7 +63,7 @@ export default function MaintenanceTable(props: Props) {
       accessorKey: "id",
       header: () => <div className="text-center">Akce</div>,
       cell: ({ row }) => {
-        const id = row.getValue("id") as string | undefined;
+        const id = row.original.id;
 
         return (
           <div className="flex w-full flex-row justify-center">
@@ -59,12 +77,13 @@ export default function MaintenanceTable(props: Props) {
                 <AlertDialogContent>
                   <AlertDialogHeader>
                     <AlertDialogTitle>
-                      Jste jsi opravdu jistí, že chcete smazat tuto chybu?
+                      Jste jsi opravdu jistí, že chcete smazat tento servis?
                     </AlertDialogTitle>
                     <AlertDialogDescription>
                       Tato akce nemůže být navrácena. Pokud určitě chcete
-                      odstranit tento záznam o chybě, pak pokračujte kliknutím
-                      na tlačítko smazat.
+                      odstranit tento záznam o servisu, pak pokračujte kliknutím
+                      na tlačítko smazat. Všechny chyby spojené s tímto servisem
+                      zůstanou zachovány.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>

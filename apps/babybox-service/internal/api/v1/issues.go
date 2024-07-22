@@ -3,7 +3,6 @@ package v1
 import (
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/zbyju/babybox-dashboard/apps/babybox-service/internal/domain"
@@ -16,9 +15,6 @@ func (app *Application) CreateIssue(c echo.Context) error {
 	if err := c.Bind(issue); err != nil {
 		return err
 	}
-
-	now := time.Now().In(app.DBService.TimeLocation)
-	issue.CreatedAt = &now
 
 	result, err := app.DBService.InsertIssue(*issue)
 	if err != nil {
@@ -60,7 +56,7 @@ func (app *Application) DeleteIssue(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, ReturnErr(err))
 	}
 
-	return c.NoContent(http.StatusNoContent)
+	return c.NoContent(http.StatusOK)
 }
 
 // GetAllIssues gets all BabyboxIssues
@@ -74,10 +70,34 @@ func (app *Application) GetAllIssues(c echo.Context) error {
 }
 
 // GetIssuesBySlug finds all BabyboxIssues with a specific slug
+func (app *Application) GetIssueByID(c echo.Context) error {
+	id := c.Param("id")
+
+	issues, err := app.DBService.FindIssueByID(id)
+	fmt.Println(err)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, ReturnErr(err))
+	}
+
+	return c.JSON(http.StatusOK, ReturnOk(issues))
+}
+
+// GetIssuesBySlug finds all BabyboxIssues with a specific slug
 func (app *Application) GetIssuesBySlug(c echo.Context) error {
 	slug := c.Param("slug")
 
 	issues, err := app.DBService.FindIssuesBySlug(slug)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, ReturnErr(err))
+	}
+
+	return c.JSON(http.StatusOK, ReturnOk(issues))
+}
+
+func (app *Application) GetIssuesByMaintenance(c echo.Context) error {
+	id := c.Param("id")
+
+	issues, err := app.DBService.FindIssuesByMaintenance(id)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, ReturnErr(err))
 	}

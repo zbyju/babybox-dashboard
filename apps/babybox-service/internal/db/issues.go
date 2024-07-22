@@ -2,11 +2,14 @@ package db
 
 import (
 	"context"
+	"errors"
+	"fmt"
 
 	"github.com/zbyju/babybox-dashboard/apps/babybox-service/internal/domain"
 	"github.com/zbyju/babybox-dashboard/apps/babybox-service/utils"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
@@ -31,15 +34,22 @@ func (db *DBService) InsertIssue(issue domain.BabyboxIssue) (*domain.BabyboxIssu
 func (db *DBService) UpdateIssue(issue domain.BabyboxIssue) (*domain.BabyboxIssue, error) {
 	collection := db.Client.Database(db.DatabaseName).Collection("issues")
 
+	if issue.ID == "" {
+		return nil, errors.New("issue ID cannot be empty")
+	}
+
 	filter := bson.M{"_id": issue.ID}
 	update := bson.M{"$set": issue}
 
-	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
+	opts := options.FindOneAndUpdate().SetReturnDocument(options.After).SetUpsert(false)
 
 	var updatedIssue domain.BabyboxIssue
 	err := collection.FindOneAndUpdate(context.TODO(), filter, update, opts).Decode(&updatedIssue)
 	if err != nil {
-		return nil, err
+		if err == mongo.ErrNoDocuments {
+			return nil, fmt.Errorf("no issue found with ID: %s", issue.ID)
+		}
+		return nil, fmt.Errorf("error updating issue: %w", err)
 	}
 
 	return &updatedIssue, nil
@@ -73,7 +83,23 @@ func (db *DBService) FindAllIssues() ([]domain.BabyboxIssue, error) {
 		return nil, err
 	}
 
+	if results == nil {
+		return []domain.BabyboxIssue{}, nil
+	}
 	return results, nil
+}
+
+func (db *DBService) FindIssueByID(id string) (*domain.BabyboxIssue, error) {
+	collection := db.Client.Database(db.DatabaseName).Collection("issues")
+
+	var result domain.BabyboxIssue
+	filter := bson.M{"_id": id}
+	err := collection.FindOne(context.TODO(), filter).Decode(&result)
+	if err != nil {
+		return nil, err
+	}
+
+	return &result, nil
 }
 
 // FindIssuesBySlug finds all domain.BabyboxIssues with a specific slug
@@ -92,6 +118,9 @@ func (db *DBService) FindIssuesBySlug(slug string) ([]domain.BabyboxIssue, error
 		return nil, err
 	}
 
+	if results == nil {
+		return []domain.BabyboxIssue{}, nil
+	}
 	return results, nil
 }
 
@@ -111,13 +140,16 @@ func (db *DBService) FindIssuesByUsername(username string) ([]domain.BabyboxIssu
 		return nil, err
 	}
 
+	if results == nil {
+		return []domain.BabyboxIssue{}, nil
+	}
 	return results, nil
 }
 
 func (db *DBService) FindIssuesByMaintenance(maintenance string) ([]domain.BabyboxIssue, error) {
 	collection := db.Client.Database(db.DatabaseName).Collection("issues")
 
-	filter := bson.M{"maintenance": maintenance}
+	filter := bson.M{"maintenance_id": maintenance}
 	cursor, err := collection.Find(context.TODO(), filter)
 	if err != nil {
 		return nil, err
@@ -129,6 +161,9 @@ func (db *DBService) FindIssuesByMaintenance(maintenance string) ([]domain.Babyb
 		return nil, err
 	}
 
+	if results == nil {
+		return []domain.BabyboxIssue{}, nil
+	}
 	return results, nil
 }
 
@@ -153,5 +188,8 @@ func (db *DBService) FindMaintenancesUnsolvedOptionallyBySlug(slug string) ([]do
 		return nil, err
 	}
 
+	if results == nil {
+		return []domain.BabyboxIssue{}, nil
+	}
 	return results, nil
 }

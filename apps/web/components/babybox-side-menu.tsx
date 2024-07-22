@@ -10,6 +10,8 @@ import {
   Info,
   LineChart,
   List,
+  ListTodo,
+  MessageSquareWarning,
   Thermometer,
 } from "lucide-react";
 import { BabyboxesContext } from "./contexts/babyboxes-context";
@@ -48,8 +50,18 @@ export default function BabyboxSideMenu(props: Props) {
           icon: <Info />,
         },
         {
+          href: "/dashboard/babybox/" + props.babybox.slug + "/issue",
+          text: "Chyby",
+          icon: <ListTodo />,
+        },
+        {
+          href: "/dashboard/babybox/" + props.babybox.slug + "/issue/report",
+          text: "Reportovat Chybu",
+          icon: <MessageSquareWarning />,
+        },
+        {
           href: "/dashboard/babybox/" + props.babybox.slug + "/edit",
-          text: "Editovat",
+          text: "Upravit Informace",
           icon: <FilePenLine />,
         },
       ],
@@ -120,13 +132,13 @@ export default function BabyboxSideMenu(props: Props) {
   ];
 
   return (
-    <nav className="z-10 mx-auto block w-full min-w-[200px] flex-col overflow-y-auto rounded-r-xl border border-border bg-slate-50 pb-3 dark:bg-slate-900 lg:fixed lg:left-0 lg:max-h-[75vh] lg:w-[16%]">
+    <nav className="z-10 mx-auto block w-full min-w-[200px] flex-col overflow-y-auto rounded-r-xl border border-slate-300 bg-slate-50 pb-3 dark:border-blue-950 dark:bg-slate-960 lg:fixed lg:left-0 lg:max-h-[75vh] lg:w-[16%]">
       <div className="sticky mt-2 flex flex-col items-start justify-start gap-2">
         <h2 className="ml-2 mt-1 text-wrap text-xl font-bold capitalize">
           <span className="text-pink-600 dark:text-pink-700">Babybox </span>
           {props.babybox.name}
         </h2>
-        <Separator className="my-1" />
+        <Separator className="my-1  dark:bg-blue-950" />
         <h3 className="mb-1 ml-2 text-lg font-semibold">
           Navigace mezi Babyboxy
         </h3>
@@ -143,7 +155,7 @@ export default function BabyboxSideMenu(props: Props) {
           ))}
         </div>
 
-        <Separator className="my-1" />
+        <Separator className="my-1 dark:bg-blue-950" />
 
         {linkGroups.map((group) => (
           <div key={group.group} className="w-full">

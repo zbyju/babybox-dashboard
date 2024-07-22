@@ -6,7 +6,7 @@ import {
   CommandItem,
 } from "../ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronsUpDown, X } from "lucide-react";
 import { Button } from "../ui/button";
 import { useState } from "react";
 
@@ -63,26 +63,24 @@ export default function Combobox({
               <CommandItem
                 key={value.value}
                 value={value.value}
-                onSelect={(currentValue) => {
+                onSelect={() => {
                   if (Array.isArray(selected)) {
-                    if (selected.find((x) => x.value === currentValue)) {
+                    if (selected.find((x) => x.value === value.value)) {
                       onSelect(
                         selected
-                          .filter((x) => x.value !== currentValue)
+                          .filter((x) => x.value !== value.value)
                           .map((x) => x.value),
                       );
                     } else {
                       onSelect(
                         selected
-                          .concat({ value: currentValue, label: currentValue })
+                          .concat({ value: value.value, label: value.value })
                           .map((x) => x.value),
                       );
                     }
                     return;
                   }
-                  onSelect(
-                    currentValue === selected?.value ? "" : currentValue,
-                  );
+                  onSelect(value.value === selected?.value ? "" : value.value);
                   setOpen(false);
                 }}
                 className="cursor-pointer"
@@ -90,11 +88,14 @@ export default function Combobox({
                 {Array.isArray(selected) &&
                 selected.find((x) => x.value === value.value) ? (
                   <>
-                    <Check height="16" /> {value.label}
+                    <Check height="16" className="mr-1" />
                   </>
-                ) : (
-                  value.label
-                )}
+                ) : Array.isArray(selected) ? (
+                  <>
+                    <X height="16" className="mr-1" />
+                  </>
+                ) : null}
+                <span> {value.label}</span>
               </CommandItem>
             ))}
           </CommandGroup>

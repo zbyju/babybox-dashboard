@@ -2,6 +2,8 @@ package db
 
 import (
 	"context"
+	"fmt"
+	"time"
 
 	"github.com/zbyju/babybox-dashboard/apps/babybox-service/internal/domain"
 	"github.com/zbyju/babybox-dashboard/apps/babybox-service/utils"
@@ -10,13 +12,89 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func (db *DBService) InsertMaintenance(maintenance domain.BabyboxMaintenance) (*domain.BabyboxMaintenance, error) {
+func (db *DBService) UpdateIssuesForMaintenance(maintenanceID string, issueIDs []string) error {
+	issuesCollection := db.Client.Database(db.DatabaseName).Collection("issues")
+	ctx := context.Background()
+
+	// Step 1: Change the state to "planned" if the issue was "open" and was linked to a maintenance
+	stateUpdateFilter := bson.M{
+		"_id":                   bson.M{"$in": issueIDs},
+		"state_history.0.state": "open",
+	}
+	stateUpdateDoc := bson.M{
+		"$push": bson.M{
+			"state_history": bson.M{
+				"$each":     []bson.M{{"state": "planned", "timestamp": time.Now(), "username": "SYSTEM"}},
+				"$position": 0,
+			},
+		},
+	}
+	_, err := issuesCollection.UpdateMany(ctx, stateUpdateFilter, stateUpdateDoc)
+	if err != nil {
+		return fmt.Errorf("failed to update state property in state_history: %w", err)
+	}
+
+	// Step 2: Change the state to "open" if the maintenance was removed and the issue was planned
+	stateUpdateFilter = bson.M{
+		"maintenance_id":        maintenanceID,
+		"_id":                   bson.M{"$nin": issueIDs},
+		"state_history.0.state": "planned",
+	}
+	stateUpdateDoc = bson.M{
+		"$push": bson.M{
+			"state_history": bson.M{
+				"$each":     []bson.M{{"state": "open", "timestamp": time.Now(), "username": "SYSTEM"}},
+				"$position": 0,
+			},
+		},
+	}
+	_, err = issuesCollection.UpdateMany(ctx, stateUpdateFilter, stateUpdateDoc)
+	if err != nil {
+		return fmt.Errorf("failed to update state property in state_history: %w", err)
+	}
+
+	// Step 1: Update issues that should have this maintenance ID
+	updateFilter := bson.M{
+		"_id": bson.M{"$in": issueIDs},
+	}
+	updateDoc := bson.M{
+		"$set": bson.M{
+			"maintenance_id": maintenanceID,
+		},
+	}
+	_, err = issuesCollection.UpdateMany(ctx, updateFilter, updateDoc)
+	if err != nil {
+		return fmt.Errorf("failed to update issues with maintenance ID: %w", err)
+	}
+
+	// Step 2: Remove maintenance ID from issues that should no longer have it
+	removeFilter := bson.M{
+		"maintenance_id": maintenanceID,
+		"_id":            bson.M{"$nin": issueIDs},
+	}
+	removeDoc := bson.M{
+		"$unset": bson.M{"maintenance_id": ""},
+	}
+	_, err = issuesCollection.UpdateMany(ctx, removeFilter, removeDoc)
+	if err != nil {
+		return fmt.Errorf("failed to remove maintenance ID from unrelated issues: %w", err)
+	}
+
+	return nil
+}
+
+func (db *DBService) InsertMaintenance(maintenance domain.BabyboxMaintenance, issueIDs []string) (*domain.BabyboxMaintenance, error) {
 	collection := db.Client.Database(db.DatabaseName).Collection("maintenances")
 
-	id := utils.GenerateMID(maintenance.Start)
+	id := utils.GenerateMID(time.Now().In(db.TimeLocation))
 	maintenance.ID = id
 
 	_, err := collection.InsertOne(context.TODO(), maintenance)
+	if err != nil {
+		return nil, err
+	}
+
+	err = db.UpdateIssuesForMaintenance(id, issueIDs)
 	if err != nil {
 		return nil, err
 	}
@@ -44,29 +122,10 @@ func (db *DBService) UpdateMaintenance(maintenance domain.BabyboxMaintenance) (*
 
 // DeleteMaintenance deletes a domain.BabyboxIssue by its ID
 func (db *DBService) DeleteMaintenance(id string, deleteIssues bool) error {
-	// First update or delete any related issues
-	issues, err := db.FindIssuesByMaintenance(id)
+	// First update any related issues
+	err := db.UpdateIssuesForMaintenance(id, []string{})
 	if err != nil {
 		return err
-	}
-	issueCollection := db.Client.Database(db.DatabaseName).Collection("issues")
-	if deleteIssues {
-		for _, issue := range issues {
-			filter := bson.M{"_id": issue.ID}
-			_, err := issueCollection.DeleteOne(context.TODO(), filter)
-			if err != nil {
-				return err
-			}
-		}
-	} else {
-		for _, issue := range issues {
-			filter := bson.M{"_id": issue.ID}
-			update := bson.M{"$unset": "maintenance"}
-			_, err := issueCollection.UpdateOne(context.TODO(), filter, update)
-			if err != nil {
-				return err
-			}
-		}
 	}
 
 	collection := db.Client.Database(db.DatabaseName).Collection("maintenances")
@@ -95,6 +154,9 @@ func (db *DBService) FindAllMaintenances() ([]domain.BabyboxMaintenance, error) 
 		return nil, err
 	}
 
+	if results == nil {
+		return []domain.BabyboxMaintenance{}, nil
+	}
 	return results, nil
 }
 
@@ -114,5 +176,21 @@ func (db *DBService) FindMaintenancesBySlug(slug string) ([]domain.BabyboxMainte
 		return nil, err
 	}
 
+	if results == nil {
+		return []domain.BabyboxMaintenance{}, nil
+	}
 	return results, nil
+}
+
+func (db *DBService) FindMaintenanceByID(id string) (*domain.BabyboxMaintenance, error) {
+	collection := db.Client.Database(db.DatabaseName).Collection("maintenances")
+
+	var result domain.BabyboxMaintenance
+	filter := bson.M{"_id": id}
+	err := collection.FindOne(context.TODO(), filter).Decode(&result)
+	if err != nil {
+		return nil, err
+	}
+
+	return &result, nil
 }
