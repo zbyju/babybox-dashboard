@@ -15,7 +15,7 @@ export default function Widget({
     <div className={"h-auto min-w-[200px] " + className || ""}>
       <div
         className={
-          "flex flex-col rounded-lg border border-border bg-slate-50 px-3 py-4 shadow-md transition-all duration-500 hover:shadow-lg dark:bg-slate-930 " +
+          "flex flex-col rounded-lg border border-blue-950 bg-slate-50 px-3 py-4 shadow-md transition-all duration-500 hover:shadow-lg dark:bg-slate-960 " +
             classNameInner || ""
         }
       >
