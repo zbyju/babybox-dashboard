@@ -9,15 +9,24 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+type MaintenanceRequest struct {
+	Maintenance domain.BabyboxMaintenance `json:"maintenance"`
+	Issues      []string                  `json:"issues"`
+}
+
 // CreateMaintenance inserts a new BabyboxMaintenance
 func (app *Application) CreateMaintenance(c echo.Context) error {
-	maintenance := new(domain.BabyboxMaintenance)
-	if err := c.Bind(maintenance); err != nil {
-		return err
+	data := new(MaintenanceRequest)
+	if err := c.Bind(data); err != nil {
+		fmt.Printf("Error when converting to BabyboxMaintenance type from client: %v", err)
+		return c.JSON(http.StatusInternalServerError, ReturnErr(err))
 	}
 
-	result, err := app.DBService.InsertMaintenance(*maintenance)
+	fmt.Println(data.Issues)
+
+	result, err := app.DBService.InsertMaintenance(data.Maintenance, data.Issues)
 	if err != nil {
+		fmt.Println(err)
 		return c.JSON(http.StatusInternalServerError, ReturnErr(err))
 	}
 
@@ -50,6 +59,7 @@ func (app *Application) DeleteMaintenance(c echo.Context) error {
 
 	err := app.DBService.DeleteMaintenance(id, false)
 	if err != nil {
+		fmt.Println(err)
 		if err == mongo.ErrNoDocuments {
 			return c.JSON(http.StatusNotFound, ReturnErr(fmt.Sprintf("Maintenance with ID: '%s' was not found.", id)))
 		}
@@ -79,4 +89,16 @@ func (app *Application) GetMaintenancesBySlug(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, ReturnOk(maintenances))
+}
+
+func (app *Application) GetMaintenanceByID(c echo.Context) error {
+	id := c.Param("id")
+
+	maintenance, err := app.DBService.FindMaintenanceByID(id)
+	fmt.Println(err)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, ReturnErr(err))
+	}
+
+	return c.JSON(http.StatusOK, ReturnOk(maintenance))
 }

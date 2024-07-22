@@ -4,6 +4,18 @@ import (
 	"time"
 )
 
+type IssueComment struct {
+	Text      string    `json:"text" bson:"text"`
+	Timestamp time.Time `json:"timestamp" bson:"timestamp"`
+	Username  string    `bson:"username" json:"username"`
+}
+
+type IssueStateUpdate struct {
+	State     string    `bson:"state" json:"state"` // Possible states: Created, Open, Denied, Solved
+	Timestamp time.Time `bson:"timestamp" json:"timestamp"`
+	Username  string    `bson:"username" json:"username"`
+}
+
 type BabyboxIssueDescription struct {
 	Type        string `json:"type" bson:"type"`
 	Subtype     string `json:"subtype" bson:"subtype"`
@@ -12,15 +24,16 @@ type BabyboxIssueDescription struct {
 }
 
 type BabyboxIssue struct {
-	ID          string                  `json:"id,omitempty" bson:"_id,omitempty"`                  // Optional field
-	Maintenance string                  `json:"maintenance,omitempty" bson:"maintenance,omitempty"` // Optional field
-	Timestamp   time.Time               `json:"timestamp" bson:"timestamp"`
-	Slug        string                  `json:"slug" bson:"slug"`
-	Priority    string                  `json:"priority" bson:"priority"`
-	Severity    string                  `json:"severity" bson:"severity"`
-	Assignee    string                  `json:"assignee,omitempty" bson:"assignee,omitempty"` // Optional field
-	Issue       BabyboxIssueDescription `json:"issue" bson:"issue"`
-	CreatedAt   *time.Time              `json:"created_at,omitempty" bson:"created_at,omitempty"` // Optional field
-	IsSolved    bool                    `json:"isSolved" bson:"is_solved"`
-	SolvedAt    *time.Time              `json:"solvedAt,omitempty" bson:"solved_at,omitempty"` // Optional field
+	ID            string                  `json:"id,omitempty" bson:"_id,omitempty"`                        // Optional field
+	MaintenanceID string                  `json:"maintenance_id,omitempty" bson:"maintenance_id,omitempty"` // Optional field
+	Slug          string                  `json:"slug" bson:"slug"`
+	Title         string                  `json:"title" bson:"title"`
+	Priority      string                  `json:"priority" bson:"priority"`
+	Severity      string                  `json:"severity" bson:"severity"`
+	Assignee      string                  `json:"assignee,omitempty" bson:"assignee,omitempty"` // Optional field
+	Issue         BabyboxIssueDescription `json:"issue" bson:"issue"`
+
+	// Histories: first element = latest = newest; last element = earliest = oldest
+	StateHistory []IssueStateUpdate `json:"state_history" bson:"state_history"`
+	Comments     []IssueComment     `json:"comments,omitempty" bson:"comments,omitempty"`
 }
