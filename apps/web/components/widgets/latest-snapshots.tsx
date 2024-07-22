@@ -1,18 +1,18 @@
 "use client";
 
-import { Snapshot } from "@/types/snapshot.types";
-import { DataTable } from "../ui/data-table";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
-import { Badge } from "../ui/badge";
-import { differenceInMinutes, format, parse } from "date-fns";
-import { ColumnDef, Row, Table } from "@tanstack/react-table";
 import { ArrowDownRight, ArrowUpRight, Minus } from "lucide-react";
+import { ColumnDef, Row, Table } from "@tanstack/react-table";
 import { calculatePercentageChange } from "@/utils/stats";
+import { Snapshot } from "@/types/snapshot.types";
+import { DataTable } from "../ui/data-table";
+import { Badge } from "../ui/badge";
+import { format } from "date-fns";
 
 const columnVars = [
   { key: "temperature.inside", label: "Vnitřní", key2: "temperature_inside" },
@@ -46,8 +46,8 @@ const columnVars = [
     const previousValue =
       currentIndex > 0
         ? (table
-          .getRowModel()
-          .rows[currentIndex - 1]?.getValue(c.key2) as number)
+            .getRowModel()
+            .rows[currentIndex - 1]?.getValue(c.key2) as number)
         : undefined;
 
     const percentageChange =

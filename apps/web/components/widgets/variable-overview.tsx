@@ -1,18 +1,11 @@
 "use client";
 
+import { ArrowDownRight, ArrowUpRight, Minus } from "lucide-react";
 import { Snapshot, SnapshotVariableStat } from "@/types/snapshot.types";
-import {
-  ArrowDown,
-  ArrowDownRight,
-  ArrowUp,
-  ArrowUpRight,
-  Minus,
-} from "lucide-react";
-import LineChart from "../charts/line-chart";
-import { parse } from "date-fns";
-import { DataTable } from "../ui/data-table";
 import { ColumnDef, Row, Table } from "@tanstack/react-table";
 import { calculatePercentageChange } from "@/utils/stats";
+import LineChart from "../charts/line-chart";
+import { DataTable } from "../ui/data-table";
 
 interface Source {
   group: string;
@@ -80,8 +73,8 @@ const minavgmaxColumns = [
       const previousValue =
         currentIndex > 0
           ? (table
-            .getRowModel()
-            .rows[currentIndex - 1].getValue(c.key) as number)
+              .getRowModel()
+              .rows[currentIndex - 1].getValue(c.key) as number)
           : undefined;
 
       const percentageChange = previousValue

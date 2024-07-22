@@ -1,10 +1,9 @@
 "use client";
 
-import BabyboxesTable, { Babybox } from "@/components/tables/babyboxes-table";
 import { BabyboxesContext } from "@/components/contexts/babyboxes-context";
-import { useAuth } from "@/components/contexts/auth-context";
-import { useContext, useEffect, useState } from "react";
+import BabyboxesTable from "@/components/tables/babyboxes-table";
 import { BabyboxBase } from "@/types/babybox.types";
+import { useContext } from "react";
 
 export default function Home() {
   const babyboxes = useContext(BabyboxesContext) as BabyboxBase[];

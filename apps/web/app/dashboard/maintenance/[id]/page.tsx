@@ -13,7 +13,7 @@ import Link from "next/link";
 import useSWR from "swr";
 
 export default function Issue({ params }: { params: { id: string } }) {
-  const { token, user } = useAuth();
+  const { token } = useAuth();
   const {
     data: maintenance,
     isLoading,

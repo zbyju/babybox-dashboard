@@ -5,7 +5,6 @@ import { useAuth } from "@/components/contexts/auth-context";
 import IssuesTable from "@/components/tables/issues-table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BabyboxIssue } from "@/types/issue.types";
-import { parseISO } from "date-fns";
 import { toast } from "sonner";
 import useSWR from "swr";
 

@@ -3,10 +3,10 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "../ui/accordion";
-import { Badge } from "../ui/badge";
-import { format, parseISO } from "date-fns";
 import { BatteryMeasurement } from "@/types/battery-measurement.types";
 import LineChart from "../charts/line-chart";
+import { format, parseISO } from "date-fns";
+import { Badge } from "../ui/badge";
 
 interface Props {
   batteryMeasurement: BatteryMeasurement;

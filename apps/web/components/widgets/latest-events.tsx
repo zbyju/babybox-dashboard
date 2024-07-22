@@ -1,10 +1,10 @@
 "use client";
 
+import { decodeEvent, translateEvent } from "@/utils/events";
+import { ColumnDef } from "@tanstack/react-table";
+import { type Event } from "@/types/event.types";
 import { DataTable } from "../ui/data-table";
 import { format, parse } from "date-fns";
-import { ColumnDef } from "@tanstack/react-table";
-import { decodeEvent, translateEvent } from "@/utils/events";
-import { type Event } from "@/types/event.types";
 
 export const columns: ColumnDef<Event>[] = [
   {

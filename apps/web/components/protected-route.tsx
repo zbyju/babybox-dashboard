@@ -1,14 +1,14 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useAuth } from "./contexts/auth-context";
+import { useRouter } from "next/navigation";
+import { Button } from "./ui/button";
+import { useEffect } from "react";
 import { toast } from "sonner";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { Button } from "./ui/button";
 
 export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated, isLoaded, token } = useAuth();
+  const { isAuthenticated, isLoaded } = useAuth();
   const router = useRouter();
 
   useEffect(() => {

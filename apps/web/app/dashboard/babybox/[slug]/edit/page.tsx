@@ -1,19 +1,19 @@
 "use client";
 
-import { useAuth } from "@/components/contexts/auth-context";
-import LocationInformationEdit from "@/components/location-information-edit";
-import NetworkConfigurationEdit from "@/components/network-configuration-edit";
 import ContactInformationTableEdit from "@/components/tables/contact-information-table-edit";
+import NetworkConfigurationEdit from "@/components/network-configuration-edit";
+import LocationInformationEdit from "@/components/location-information-edit";
+import { BabyboxContact, BabyboxDetail } from "@/types/babybox.types";
+import { useAuth } from "@/components/contexts/auth-context";
+import { fetcherWithToken } from "@/helpers/api-helper";
+import { ArrowLeft, Info, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ApiResponse } from "@/types/api.types";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { fetcherWithToken } from "@/helpers/api-helper";
-import { ApiResponse } from "@/types/api.types";
-import { BabyboxContact, BabyboxDetail } from "@/types/babybox.types";
-import { ArrowLeft, Info, Pencil } from "lucide-react";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import Link from "next/link";
 import useSWR from "swr";
 
 export default function Home({ params }: { params: { slug: string } }) {
@@ -47,7 +47,7 @@ export default function Home({ params }: { params: { slug: string } }) {
           body: JSON.stringify(babybox),
         },
       );
-      const result: ApiResponse<BabyboxDetail> = await response.json();
+      const result: ApiResponse = await response.json();
       mutate(result);
       toast.success("Babybox úspěšně aktualizován.");
     } catch (err) {
@@ -129,7 +129,7 @@ export default function Home({ params }: { params: { slug: string } }) {
           }
         />
 
-        <ContactInformationTableEdit 
+        <ContactInformationTableEdit
           contacts={data?.data?.contacts || []}
           onClick={(contacts) =>
             updateBabybox({
@@ -140,11 +140,12 @@ export default function Home({ params }: { params: { slug: string } }) {
           onRemove={(id) => {
             updateBabybox({
               ...data.data,
-              contacts: data.data.contacts.filter((c: BabyboxContact) => c.id !== id)
-            })
+              contacts: data.data.contacts.filter(
+                (c: BabyboxContact) => c.id !== id,
+              ),
+            });
           }}
         />
-
       </div>
     </div>
   );

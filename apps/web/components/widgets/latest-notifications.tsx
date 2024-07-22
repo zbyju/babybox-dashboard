@@ -1,6 +1,6 @@
-import { processNotifications } from "@/utils/notifications";
-import { Notification } from "../../types/notification.types";
 import GroupNotificationAccordionItem from "./grouped-notifications-accordion-item";
+import { Notification } from "../../types/notification.types";
+import { processNotifications } from "@/utils/notifications";
 import { Accordion } from "@radix-ui/react-accordion";
 
 interface Props {

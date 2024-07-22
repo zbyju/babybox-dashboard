@@ -1,10 +1,10 @@
 "use client";
 
 import { User, UserWithPassword } from "@/types/user.types";
+import { useAuth } from "./contexts/auth-context";
+import { Button } from "./ui/button";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
-import { Button } from "./ui/button";
-import { useAuth } from "./contexts/auth-context";
 import { useState } from "react";
 import { toast } from "sonner";
 

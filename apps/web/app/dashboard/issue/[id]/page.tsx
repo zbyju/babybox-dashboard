@@ -6,12 +6,7 @@ import {
   colorizeSeverity,
   colorizeStatus,
 } from "@/utils/colorize/issues";
-import {
-  fetcherWithToken,
-  issueFetcher,
-  issuesFetcher,
-  updateIssue,
-} from "@/helpers/api-helper";
+import { issueFetcher, updateIssue } from "@/helpers/api-helper";
 import { translateIssueState } from "@/utils/translations/issue";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/components/contexts/auth-context";
@@ -21,8 +16,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { combineHistories } from "@/utils/issue";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { format, parseISO } from "date-fns";
 import { cs } from "date-fns/locale";
+import { format } from "date-fns";
 import { useState } from "react";
 import { toast } from "sonner";
 import useSWR from "swr";

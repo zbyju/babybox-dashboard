@@ -2,9 +2,9 @@
 
 import { useAuth } from "@/components/contexts/auth-context";
 import UsersTable from "@/components/tables/users-table";
+import { fetcherWithToken } from "@/helpers/api-helper";
 import { Skeleton } from "@/components/ui/skeleton";
 import UserAdd from "@/components/user-add";
-import { fetcherWithToken } from "@/helpers/api-helper";
 import { User } from "@/types/user.types";
 import { toast } from "sonner";
 import useSWR from "swr";

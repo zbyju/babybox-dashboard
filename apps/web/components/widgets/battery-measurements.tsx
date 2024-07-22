@@ -1,6 +1,6 @@
+import BatteryMeasurementAccordionItem from "./battery-measurement-accordion-item";
 import { BatteryMeasurement } from "@/types/battery-measurement.types";
 import { Accordion } from "../ui/accordion";
-import BatteryMeasurementAccordionItem from "./battery-measurement-accordion-item";
 
 interface Props {
   batteryMeasurements: BatteryMeasurement[];
@@ -8,7 +8,7 @@ interface Props {
 
 export default function BatteryMeasurements(props: Props) {
   return (
-    <div className="flex w-full flex-col gap-4 mt-4">
+    <div className="mt-4 flex w-full flex-col gap-4">
       {props.batteryMeasurements.length > 0 ? (
         <>
           {props.batteryMeasurements.map((b: BatteryMeasurement) => (

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { RotateCcw } from "lucide-react";
 import { useRef, useState } from "react";
@@ -23,16 +23,12 @@ export default function RefreshButton(props: Props) {
       setIsSpinning(false);
       spinTimeoutRef.current = null;
     }, 1000);
-    props.onClick()
+    props.onClick();
   };
 
   return (
-    <Button
-      variant="outline"
-      size="icon"
-      onClick={onRefresh}
-    >
-      <RotateCcw className={`w-5 h-5 ${isSpinning ? 'spin' : ''}`} />
+    <Button variant="outline" size="icon" onClick={onRefresh}>
+      <RotateCcw className={`h-5 w-5 ${isSpinning ? "spin" : ""}`} />
     </Button>
   );
-};
+}

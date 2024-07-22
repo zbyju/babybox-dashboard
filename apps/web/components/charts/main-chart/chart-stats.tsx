@@ -1,7 +1,7 @@
-import Widget from "@/components/ui/widget";
-import VariableStats from "@/components/widgets/variable-stats";
 import { Snapshot, SnapshotGroupStat } from "@/types/snapshot.types";
+import VariableStats from "@/components/widgets/variable-stats";
 import { calculateSnapshotStats } from "@/utils/stats";
+import Widget from "@/components/ui/widget";
 
 interface Props {
   data: Snapshot[];

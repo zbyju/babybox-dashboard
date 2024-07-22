@@ -1,14 +1,14 @@
 "use client";
 
 import { BabyboxContact } from "@/types/babybox.types";
-import { DataTable } from "../ui/data-table";
-import { ColumnDef } from "@tanstack/react-table";
 import { NotebookTabs, Trash2 } from "lucide-react";
+import { ColumnDef } from "@tanstack/react-table";
+import { DataTable } from "../ui/data-table";
+import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
+import { v4 as uuidv4 } from "uuid";
 import { useState } from "react";
-import { Button } from "../ui/button";
-import { v4 as uuidv4 } from 'uuid';
 import { toast } from "sonner";
 
 interface Props {
@@ -46,7 +46,7 @@ export default function ContactInformationTableEdit(props: Props) {
     {
       accessorKey: "id",
       header: () => <div className="text-center">Akce</div>,
-      cell: ({ getValue}) => {
+      cell: ({ getValue }) => {
         const id = getValue() as string;
 
         return (
@@ -65,7 +65,6 @@ export default function ContactInformationTableEdit(props: Props) {
     },
   ];
 
-
   const [contact, setContact] = useState<BabyboxContact>({
     id: uuidv4(),
     firstname: "",
@@ -75,7 +74,6 @@ export default function ContactInformationTableEdit(props: Props) {
     phone: "",
     note: "",
   });
-
 
   return (
     <div>
@@ -94,7 +92,9 @@ export default function ContactInformationTableEdit(props: Props) {
           <Label className="ml-1 text-muted-foreground">Jméno</Label>
           <Input
             value={contact.firstname}
-            onChange={(e) => setContact({ ...contact, firstname: e.target.value })}
+            onChange={(e) =>
+              setContact({ ...contact, firstname: e.target.value })
+            }
             className="h-[30px] w-[150px] rounded-sm text-xs"
           />
         </div>
@@ -102,7 +102,9 @@ export default function ContactInformationTableEdit(props: Props) {
           <Label className="ml-1 text-muted-foreground">Příjmení</Label>
           <Input
             value={contact.lastname}
-            onChange={(e) => setContact({ ...contact, lastname: e.target.value })}
+            onChange={(e) =>
+              setContact({ ...contact, lastname: e.target.value })
+            }
             className="h-[30px] w-[150px] rounded-sm text-xs"
           />
         </div>
@@ -110,7 +112,9 @@ export default function ContactInformationTableEdit(props: Props) {
           <Label className="ml-1 text-muted-foreground">Role</Label>
           <Input
             value={contact.position}
-            onChange={(e) => setContact({ ...contact, position: e.target.value })}
+            onChange={(e) =>
+              setContact({ ...contact, position: e.target.value })
+            }
             className="h-[30px] w-[150px] rounded-sm text-xs"
           />
         </div>
@@ -143,22 +147,25 @@ export default function ContactInformationTableEdit(props: Props) {
       </div>
 
       <div className="flex flex-row flex-wrap gap-4">
-        <Button size="sm" onClick={() => {
-          if(contact.firstname.length > 1 && contact.lastname.length > 1) {
-            props.onClick(props.contacts.concat(contact));
-            setContact({
-              id: uuidv4(),
-              firstname: "",
-              lastname: "",
-              position: "",
-              email: "",
-              phone: "",
-              note: ""
-            })
-          } else {
-            toast.error("Kontakt musí mít vyplněné jméno a příjmení.")
+        <Button
+          size="sm"
+          onClick={() => {
+            if (contact.firstname.length > 1 && contact.lastname.length > 1) {
+              props.onClick(props.contacts.concat(contact));
+              setContact({
+                id: uuidv4(),
+                firstname: "",
+                lastname: "",
+                position: "",
+                email: "",
+                phone: "",
+                note: "",
+              });
+            } else {
+              toast.error("Kontakt musí mít vyplněné jméno a příjmení.");
+            }
           }}
-        }>
+        >
           Přidat
         </Button>
       </div>

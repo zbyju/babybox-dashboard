@@ -1,15 +1,15 @@
 "use client";
 
-import { BabyboxMaintenance } from "@/types/babybox.types";
-import { DataTable } from "../ui/data-table";
+import { BabyboxMaintenance } from "@/types/maintenance.types";
 import { ColumnDef } from "@tanstack/react-table";
-import { FileClock } from "lucide-react";
-import { format } from "date-fns";
 import { DatePicker } from "../ui/date-picker";
-import { useState } from "react";
+import { DataTable } from "../ui/data-table";
+import { FileClock } from "lucide-react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
+import { format } from "date-fns";
+import { useState } from "react";
 import { toast } from "sonner";
 
 interface Props {

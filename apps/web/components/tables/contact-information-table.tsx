@@ -1,8 +1,8 @@
 "use client";
 
 import { BabyboxContact } from "@/types/babybox.types";
-import { DataTable } from "../ui/data-table";
 import { ColumnDef } from "@tanstack/react-table";
+import { DataTable } from "../ui/data-table";
 import { NotebookTabs } from "lucide-react";
 
 interface Props {
