@@ -2,12 +2,10 @@
 
 import { useAuth } from "@/components/contexts/auth-context";
 import IssuesTable from "@/components/tables/issues-table";
-import UsersTable from "@/components/tables/users-table";
 import { fetcherWithToken } from "@/helpers/api-helper";
-import { BabyboxIssue } from "@/types/babybox.types";
 import { Skeleton } from "@/components/ui/skeleton";
+import { BabyboxIssue } from "@/types/issue.types";
 import IssueAdd from "@/components/issue-add";
-import { User } from "@/types/user.types";
 import { toast } from "sonner";
 import useSWR from "swr";
 
@@ -23,26 +21,28 @@ export default function Issues() {
   );
 
   const userServiceURL = process.env.NEXT_PUBLIC_URL_USER_SERVICE;
-  const { data: userData, isLoading: userIsLoading } = useSWR(
+  const { data: userData } = useSWR(
     [`${userServiceURL}/v1/users/`, token],
     ([url, token]) => fetcherWithToken(url, token),
   );
 
   async function handleDeleteIssue(id: string) {
     try {
-      await fetch(`${babyboxServiceURL}/v1/isses/${id}`, {
+      const res = await fetch(`${babyboxServiceURL}/v1/issues/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: "Bearer " + token,
         },
       });
+      if (!res.ok) throw "Not ok";
+
       const users = (issuesData?.data || []).filter(
         (u: BabyboxIssue) => u.id !== id,
       );
       mutateIssues({ ...issuesData, data: users });
-      toast.success("Uživatel úspěšně odebrán.");
+      toast.success("Chyba úspěšně odebrána.");
     } catch (err) {
-      toast.error("Nebylo možné odebrat uživatele.");
+      toast.error("Nebylo možné odebrat chybu.");
     }
   }
 
@@ -51,12 +51,20 @@ export default function Issues() {
     mutateIssues({ ...issuesData, data: issues });
   }
 
+  function handleChangeIssue(issue: BabyboxIssue) {
+    const issues = (issuesData?.data || []).map((i: BabyboxIssue) => {
+      if (i.id === issue.id) return issue;
+      return i;
+    });
+    mutateIssues({ ...issuesData, data: issues });
+  }
+
   return (
     <div className="mb-10 mt-2 w-full px-4 lg:px-[16%]">
       <div>
         <IssueAdd onAdd={handleAddIssue} users={userData?.data} />
       </div>
-      <div className="mt-4 flex w-full flex-col gap-4">
+      <div className="mt-8 flex w-full flex-col gap-2">
         <h2 className="text-3xl font-bold">Reportované chyby</h2>
         {issuesIsLoading ? (
           <div className="mx-auto flex flex-col justify-center gap-4">
@@ -69,6 +77,7 @@ export default function Issues() {
         ) : (
           <IssuesTable
             issues={issuesData?.data || []}
+            onUpdate={handleChangeIssue}
             onDelete={handleDeleteIssue}
           />
         )}

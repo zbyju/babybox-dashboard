@@ -6,20 +6,24 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
-import { BabyboxesContext } from "../contexts/babyboxes-context";
-import { differenceInMinutes, format, parse } from "date-fns";
+import { fetcherMultipleWithToken } from "@/helpers/api-helper";
 import { ColumnDef, Row } from "@tanstack/react-table";
+import { differenceInMinutes, format } from "date-fns";
+import { BabyboxBase } from "@/types/babybox.types";
+import { useAuth } from "../contexts/auth-context";
 import { DataTable } from "../ui/data-table";
 import { useRouter } from "next/navigation";
 import { ArrowUpDown } from "lucide-react";
+import { Skeleton } from "../ui/skeleton";
 import { Button } from "../ui/button";
 import { toSlug } from "@/utils/slug";
 import { Badge } from "../ui/badge";
-import { useContext } from "react";
+import useSWR from "swr";
 
 export type Babybox = {
   slug: string;
   name: string;
+  fetchStatus: "ok" | "loading" | "error";
   lastData: {
     timestamp: string;
     voltage: {
@@ -84,7 +88,11 @@ export const columns: ColumnDef<Babybox>[] = [
   {
     accessorKey: "lastData.temperature.inside",
     header: () => <div className="text-right">Vnitřní [°C]</div>,
-    cell: ({ getValue }) => {
+    cell: ({ getValue, row }) => {
+      if (row.original.fetchStatus === "error")
+        return <div className="text-right">X</div>;
+      if (row.original.fetchStatus === "loading")
+        return <Skeleton className="h-4 w-[20px]" />;
       const val = getValue();
       const str = typeof val === "number" ? val.toFixed(2) : val;
       return <div className="text-right">{str as string}</div>;
@@ -93,7 +101,11 @@ export const columns: ColumnDef<Babybox>[] = [
   {
     accessorKey: "lastData.temperature.outside",
     header: () => <div className="text-right">Venkovní [°C]</div>,
-    cell: ({ getValue }) => {
+    cell: ({ getValue, row }) => {
+      if (row.original.fetchStatus === "error")
+        return <div className="text-right">X</div>;
+      if (row.original.fetchStatus === "loading")
+        return <Skeleton className="h-4 w-[20px]" />;
       const val = getValue();
       const str = typeof val === "number" ? val.toFixed(2) : val;
       return <div className="text-right">{str as string}</div>;
@@ -102,7 +114,11 @@ export const columns: ColumnDef<Babybox>[] = [
   {
     accessorKey: "lastData.voltage.in",
     header: () => <div className="text-right">Vstup [V]</div>,
-    cell: ({ getValue }) => {
+    cell: ({ getValue, row }) => {
+      if (row.original.fetchStatus === "error")
+        return <div className="text-right">X</div>;
+      if (row.original.fetchStatus === "loading")
+        return <Skeleton className="h-4 w-[20px]" />;
       const val = getValue();
       const str = typeof val === "number" ? val.toFixed(2) : val;
       return <div className="text-right">{str as string}</div>;
@@ -111,7 +127,11 @@ export const columns: ColumnDef<Babybox>[] = [
   {
     accessorKey: "lastData.voltage.battery",
     header: () => <div className="text-right">Baterie [V]</div>,
-    cell: ({ getValue }) => {
+    cell: ({ getValue, row }) => {
+      if (row.original.fetchStatus === "error")
+        return <div className="text-right">X</div>;
+      if (row.original.fetchStatus === "loading")
+        return <Skeleton className="h-4 w-[20px]" />;
       const val = getValue();
       const str = typeof val === "number" ? val.toFixed(2) : val;
       return <div className="text-right">{str as string}</div>;
@@ -121,6 +141,10 @@ export const columns: ColumnDef<Babybox>[] = [
     accessorKey: "lastData.timestamp",
     header: () => <div className="text-right">Čas dat</div>,
     cell: ({ row }) => {
+      if (row.original.fetchStatus === "error")
+        return <div className="text-right">X</div>;
+      if (row.original.fetchStatus === "loading")
+        return <Skeleton className="h-4 w-[20px]" />;
       const timestamp = format(
         row.getValue("lastData_timestamp"),
         "HH:mm dd.MM.yyyy",
@@ -132,6 +156,10 @@ export const columns: ColumnDef<Babybox>[] = [
     accessorKey: "lastData.status",
     header: () => <div className="text-center">Status</div>,
     cell: ({ row }) => {
+      if (row.original.fetchStatus === "error")
+        return <div className="text-right">X</div>;
+      if (row.original.fetchStatus === "loading")
+        return <Skeleton className="h-4 w-[20px]" />;
       const d = row.getValue("lastData_timestamp") as Date;
       const now = new Date();
       if (differenceInMinutes(now, d) >= 12) {
@@ -209,12 +237,58 @@ export const columns: ColumnDef<Babybox>[] = [
 
 export default function BabyboxesTable({
   babyboxes,
-  onRefresh,
 }: {
-  babyboxes: Babybox[];
-  onRefresh: () => void;
+  babyboxes: BabyboxBase[];
 }) {
   const router = useRouter();
+
+  const { token } = useAuth();
+  const snapshotServiceURL = process.env.NEXT_PUBLIC_URL_SNAPSHOT_HANDLER;
+  const urls = babyboxes.map(
+    (b) => `${snapshotServiceURL}/v1/snapshots/${b.slug}?n=1`,
+  );
+  const { data, isLoading, mutate } = useSWR(
+    urls.length ? [urls, token] : null,
+    ([urls, token]) => fetcherMultipleWithToken(urls, token),
+  );
+
+  const babyboxesWithData: Babybox[] = babyboxes.map((bb) => {
+    if (!data) {
+      const status = isLoading ? "loading" : "error";
+      const defaultData = {
+        timestamp: "00:00 01.01.2020",
+        voltage: {
+          in: 0,
+          battery: 0,
+        },
+        temperature: {
+          inside: 0,
+          outside: 0,
+          casing: 0,
+          top: 0,
+          bottom: 0,
+        },
+      };
+      return { ...bb, fetchStatus: status, lastData: defaultData };
+    }
+    const found = data.find(
+      (x) =>
+        "data" in x &&
+        x.data.length > 0 &&
+        "slug" in x.data[0] &&
+        x.data[0].slug === bb.slug,
+    );
+    const status = found === undefined ? "error" : "ok";
+    return {
+      ...bb,
+      fetchStatus: status,
+      lastData: found.data[0],
+    };
+  });
+
+  function handleRefresh() {
+    mutate();
+  }
 
   function onRowClick(row: Row<Babybox>) {
     router.push("/dashboard/babybox/" + row.getValue("slug"));
@@ -223,12 +297,12 @@ export default function BabyboxesTable({
   return (
     <DataTable
       columns={columns}
-      data={babyboxes}
+      data={babyboxesWithData}
       sorting={[{ id: "name", desc: false }]}
       rowClickAccessor={onRowClick}
       hideColumns={["slug"]}
       filterColumnName="name"
-      onRefresh={onRefresh}
+      onRefresh={handleRefresh}
     />
   );
 }

@@ -9,26 +9,31 @@ import {
   FormMessage,
 } from "./ui/form";
 import {
-  getSubtypes,
-  priorities,
-  severities,
-  types,
-} from "@/helpers/issue-helper";
-import { BabyboxIssue, BabyboxIssueSchema } from "@/types/babybox.types";
+  BabyboxIssue,
+  BabyboxIssueSchema,
+  IssueState,
+} from "@/types/issue.types";
+import IssuePriorityAutocomplete from "./forms/issue-priority-autocomplete";
+import IssueSeverityAutocomplete from "./forms/issue-severity-autocomplete";
 import { BabyboxesContext } from "./contexts/babyboxes-context";
+import { getSubtypes, types } from "@/helpers/issue-helper";
+import IssueStateSelect from "./forms/issue-state-select";
+import { fetcherWithToken } from "@/helpers/api-helper";
 import { DateTimePicker } from "./ui/date-time-picker";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Babybox } from "./tables/babyboxes-table";
 import { useAuth } from "./contexts/auth-context";
 import Autocomplete from "./ui/autocomplete";
+import { useContext, useState } from "react";
 import { User } from "@/types/user.types";
 import { useForm } from "react-hook-form";
 import { Textarea } from "./ui/textarea";
+import { addSeconds } from "date-fns";
 import Combobox from "./ui/combobox";
 import { Button } from "./ui/button";
-import { Switch } from "./ui/switch";
-import { useContext } from "react";
+import { Input } from "./ui/input";
 import { toast } from "sonner";
+import useSWR from "swr";
 import { z } from "zod";
 
 export interface Props {
@@ -39,11 +44,20 @@ export interface Props {
 export default function IssueAdd({ onAdd, users }: Props) {
   const babyboxes = useContext(BabyboxesContext) as Babybox[];
   const babyboxServiceURL = process.env.NEXT_PUBLIC_URL_BABYBOX_SERVICE;
-  const { token } = useAuth();
+  const { token, user } = useAuth();
+
+  const { data: maintenancesData } = useSWR(
+    [`${babyboxServiceURL}/v1/maintenances/`, token],
+    ([url, token]) => fetcherWithToken(url, token),
+  );
+
+  const [state, setState] = useState<IssueState>("open");
+  const [timestamp, setTimestamp] = useState<Date | undefined>(new Date());
 
   const form = useForm<z.infer<typeof BabyboxIssueSchema>>({
     resolver: zodResolver(BabyboxIssueSchema),
     defaultValues: {
+      title: "",
       priority: "",
       severity: "",
       issue: {
@@ -52,19 +66,31 @@ export default function IssueAdd({ onAdd, users }: Props) {
         description: "",
         context: "",
       },
-      solvedAt: undefined,
-      isSolved: false,
     },
   });
 
-  const solved = form.watch("isSolved");
   const type = form.watch("issue.type");
   const subtypes = getSubtypes(type);
 
-  // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof BabyboxIssueSchema>) {
-    console.log(values);
-    console.log(JSON.stringify(values));
+    const issue: BabyboxIssue = {
+      ...values,
+      priority: values.priority || "Neuvedena",
+      severity: values.severity || "Neuvedena",
+      comments: [],
+      state_history: [
+        {
+          state: state,
+          timestamp: addSeconds(timestamp || new Date(), 1),
+          username: user?.username || "",
+        },
+        {
+          state: "created",
+          timestamp: new Date(),
+          username: user?.username || "",
+        },
+      ],
+    };
     try {
       const res = await fetch(`${babyboxServiceURL}/v1/issues`, {
         method: "POST",
@@ -72,7 +98,7 @@ export default function IssueAdd({ onAdd, users }: Props) {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify(issue),
       });
       const data = await res.json();
       if (res.ok && !data?.metadata?.err) {
@@ -88,7 +114,7 @@ export default function IssueAdd({ onAdd, users }: Props) {
     }
   }
 
-  const cRow = "flex flex-row items-center gap-4";
+  const cRow = "flex flex-row items-center gap-4 flex-wrap";
   const cItem = "flex flex-col gap-y-1 space-y-0";
   const cLabel = "ml-1 my-0 py-0";
   const cHeading = "mb-[-10px] text-lg";
@@ -103,10 +129,26 @@ export default function IssueAdd({ onAdd, users }: Props) {
             <div className={cRow}>
               <FormField
                 control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem className={cItem + " w-full"}>
+                    <FormLabel className={cLabel}>Název*</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className={cRow}>
+              <FormField
+                control={form.control}
                 name="slug"
                 render={({ field }) => (
                   <FormItem className={cItem}>
-                    <FormLabel className={cLabel}>Babybox</FormLabel>
+                    <FormLabel className={cLabel}>Babybox*</FormLabel>
                     <FormControl>
                       <Combobox
                         values={babyboxes.map((bb) => ({
@@ -128,6 +170,36 @@ export default function IssueAdd({ onAdd, users }: Props) {
                 )}
               />
 
+              {maintenancesData && maintenancesData.data && (
+                <FormField
+                  control={form.control}
+                  name="maintenance_id"
+                  render={({ field }) => (
+                    <FormItem className={cItem}>
+                      <FormLabel className={cLabel}>Servis ID</FormLabel>
+                      <FormControl>
+                        <Combobox
+                          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                          values={maintenancesData.data.map((m: any) => ({
+                            value: m.id,
+                            label: m.title || m.id,
+                          }))}
+                          selected={
+                            field.value
+                              ? { value: field.value, label: field.value }
+                              : undefined
+                          }
+                          onSelect={(selectedValue) =>
+                            field.onChange(selectedValue)
+                          }
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+
               <FormField
                 control={form.control}
                 name="priority"
@@ -135,11 +207,7 @@ export default function IssueAdd({ onAdd, users }: Props) {
                   <FormItem className={cItem}>
                     <FormLabel className={cLabel}>Priorita</FormLabel>
                     <FormControl>
-                      <Autocomplete
-                        values={priorities}
-                        value={field.value}
-                        onChange={(x) => field.onChange(x)}
-                      />
+                      <IssuePriorityAutocomplete {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -152,26 +220,21 @@ export default function IssueAdd({ onAdd, users }: Props) {
                   <FormItem className={cItem}>
                     <FormLabel className={cLabel}>Severita</FormLabel>
                     <FormControl>
-                      <Autocomplete
-                        values={severities}
-                        value={field.value}
-                        onChange={field.onChange}
-                      />
+                      <IssueSeverityAutocomplete {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
               <FormField
-                control={form.control}
                 name="timestamp"
-                render={({ field }) => (
+                render={() => (
                   <FormItem className={cItem}>
-                    <FormLabel className={cLabel}>Datum a čas chyby</FormLabel>
+                    <FormLabel className={cLabel}>Datum a čas chyby*</FormLabel>
                     <FormControl>
                       <DateTimePicker
-                        date={field.value}
-                        setDate={(newDate) => field.onChange(newDate)}
+                        date={timestamp}
+                        setDate={(newDate) => setTimestamp(newDate)}
                       />
                     </FormControl>
                     <FormMessage />
@@ -183,50 +246,19 @@ export default function IssueAdd({ onAdd, users }: Props) {
             <h6 className={cHeading}>Řešení chyby</h6>
             <div className={cRow}>
               <FormField
-                control={form.control}
-                name="isSolved"
-                render={({ field }) => (
+                name="state"
+                render={() => (
                   <FormItem className={cItem}>
-                    <FormLabel className="mb-[12px]">Chyba vyřešena</FormLabel>
+                    <FormLabel className="mb-[4px]">Status*</FormLabel>
                     <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={(checked) => {
-                          field.onChange(checked);
-                          if (!checked) {
-                            form.setValue("solvedAt", undefined);
-                          } else {
-                            form.setValue("assignee", undefined);
-                          }
-                        }}
-                      />
+                      <IssueStateSelect value={state} onChange={setState} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              {solved ? (
-                <FormField
-                  control={form.control}
-                  name="solvedAt"
-                  render={({ field }) => (
-                    <FormItem className={cItem}>
-                      <FormLabel className="mt-[4px]">
-                        Datum a čas vyřešení
-                      </FormLabel>
-                      <FormControl>
-                        <DateTimePicker
-                          date={field.value}
-                          setDate={(newDate) => field.onChange(newDate)}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ) : null}
 
-              {!solved && users ? (
+              {users ? (
                 <FormField
                   control={form.control}
                   name="assignee"
@@ -265,7 +297,7 @@ export default function IssueAdd({ onAdd, users }: Props) {
                 name="issue.type"
                 render={({ field }) => (
                   <FormItem className={cItem}>
-                    <FormLabel className="mt-[4px]">Typ chyby</FormLabel>
+                    <FormLabel className="mt-[4px]">Typ chyby*</FormLabel>
                     <FormControl>
                       <Autocomplete
                         values={types.map((t) => ({ value: t, label: t }))}
@@ -286,7 +318,7 @@ export default function IssueAdd({ onAdd, users }: Props) {
                 name="issue.subtype"
                 render={({ field }) => (
                   <FormItem className={cItem}>
-                    <FormLabel className="mt-[4px]">Podtyp chyby</FormLabel>
+                    <FormLabel className="mt-[4px]">Podtyp chyby*</FormLabel>
                     <FormControl>
                       <Autocomplete
                         values={subtypes}

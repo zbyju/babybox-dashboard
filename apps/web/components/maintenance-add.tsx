@@ -1,12 +1,6 @@
 "use client";
 
 import {
-  BabyboxIssue,
-  BabyboxIssueSchema,
-  BabyboxMaintenance,
-  BabyboxMaintenanceSchema,
-} from "@/types/babybox.types";
-import {
   Form,
   FormControl,
   FormField,
@@ -15,27 +9,25 @@ import {
   FormMessage,
 } from "./ui/form";
 import {
-  getSubtypes,
-  priorities,
-  severities,
-  types,
-} from "@/helpers/issue-helper";
+  BabyboxMaintenance,
+  BabyboxMaintenanceSchema,
+} from "@/types/maintenance.types";
+import { createBabyboxMaintenance } from "@/fetchers/maintenance.fetcher";
 import { BabyboxesContext } from "./contexts/babyboxes-context";
-import { DateTimePicker } from "./ui/date-time-picker";
+import { useContext, useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { issuesFetcher } from "@/helpers/api-helper";
 import { Babybox } from "./tables/babyboxes-table";
 import { useAuth } from "./contexts/auth-context";
 import { DatePicker } from "./ui/date-picker";
-import Autocomplete from "./ui/autocomplete";
 import { User } from "@/types/user.types";
 import { useForm } from "react-hook-form";
 import { Textarea } from "./ui/textarea";
 import Combobox from "./ui/combobox";
 import { Button } from "./ui/button";
-import { Switch } from "./ui/switch";
 import { Input } from "./ui/input";
-import { useContext } from "react";
 import { toast } from "sonner";
+import useSWR from "swr";
 import { z } from "zod";
 
 export interface Props {
@@ -45,47 +37,47 @@ export interface Props {
 
 export default function MaintenanceAdd({ onAdd, users }: Props) {
   const babyboxes = useContext(BabyboxesContext) as Babybox[];
-  const babyboxServiceURL = process.env.NEXT_PUBLIC_URL_BABYBOX_SERVICE;
   const { token } = useAuth();
+
+  const [maintenanceIssues, setMaintenanceIssues] = useState<string[]>([]);
 
   const form = useForm<z.infer<typeof BabyboxMaintenanceSchema>>({
     resolver: zodResolver(BabyboxMaintenanceSchema),
     defaultValues: {
-      state: "opened",
-      start: new Date(),
+      state: "open",
     },
   });
+  const slug = form.watch("slug");
 
-  // 2. Define a submit handler.
-  async function onSubmit(values: z.infer<typeof BabyboxMaintenanceSchema>) {
+  useEffect(() => {
+    setMaintenanceIssues([]);
+  }, [slug]);
+
+  const { data: issues } = useSWR(
+    ["issues/slug/" + slug, token],
+    ([_, token]) => issuesFetcher(token, slug),
+  );
+
+  async function onSubmit(
+    maintenance: z.infer<typeof BabyboxMaintenanceSchema>,
+  ) {
+    if (maintenance.distance === 0) delete maintenance.distance;
     try {
-      const distance = values.distance
-        ? parseFloat(values.distance)
-        : undefined;
-      const maintenance: BabyboxMaintenance = { ...values, distance };
-      const res = await fetch(`${babyboxServiceURL}/v1/maintenances`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(maintenance),
-      });
-      const data = await res.json();
-      if (res.ok && !data?.metadata?.err) {
-        onAdd(maintenance);
-        form.reset();
-        toast.success("Servis úspěšně vytvořen.");
-      } else {
-        throw data?.metadata?.err;
-      }
+      const newMaintenance = await createBabyboxMaintenance(
+        maintenance,
+        maintenanceIssues,
+        token,
+      );
+      onAdd(newMaintenance);
+      form.reset();
+      toast.success("Servis úspěšně vytvořen.");
     } catch (err) {
-      console.log(err);
+      console.error(err);
       toast.error("Servis nebyl vytvořen.");
     }
   }
 
-  const cRow = "flex flex-row items-center gap-4";
+  const cRow = "flex flex-row flex-wrap items-center gap-4";
   const cItem = "flex flex-col gap-y-1 space-y-0";
   const cLabel = "ml-1 my-0 py-0";
   const cHeading = "mb-[-10px] text-lg";
@@ -97,6 +89,26 @@ export default function MaintenanceAdd({ onAdd, users }: Props) {
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="flex flex-col gap-4">
             <h6 className={cHeading}>Základní informace</h6>
+            <div className={cRow}>
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem className={cItem + " w-full"}>
+                    <FormLabel className={cLabel}>Název*</FormLabel>
+                    <FormControl>
+                      <Input
+                        value={field.value || ""}
+                        onChange={field.onChange}
+                        onBlur={field.onBlur}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
             <div className={cRow}>
               <FormField
                 control={form.control}
@@ -132,27 +144,70 @@ export default function MaintenanceAdd({ onAdd, users }: Props) {
               />
               <FormField
                 control={form.control}
-                name="slugs"
+                name="slug"
                 render={({ field }) => (
                   <FormItem className={cItem}>
                     <FormLabel className={cLabel}>Babyboxy</FormLabel>
                     <FormControl>
                       <Combobox
-                        values={babyboxes.map((u) => ({
-                          label: u.name,
-                          value: u.slug,
+                        values={babyboxes.map((bb) => ({
+                          value: bb.slug,
+                          label: bb.name,
                         }))}
-                        selected={(() => {
-                          if (field.value === undefined) {
-                            return [];
-                          }
-                          return field.value?.map((x) => ({
-                            value: x,
-                            label: x,
-                          }));
-                        })()}
+                        selected={
+                          field.value
+                            ? { value: field.value, label: field.value }
+                            : undefined
+                        }
+                        onSelect={(selectedValue) =>
+                          field.onChange(selectedValue)
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                name="maintenance"
+                render={() => (
+                  <FormItem className={cItem}>
+                    <FormLabel className={cLabel}>Chyby</FormLabel>
+                    <FormControl>
+                      <Combobox
+                        values={(issues || [])
+                          .filter(
+                            (i) =>
+                              i.id &&
+                              i.maintenance_id === undefined &&
+                              i.slug === slug &&
+                              !["closed", "solved"].includes(
+                                i.state_history.at(0)?.state || "",
+                              ),
+                          )
+                          .sort((a, b) => {
+                            const as = a.state_history.at(0)?.state;
+                            const bs = b.state_history.at(0)?.state;
+
+                            return as === "open" && bs === "open"
+                              ? a.title.localeCompare(b.title)
+                              : as === "open"
+                                ? -1
+                                : bs === "open"
+                                  ? 1
+                                  : a.title.localeCompare(b.title);
+                          })
+                          .map((i) => ({ value: i.id || "", label: i.title }))}
+                        selected={maintenanceIssues.map((i) => ({
+                          value: i,
+                          label: i,
+                        }))}
                         onSelect={(selectedValue) => {
-                          field.onChange(selectedValue);
+                          const val = Array.isArray(selectedValue)
+                            ? selectedValue
+                            : [selectedValue];
+                          setMaintenanceIssues(val);
                         }}
                       />
                     </FormControl>
@@ -170,7 +225,7 @@ export default function MaintenanceAdd({ onAdd, users }: Props) {
                   name="assignee"
                   render={({ field }) => (
                     <FormItem className={cItem}>
-                      <FormLabel>Popis chyby</FormLabel>
+                      <FormLabel>Přiřazení uživateli</FormLabel>
                       <FormControl>
                         <Combobox
                           values={users.map((u) => ({
@@ -199,12 +254,14 @@ export default function MaintenanceAdd({ onAdd, users }: Props) {
                   <FormItem className={cItem}>
                     <FormLabel>Ujetých km</FormLabel>
                     <FormControl>
-                      <Input type="number" {...field} />
+                      <Input type="number" defaultValue={0} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+            </div>
+            <div className={cRow}>
               <FormField
                 control={form.control}
                 name="note"
