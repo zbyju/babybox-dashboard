@@ -1,8 +1,8 @@
-import { Snapshot } from "@/types/snapshot.types";
-import { calculateAverageSnapshotGap } from "@/utils/stats";
-import { differenceInMinutes, formatDistanceToNow, parse } from "date-fns";
-import { cs } from "date-fns/locale";
+import { differenceInMinutes, formatDistanceToNow } from "date-fns";
 import { BadgeAlert, BadgeCheck, BadgeX } from "lucide-react";
+import { calculateAverageSnapshotGap } from "@/utils/stats";
+import { Snapshot } from "@/types/snapshot.types";
+import { cs } from "date-fns/locale";
 
 interface Props {
   snapshots: Snapshot[];

@@ -1,13 +1,13 @@
 "use client";
 
-import { useAuth } from "@/components/contexts/auth-context";
 import { BabyboxesProvider } from "@/components/contexts/babyboxes-context";
-import Navbar from "@/components/navbar";
-import { ProtectedRoute } from "@/components/protected-route";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Skeleton } from "@/components/ui/skeleton";
+import { ProtectedRoute } from "@/components/protected-route";
+import { useAuth } from "@/components/contexts/auth-context";
 import { fetcherWithToken } from "@/helpers/api-helper";
+import { Skeleton } from "@/components/ui/skeleton";
 import { AlertCircle, Link } from "lucide-react";
+import Navbar from "@/components/navbar";
 import useSWR from "swr";
 
 export default function AppLayout({

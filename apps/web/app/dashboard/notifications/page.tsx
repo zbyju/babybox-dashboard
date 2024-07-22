@@ -1,13 +1,13 @@
 "use client";
 
-import { useAuth } from "@/components/contexts/auth-context";
 import NotificationTemplateTable from "@/components/tables/notification-template-table";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
+import { useAuth } from "@/components/contexts/auth-context";
 import { fetcherWithToken } from "@/helpers/api-helper";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import Link from "next/link";
 import { toast } from "sonner";
+import Link from "next/link";
 import useSWR from "swr";
 
 export default function NotificationsPage() {

@@ -21,7 +21,7 @@ export default function Maintenances() {
   );
 
   const userServiceURL = process.env.NEXT_PUBLIC_URL_USER_SERVICE;
-  const { data: userData, isLoading: userIsLoading } = useSWR(
+  const { data: userData } = useSWR(
     [`${userServiceURL}/v1/users/`, token],
     ([url, token]) => fetcherWithToken(url, token),
   );

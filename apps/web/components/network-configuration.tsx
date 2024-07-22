@@ -5,8 +5,8 @@ import {
   BabyboxNetworkType,
 } from "@/types/babybox.types";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { Network } from "lucide-react";
 import OptionalRender from "./optional-render";
+import { Network } from "lucide-react";
 
 interface Props {
   networkConfiguration: BabyboxNetworkConfiguration;

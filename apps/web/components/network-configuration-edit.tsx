@@ -1,20 +1,5 @@
 "use client";
 
-import { BabyboxNetworkConfiguration } from "@/types/babybox.types";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "./ui/card";
-import { Network } from "lucide-react";
-import { Label } from "./ui/label";
-import { Textarea } from "./ui/textarea";
-import { useState } from "react";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
-import { toast } from "sonner";
 import {
   Select,
   SelectContent,
@@ -24,6 +9,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
+import { BabyboxNetworkConfiguration } from "@/types/babybox.types";
+import { Textarea } from "./ui/textarea";
+import { Network } from "lucide-react";
+import { Button } from "./ui/button";
+import { Label } from "./ui/label";
+import { Input } from "./ui/input";
+import { useState } from "react";
+import { toast } from "sonner";
 
 interface Props {
   networkConfiguration: BabyboxNetworkConfiguration | undefined;

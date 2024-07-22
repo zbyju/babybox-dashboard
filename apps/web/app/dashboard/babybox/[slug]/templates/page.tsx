@@ -24,7 +24,7 @@ export default function NotificationsPage({
   const babyboxes = useContext(BabyboxesContext) as BabyboxBase[];
   const babybox = babyboxes.find((x) => x.slug === params.slug);
 
-  const { data, error, isLoading, mutate } = useSWR(
+  const { data, isLoading, mutate } = useSWR(
     [`${notificationServiceURL}/v1/templates/${params.slug}`, token],
     ([url, token]) => fetcherWithToken(url, token),
   );

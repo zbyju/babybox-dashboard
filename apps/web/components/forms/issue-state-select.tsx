@@ -8,11 +8,10 @@ import {
   SelectValue,
 } from "../ui/select";
 import { translateIssueState } from "@/utils/translations/issue";
+import { BabyboxIssue, IssueState } from "@/types/issue.types";
 import { colorizeStatus } from "@/utils/colorize/issues";
-import { BabyboxIssue } from "@/types/babybox.types";
 import { useAuth } from "../contexts/auth-context";
 import { updateIssue } from "@/helpers/api-helper";
-import { IssueState } from "@/types/issue.types";
 import { toast } from "sonner";
 
 interface Props {

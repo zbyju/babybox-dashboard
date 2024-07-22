@@ -1,14 +1,14 @@
 "use client";
 
-import { useAuth } from "@/components/contexts/auth-context";
 import NotificationTemplateForm from "@/components/notification-template-form";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { fetcherWithToken } from "@/helpers/api-helper";
 import { NotificationTemplate } from "@/types/notification.types";
+import { useAuth } from "@/components/contexts/auth-context";
+import { fetcherWithToken } from "@/helpers/api-helper";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
 import { toast } from "sonner";
+import Link from "next/link";
 import useSWR from "swr";
 
 export default function NotificationEdit({
@@ -20,7 +20,7 @@ export default function NotificationEdit({
   const notificationServiceURL =
     process.env.NEXT_PUBLIC_URL_NOTIFICATION_SERVICE;
 
-  const { data, error, isLoading } = useSWR(
+  const { data, isLoading } = useSWR(
     [`${notificationServiceURL}/v1/templates/id/${params.id}`, token],
     ([url, token]) => fetcherWithToken(url, token),
   );

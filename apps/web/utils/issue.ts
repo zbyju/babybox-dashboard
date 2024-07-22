@@ -1,4 +1,4 @@
-import { BabyboxIssue } from "@/types/babybox.types";
+import { BabyboxIssue } from "@/types/issue.types";
 
 export type BabyboxIssueHistoryPoint = {
   type: "comment" | "state";
@@ -19,13 +19,13 @@ export function combineHistories(
     type: "state" as "state" | "comment",
     value: s.state,
     timestamp: s.timestamp,
-    username: s.username,
+    username: s.username || "",
   }));
   const comments = issue.comments.map((s) => ({
     type: "comment" as "state" | "comment",
     value: s.text,
     timestamp: s.timestamp,
-    username: s.username,
+    username: s.username || "",
   }));
   return states.concat(comments).sort((a, b) => {
     if (a.type === "state" && a.value === "created") return -1;

@@ -1,25 +1,22 @@
-import { Info, XCircle, AlertTriangle } from "lucide-react";
-import {
-  NotificationTemplate,
-  NotificationsByTemplateGroupedByDays,
-} from "@/types/notification.types";
-import { useAuth } from "../contexts/auth-context";
-import useSWR from "swr";
-import { fetcherWithToken } from "@/helpers/api-helper";
-import {
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "../ui/accordion";
-import { Skeleton } from "../ui/skeleton";
-import { Badge } from "../ui/badge";
-import { format, parseISO } from "date-fns";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
+import {
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "../ui/accordion";
+import { NotificationsByTemplateGroupedByDays } from "@/types/notification.types";
+import { Info, XCircle, AlertTriangle } from "lucide-react";
+import { fetcherWithToken } from "@/helpers/api-helper";
+import { useAuth } from "../contexts/auth-context";
+import { format, parseISO } from "date-fns";
+import { Skeleton } from "../ui/skeleton";
+import { Badge } from "../ui/badge";
+import useSWR from "swr";
 
 interface Props {
   groupedNotifications: NotificationsByTemplateGroupedByDays;

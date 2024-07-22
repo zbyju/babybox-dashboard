@@ -1,12 +1,12 @@
 "use client";
 
-import { useAuth } from "@/components/contexts/auth-context";
 import NotificationTemplateForm from "@/components/notification-template-form";
-import { Button } from "@/components/ui/button";
 import { NotificationTemplate } from "@/types/notification.types";
+import { useAuth } from "@/components/contexts/auth-context";
+import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
 import { toast } from "sonner";
+import Link from "next/link";
 
 export default function NotificationsPage() {
   const notificationServiceURL =

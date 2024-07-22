@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import {
   Drawer,
   DrawerClose,
@@ -9,8 +8,9 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { ListCollapse } from "lucide-react";
 import { useState } from "react";
 

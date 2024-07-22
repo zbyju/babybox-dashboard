@@ -1,7 +1,3 @@
-import { NotificationTemplate } from "@/types/notification.types";
-import { Button } from "../ui/button";
-import { Pencil, Trash2 } from "lucide-react";
-import Link from "next/link";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,8 +9,12 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../ui/alert-dialog";
+import { NotificationTemplate } from "@/types/notification.types";
 import { ColumnDef, Row } from "@tanstack/react-table";
+import { Pencil, Trash2 } from "lucide-react";
 import { DataTable } from "../ui/data-table";
+import { Button } from "../ui/button";
+import Link from "next/link";
 
 interface Props {
   templates: NotificationTemplate[];

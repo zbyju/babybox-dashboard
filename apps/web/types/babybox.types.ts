@@ -1,5 +1,4 @@
 import { Snapshot } from "./snapshot.types";
-import { z } from "zod";
 
 export type BabyboxBase = {
   slug: string;

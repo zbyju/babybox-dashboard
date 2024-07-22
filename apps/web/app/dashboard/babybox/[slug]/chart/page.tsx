@@ -1,13 +1,7 @@
 "use client";
 
-import { fetcherWithToken, snapshotFetcher } from "@/helpers/api-helper";
 import ChartPageWrapper from "./chart-page-wrapper";
 import { addDays, format } from "date-fns";
-import useSWR from "swr";
-import { useAuth } from "@/components/contexts/auth-context";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
 
 function searchParamTimeToString(
   sp: string | string[] | undefined,
