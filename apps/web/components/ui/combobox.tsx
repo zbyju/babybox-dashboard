@@ -20,17 +20,27 @@ interface Props {
   searchLabel?: string;
   emptyLabel?: string;
   chooseLabel?: string;
+  disabledLabel?: string;
 }
 
 export default function Combobox({
   values,
   selected,
   onSelect,
+  disabledLabel,
   emptyLabel = "Nenalezeno",
   searchLabel = "Vyhledejte...",
   chooseLabel = "Vyberte...",
 }: Props) {
   const [open, setOpen] = useState(false);
+
+  if (disabledLabel !== undefined) {
+    return (
+      <Button disabled variant="outline" className="w-[200px] justify-between">
+        {disabledLabel}
+      </Button>
+    );
+  }
 
   const normalizedValues =
     typeof values[0] === "string"
