@@ -1,6 +1,7 @@
 import {
   BabyboxMaintenance,
   BabyboxMaintenanceSchema,
+  BabyboxMaintenancesSchema,
 } from "@/types/maintenance.types";
 import { ApiResponse, ApiResponseSchema } from "@/types/api.types";
 import axios, { AxiosError } from "axios";
@@ -82,13 +83,57 @@ export async function maintenanceFetcher(token: string, id: string) {
     const parsedMaintenance = BabyboxMaintenanceSchema.safeParse(data);
     if (!parsedMaintenance.success) {
       throw new Error(
-        `Invalid maintenances format: ${JSON.stringify(parsedMaintenance.error.errors)}`,
+        `Invalid maintenance format: ${JSON.stringify(parsedMaintenance.error.errors)}`,
       );
     }
 
     return parsedMaintenance.data;
   } catch (error) {
     console.error(error);
-    throw new Error(`Failed to fetch issues: ${error}`);
+    throw new Error(`Failed to fetch maintenance: ${error}`);
+  }
+}
+
+export async function maintenancesFetcher(
+  token: string,
+  slug: string | unknown,
+) {
+  if (!token) {
+    throw new Error("Token is required");
+  }
+
+  try {
+    const url = slug
+      ? `${babyboxServiceURL}/v1/maintenances/slug/${slug}`
+      : `${babyboxServiceURL}/v1/maintenances`;
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const parsedResponse = ApiResponseSchema.safeParse(response.data);
+
+    if (!parsedResponse.success) {
+      throw new Error("Invalid response format");
+    }
+
+    const { data, metadata } = parsedResponse.data;
+
+    if (metadata.err) {
+      throw new Error(`API Error: ${metadata.message}`);
+    }
+
+    const parsedMaintenances = BabyboxMaintenancesSchema.safeParse(data);
+    if (!parsedMaintenances.success) {
+      throw new Error(
+        `Invalid maintenances format: ${JSON.stringify(parsedMaintenances.error.errors)}`,
+      );
+    }
+
+    return parsedMaintenances.data;
+  } catch (error) {
+    console.error(error);
+    throw new Error(`Failed to fetch maintenances: ${error}`);
   }
 }
