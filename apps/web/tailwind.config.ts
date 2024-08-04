@@ -1,7 +1,44 @@
 const { fontFamily } = require("tailwindcss/defaultTheme");
 import type { Config } from "tailwindcss";
 
+const generateTailwindColorCombinations = (colors: string[]) => {
+  const shades = [
+    "50",
+    "100",
+    "200",
+    "300",
+    "400",
+    "500",
+    "600",
+    "700",
+    "800",
+    "900",
+  ];
+  const variants = ["bg", "text", "border"];
+  const modifiers = ["", "hover:", "dark:"];
+
+  const combinations: string[] = [];
+
+  colors.forEach((color: string) => {
+    shades.forEach((shade) => {
+      variants.forEach((variant) => {
+        modifiers.forEach((modifier) => {
+          combinations.push(`${modifier}${variant}-${color}-${shade}`);
+        });
+      });
+    });
+  });
+
+  return combinations;
+};
+
 const config = {
+  safelist: generateTailwindColorCombinations([
+    "blue",
+    "green",
+    "red",
+    "purple",
+  ]),
   darkMode: ["class"],
   content: [
     "./pages/**/*.{ts,tsx}",
