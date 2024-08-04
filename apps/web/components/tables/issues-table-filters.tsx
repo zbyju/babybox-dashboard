@@ -41,17 +41,20 @@ export default function IssuesTableFilters({ form, onSubmit, issues }: Props) {
     issues.map((i) => i.severity || "").filter((x) => x),
   );
   const typeOptions = getDistinct(issues.map((i) => i.issue.type));
+  const maintenanceOptions = [
+    { value: "all", label: "Vše" },
+    { value: "assigned", label: "Přiřazeno" },
+    { value: "not_assigned", label: "Nepřiřazeno" },
+  ];
 
   const cRow = "flex flex-row items-center gap-4 flex-wrap";
   const cItem = "flex flex-col gap-y-1 space-y-0";
   const cLabel = "ml-1 my-0 py-0";
-  const cHeading = "mb-[-10px] text-lg";
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="flex flex-col gap-4">
-          <h6 className={cHeading}>Filtrovat chyby</h6>
           <div className={cRow + " mb-4"}>
             <FormField
               control={form.control}
@@ -75,6 +78,32 @@ export default function IssuesTableFilters({ form, onSubmit, issues }: Props) {
                   <FormLabel className={cLabel}>Babybox</FormLabel>
                   <FormControl>
                     <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="maintenanceFilter"
+              render={({ field }) => (
+                <FormItem className={cItem}>
+                  <FormLabel className={cLabel}>Přiřazen servisu</FormLabel>
+                  <FormControl>
+                    <Combobox
+                      values={maintenanceOptions}
+                      selected={{
+                        value: field.value,
+                        label:
+                          maintenanceOptions.find(
+                            (o) => o.value === field.value,
+                          )?.label || field.value,
+                      }}
+                      onSelect={(selectedValue) => {
+                        field.onChange(selectedValue || "all");
+                      }}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -111,7 +140,8 @@ export default function IssuesTableFilters({ form, onSubmit, issues }: Props) {
                 </FormItem>
               )}
             />
-
+          </div>
+          <div className={cRow + " mb-4"}>
             <FormField
               control={form.control}
               name="priority"
