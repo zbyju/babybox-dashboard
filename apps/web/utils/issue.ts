@@ -14,10 +14,9 @@ export type BabyboxIssueHistoryPoint = {
 export function combineHistories(
   issue: BabyboxIssue,
 ): BabyboxIssueHistoryPoint[] {
-  console.log(issue);
   const states = issue.state_history.map((s) => ({
     type: "state" as "state" | "comment",
-    value: s.state,
+    value: s.state as string,
     timestamp: s.timestamp,
     username: s.username || "",
   }));
