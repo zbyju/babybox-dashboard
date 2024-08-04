@@ -22,8 +22,6 @@ func (app *Application) CreateMaintenance(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, ReturnErr(err))
 	}
 
-	fmt.Println(data.Issues)
-
 	result, err := app.DBService.InsertMaintenance(data.Maintenance, data.Issues)
 	if err != nil {
 		fmt.Println(err)
