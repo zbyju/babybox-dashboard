@@ -183,7 +183,7 @@ export default function IssueAdd({ issue, onAdd, users }: Props) {
                       <FormControl>
                         <Combobox
                           disabledLabel={slug ? undefined : "Vyberte Babybox"}
-                          //@ts-expect-error xd
+                          //@ts-expect-error xdd
                           values={maintenances.map((m) => ({
                             value: m.id,
                             label: m.title || m.id,

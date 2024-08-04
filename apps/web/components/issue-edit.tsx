@@ -215,7 +215,7 @@ export function IssueEdit({ issue, onChange }: Props) {
                       disabledLabel={
                         maintenances ? undefined : "Vyberte Babybox"
                       }
-                      //@ts-expect-error xd
+                      //@ts-expect-error xdd
                       values={(maintenances || []).map((m) => ({
                         value: m.id,
                         label: m.title || m.id,
