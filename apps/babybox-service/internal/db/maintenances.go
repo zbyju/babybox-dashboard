@@ -164,7 +164,7 @@ func (db *DBService) FindAllMaintenances() ([]domain.BabyboxMaintenance, error) 
 func (db *DBService) FindMaintenancesBySlug(slug string) ([]domain.BabyboxMaintenance, error) {
 	collection := db.Client.Database(db.DatabaseName).Collection("maintenances")
 
-	filter := bson.M{"slugs": slug}
+	filter := bson.M{"slug": slug}
 	cursor, err := collection.Find(context.TODO(), filter)
 	if err != nil {
 		return nil, err

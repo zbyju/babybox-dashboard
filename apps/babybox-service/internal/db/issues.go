@@ -41,6 +41,11 @@ func (db *DBService) UpdateIssue(issue domain.BabyboxIssue) (*domain.BabyboxIssu
 	filter := bson.M{"_id": issue.ID}
 	update := bson.M{"$set": issue}
 
+	// If assignee is empty string, add it to $unset
+	if issue.Assignee == "" {
+		update["$unset"] = bson.M{"assignee": ""}
+	}
+
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After).SetUpsert(false)
 
 	var updatedIssue domain.BabyboxIssue

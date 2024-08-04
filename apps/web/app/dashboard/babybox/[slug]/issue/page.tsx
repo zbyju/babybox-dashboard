@@ -1,6 +1,8 @@
 "use client";
 
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { fetcherWithToken, issuesFetcher } from "@/helpers/api-helper";
+import IssuesQuickTable from "@/components/tables/issues-quick-table";
 import { useAuth } from "@/components/contexts/auth-context";
 import IssuesTable from "@/components/tables/issues-table";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -66,11 +68,28 @@ export default function Issues({ params }: { params: { slug: string } }) {
         ) : error || !data ? (
           <div>Error</div>
         ) : (
-          <IssuesTable
-            issues={data || []}
-            onUpdate={handleChangeIssue}
-            onDelete={handleDeleteIssue}
-          />
+          <Tabs defaultValue="detailed">
+            <TabsList>
+              <TabsTrigger value="detailed">Detailní seznam chyb</TabsTrigger>
+              <TabsTrigger value="quick">
+                Seznam chyb pro rychlou úpravu
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent value="detailed">
+              <IssuesTable
+                issues={data || []}
+                onUpdate={handleChangeIssue}
+                onDelete={handleDeleteIssue}
+              />
+            </TabsContent>
+            <TabsContent value="quick">
+              <IssuesQuickTable
+                issues={data || []}
+                mutate={mutateIssues}
+                smallActions
+              />
+            </TabsContent>
+          </Tabs>
         )}
       </div>
     </div>

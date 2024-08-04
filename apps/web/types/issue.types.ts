@@ -1,6 +1,18 @@
 import { requiredLabel } from "./labels";
 import { z } from "zod";
 
+export const IssueStateSchema = z.enum([
+  "open",
+  "planned",
+  "in_progress",
+  "closed",
+  "solved",
+  "created",
+  "unknown",
+]);
+
+export type IssueState = z.infer<typeof IssueStateSchema>;
+
 export const BabyboxIssueDescriptionSchema = z.object({
   type: z.string().min(1, requiredLabel),
   subtype: z.string().min(1, requiredLabel),
@@ -9,7 +21,7 @@ export const BabyboxIssueDescriptionSchema = z.object({
 });
 
 export const BabyboxIssueStateUpdateSchema = z.object({
-  state: z.string().min(1, requiredLabel),
+  state: IssueStateSchema,
   timestamp: z.coerce.date({
     required_error: requiredLabel,
   }),
@@ -41,14 +53,6 @@ export const BabyboxIssuesSchema = z.array(BabyboxIssueSchema);
 
 export type BabyboxIssue = z.infer<typeof BabyboxIssueSchema>;
 
-export type IssueState =
-  | "open"
-  | "planned"
-  | "in_progress"
-  | "closed"
-  | "solved"
-  | "unknown";
-
 export const IssueFiltersSchema = z.object({
   title: z.string().default("").optional(),
   slug: z.string().default("").optional(),
@@ -56,6 +60,7 @@ export const IssueFiltersSchema = z.object({
   priority: z.array(z.string()).optional(),
   severity: z.array(z.string()).optional(),
   type: z.array(z.string()).optional(),
+  maintenanceFilter: z.enum(["assigned", "not_assigned", "all"]).default("all"),
   time: z
     .object({
       to: z.coerce.date().optional(),

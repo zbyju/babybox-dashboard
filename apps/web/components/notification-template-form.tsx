@@ -24,12 +24,11 @@ import { ColumnDef } from "@tanstack/react-table";
 import Combobox from "@/components/ui/combobox";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { ArrowLeft, Info } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useContext, useState } from "react";
 import { Trash2 } from "lucide-react";
-import Link from "next/link";
+import { Info } from "lucide-react";
 
 interface Props {
   notificationTemplate?: NotificationTemplate;

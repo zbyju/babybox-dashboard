@@ -59,6 +59,7 @@ func RegisterRoutes(g *echo.Group, app *Application) {
 
 	g.POST("/maintenances", app.CreateMaintenance)
 	g.DELETE("/maintenances/:id", app.DeleteMaintenance)
+	g.PUT("/maintenances/:id", app.UpdateMaintenance)
 	g.GET("/maintenances", app.GetAllMaintenances)
 	g.GET("/maintenances/:id", app.GetMaintenanceByID)
 	g.GET("/maintenances/slug/:slug", app.GetMaintenancesBySlug)

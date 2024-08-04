@@ -33,9 +33,10 @@ import { z } from "zod";
 export interface Props {
   onAdd: (maintenance: BabyboxMaintenance) => unknown;
   users: User[] | undefined;
+  maintenance?: Partial<BabyboxMaintenance>;
 }
 
-export default function MaintenanceAdd({ onAdd, users }: Props) {
+export default function MaintenanceAdd({ onAdd, users, maintenance }: Props) {
   const babyboxes = useContext(BabyboxesContext) as Babybox[];
   const { token } = useAuth();
 
@@ -44,6 +45,7 @@ export default function MaintenanceAdd({ onAdd, users }: Props) {
   const form = useForm<z.infer<typeof BabyboxMaintenanceSchema>>({
     resolver: zodResolver(BabyboxMaintenanceSchema),
     defaultValues: {
+      ...maintenance,
       state: "open",
     },
   });
@@ -84,7 +86,7 @@ export default function MaintenanceAdd({ onAdd, users }: Props) {
 
   return (
     <div>
-      <h4 className="mb-3 mt-6 text-3xl font-semibold">Reportovat chybu</h4>
+      <h4 className="mb-3 mt-6 text-3xl font-semibold">Vytvořit servis</h4>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="flex flex-col gap-4">
@@ -147,7 +149,7 @@ export default function MaintenanceAdd({ onAdd, users }: Props) {
                 name="slug"
                 render={({ field }) => (
                   <FormItem className={cItem}>
-                    <FormLabel className={cLabel}>Babyboxy</FormLabel>
+                    <FormLabel className={cLabel}>Babybox</FormLabel>
                     <FormControl>
                       <Combobox
                         values={babyboxes.map((bb) => ({

@@ -15,10 +15,10 @@ import {
 } from "@/types/issue.types";
 import IssuePriorityAutocomplete from "./forms/issue-priority-autocomplete";
 import IssueSeverityAutocomplete from "./forms/issue-severity-autocomplete";
+import { maintenancesFetcher } from "@/fetchers/maintenance.fetcher";
 import { BabyboxesContext } from "./contexts/babyboxes-context";
 import { getSubtypes, types } from "@/helpers/issue-helper";
 import IssueStateSelect from "./forms/issue-state-select";
-import { fetcherWithToken } from "@/helpers/api-helper";
 import { DateTimePicker } from "./ui/date-time-picker";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Babybox } from "./tables/babyboxes-table";
@@ -37,19 +37,15 @@ import useSWR from "swr";
 import { z } from "zod";
 
 export interface Props {
+  issue?: Partial<BabyboxIssue>;
   onAdd: (issue: BabyboxIssue) => unknown;
   users: User[] | undefined;
 }
 
-export default function IssueAdd({ onAdd, users }: Props) {
+export default function IssueAdd({ issue, onAdd, users }: Props) {
   const babyboxes = useContext(BabyboxesContext) as Babybox[];
   const babyboxServiceURL = process.env.NEXT_PUBLIC_URL_BABYBOX_SERVICE;
   const { token, user } = useAuth();
-
-  const { data: maintenancesData } = useSWR(
-    [`${babyboxServiceURL}/v1/maintenances/`, token],
-    ([url, token]) => fetcherWithToken(url, token),
-  );
 
   const [state, setState] = useState<IssueState>("open");
   const [timestamp, setTimestamp] = useState<Date | undefined>(new Date());
@@ -57,6 +53,7 @@ export default function IssueAdd({ onAdd, users }: Props) {
   const form = useForm<z.infer<typeof BabyboxIssueSchema>>({
     resolver: zodResolver(BabyboxIssueSchema),
     defaultValues: {
+      ...issue,
       title: "",
       priority: "",
       severity: "",
@@ -70,7 +67,13 @@ export default function IssueAdd({ onAdd, users }: Props) {
   });
 
   const type = form.watch("issue.type");
+  const slug = form.watch("slug");
   const subtypes = getSubtypes(type);
+
+  const { data: maintenances } = useSWR(
+    ["maintenaces/slug/" + slug, token],
+    ([_, token]) => maintenancesFetcher(token, slug),
+  );
 
   async function onSubmit(values: z.infer<typeof BabyboxIssueSchema>) {
     const issue: BabyboxIssue = {
@@ -170,7 +173,7 @@ export default function IssueAdd({ onAdd, users }: Props) {
                 )}
               />
 
-              {maintenancesData && maintenancesData.data && (
+              {maintenances && (
                 <FormField
                   control={form.control}
                   name="maintenance_id"
@@ -179,8 +182,9 @@ export default function IssueAdd({ onAdd, users }: Props) {
                       <FormLabel className={cLabel}>Servis ID</FormLabel>
                       <FormControl>
                         <Combobox
-                          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                          values={maintenancesData.data.map((m: any) => ({
+                          disabledLabel={slug ? undefined : "Vyberte Babybox"}
+                          //@ts-expect-error xdd
+                          values={maintenances.map((m) => ({
                             value: m.id,
                             label: m.title || m.id,
                           }))}

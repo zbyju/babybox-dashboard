@@ -1,23 +1,34 @@
 "use client";
 
+import { BabyboxesContext } from "@/components/contexts/babyboxes-context";
 import { useAuth } from "@/components/contexts/auth-context";
 import IssuesTable from "@/components/tables/issues-table";
+import { issuesFetcher } from "@/fetchers/issue.fetcher";
 import { fetcherWithToken } from "@/helpers/api-helper";
 import { Skeleton } from "@/components/ui/skeleton";
+import { BabyboxBase } from "@/types/babybox.types";
 import { BabyboxIssue } from "@/types/issue.types";
 import IssueAdd from "@/components/issue-add";
+import { useContext } from "react";
 import { toast } from "sonner";
 import useSWR from "swr";
 
-export default function Issues() {
+export default function Issues({
+  params: { slug },
+}: {
+  params: { slug: string };
+}) {
+  const babyboxes = useContext(BabyboxesContext) as BabyboxBase[];
+  const babybox = babyboxes.find((x) => x.slug === slug);
+
   const babyboxServiceURL = process.env.NEXT_PUBLIC_URL_BABYBOX_SERVICE;
   const { token } = useAuth();
   const {
-    data: issuesData,
-    isLoading: issuesIsLoading,
+    data: issues,
+    isLoading: issuesLoading,
     mutate: mutateIssues,
-  } = useSWR([`${babyboxServiceURL}/v1/issues`, token], ([url, token]) =>
-    fetcherWithToken(url, token),
+  } = useSWR(["issues/slug/" + slug, token], ([_, token]) =>
+    issuesFetcher(token, slug),
   );
 
   const userServiceURL = process.env.NEXT_PUBLIC_URL_USER_SERVICE;
@@ -36,10 +47,8 @@ export default function Issues() {
       });
       if (!res.ok) throw "Not ok";
 
-      const users = (issuesData?.data || []).filter(
-        (u: BabyboxIssue) => u.id !== id,
-      );
-      mutateIssues({ ...issuesData, data: users });
+      const newIssues = (issues || []).filter((u: BabyboxIssue) => u.id !== id);
+      mutateIssues(newIssues);
       toast.success("Chyba úspěšně odebrána.");
     } catch (err) {
       toast.error("Nebylo možné odebrat chybu.");
@@ -47,26 +56,32 @@ export default function Issues() {
   }
 
   function handleAddIssue(issue: BabyboxIssue) {
-    const issues = (issuesData?.data || []).concat(issue);
-    mutateIssues({ ...issuesData, data: issues });
+    const newIssues = (issues || []).concat(issue);
+    mutateIssues(newIssues);
   }
 
   function handleChangeIssue(issue: BabyboxIssue) {
-    const issues = (issuesData?.data || []).map((i: BabyboxIssue) => {
+    const newIssues = (issues || []).map((i: BabyboxIssue) => {
       if (i.id === issue.id) return issue;
       return i;
     });
-    mutateIssues({ ...issuesData, data: issues });
+    mutateIssues(newIssues);
   }
 
   return (
     <div className="mb-10 mt-2 w-full px-4 lg:px-[16%]">
       <div>
-        <IssueAdd onAdd={handleAddIssue} users={userData?.data} />
+        <IssueAdd
+          issue={{ slug: slug }}
+          onAdd={handleAddIssue}
+          users={userData?.data}
+        />
       </div>
       <div className="mt-8 flex w-full flex-col gap-2">
-        <h2 className="text-3xl font-bold">Reportované chyby</h2>
-        {issuesIsLoading ? (
+        <h2 className="text-3xl font-bold">
+          Reportované chyby - Babybox {babybox?.name || slug}
+        </h2>
+        {issuesLoading ? (
           <div className="mx-auto flex flex-col justify-center gap-4">
             <Skeleton className="h-8 w-11/12" />
             <Skeleton className="h-4 w-11/12" />
@@ -76,7 +91,7 @@ export default function Issues() {
           </div>
         ) : (
           <IssuesTable
-            issues={issuesData?.data || []}
+            issues={issues || []}
             onUpdate={handleChangeIssue}
             onDelete={handleDeleteIssue}
           />

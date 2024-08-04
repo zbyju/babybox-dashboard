@@ -22,7 +22,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import RefreshButton from "../buttons/refresh";
-import { RotateCcw } from "lucide-react";
 import { Button } from "./button";
 import { useState } from "react";
 import { Input } from "./input";

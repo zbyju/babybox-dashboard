@@ -18,21 +18,26 @@ import {
   IssueState,
 } from "@/types/issue.types";
 import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "../ui/accordion";
+import {
   colorizeIssueType,
   colorizePriority,
   colorizeSeverity,
 } from "@/utils/colorize/issues";
 import { BabyboxesContext } from "../contexts/babyboxes-context";
 import { translateIssueState } from "@/utils/translations/issue";
-import { ArrowUpDown, ChevronRight, Trash2 } from "lucide-react";
 import IssueStateSelect from "../forms/issue-state-select";
 import IssuesTableFilters from "./issues-table-filters";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { BabyboxBase } from "@/types/babybox.types";
 import { normalizeString } from "@/utils/normalize";
+import { ArrowUpDown, Trash2 } from "lucide-react";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "../ui/data-table";
-import { useRouter } from "next/navigation";
 import { useContext, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "../ui/button";
@@ -63,6 +68,12 @@ const filterIssues = (issues: LocalBabyboxIssue[], filters: IssueFilters) => {
     if (
       filters.slug &&
       !normalizeString(issue.slug).includes(normalizeString(filters.slug))
+    ) {
+      return false;
+    }
+    if (
+      (filters.maintenanceFilter === "assigned" && !issue.maintenance_id) ||
+      (filters.maintenanceFilter === "not_assigned" && issue.maintenance_id)
     ) {
       return false;
     }
@@ -114,14 +125,25 @@ export default function IssuesTable(props: Props) {
       accessorKey: "title",
       header: () => <div className="">Název</div>,
       cell: ({ row }) => {
+        const status = row.original.state_history.at(0)?.state || "unknown";
+        const borderColor =
+          status === "open"
+            ? "border-blue-600"
+            : status === "closed"
+              ? "border-red-600"
+              : status === "in_progress"
+                ? "border-purple-600"
+                : status === "solved"
+                  ? "border-green-600"
+                  : "";
         return (
           <Link href={`/dashboard/issue/${row.original.id}`}>
-            <div className="flex flex-row flex-wrap items-center gap-2">
-              <Button size="icon" variant="outline">
-                <ChevronRight size={24} className="hidden lg:block" />
-              </Button>
+            <Button
+              variant="outline"
+              className={`whitespace-normal border-2 ${borderColor}`}
+            >
               <span>{row.original.title}</span>
-            </div>
+            </Button>
           </Link>
         );
       },
@@ -294,7 +316,6 @@ export default function IssuesTable(props: Props) {
   ];
 
   const babyboxes = useContext(BabyboxesContext) as BabyboxBase[];
-  const router = useRouter();
 
   const issues: LocalBabyboxIssue[] = (props.issues || []).map((i) => ({
     ...i,
@@ -309,6 +330,7 @@ export default function IssuesTable(props: Props) {
     defaultValues: {
       title: "",
       slug: "",
+      maintenanceFilter: "all",
     },
   });
 
@@ -321,14 +343,26 @@ export default function IssuesTable(props: Props) {
 
   return (
     <div>
-      <IssuesTableFilters
-        form={form}
-        onSubmit={() => {}}
-        issues={props.issues}
-      />
+      <Accordion type="single" collapsible className="mb-2 w-full">
+        <AccordionItem value="filter">
+          <AccordionTrigger className="text-lg font-medium">
+            Filtrovat Chyby
+          </AccordionTrigger>
+          <AccordionContent className=" px-2">
+            <IssuesTableFilters
+              form={form}
+              onSubmit={() => {}}
+              issues={props.issues}
+            />
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
       <DataTable
         columns={columns}
-        sorting={[{ id: "created_at", desc: true }]}
+        sorting={[
+          { id: "created_at", desc: true },
+          { id: "title", desc: false },
+        ]}
         data={filteredIssues}
         showPagination
       />

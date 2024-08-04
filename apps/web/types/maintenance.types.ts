@@ -1,6 +1,10 @@
 import { requiredLabel } from "./labels";
 import { z } from "zod";
 
+export const BabyboxMaintenanceStateSchema = z
+  .enum(["open", "completed", "unknown"])
+  .default("unknown");
+
 export const BabyboxMaintenanceSchema = z.object({
   id: z.string().optional(),
   title: z.string().min(1, requiredLabel),
@@ -12,9 +16,12 @@ export const BabyboxMaintenanceSchema = z.object({
     required_error: requiredLabel,
   }),
   end: z.coerce.date().optional(),
-  state: z.string().min(1, requiredLabel),
+  state: BabyboxMaintenanceStateSchema,
 });
 
 export const BabyboxMaintenancesSchema = z.array(BabyboxMaintenanceSchema);
 
 export type BabyboxMaintenance = z.infer<typeof BabyboxMaintenanceSchema>;
+export type BabyboxMaintenanceState = z.infer<
+  typeof BabyboxMaintenanceStateSchema
+>;

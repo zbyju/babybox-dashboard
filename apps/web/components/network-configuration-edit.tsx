@@ -23,7 +23,6 @@ import { Button } from "./ui/button";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { useState } from "react";
-import { toast } from "sonner";
 
 interface Props {
   networkConfiguration: BabyboxNetworkConfiguration | undefined;
@@ -45,10 +44,6 @@ export default function NetworkConfigurationEdit(props: Props) {
         },
       },
     );
-
-  function handleSaveClicked(): void {
-    toast.error("Error when saivng");
-  }
 
   return (
     <Card className="min-w-[300px] max-w-[400px] flex-grow">
