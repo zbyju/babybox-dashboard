@@ -165,7 +165,6 @@ export function IssueEdit({ issue, onChange }: Props) {
                           : undefined
                       }
                       onSelect={(selectedValue) => {
-                        console.log(selectedValue);
                         field.onChange(selectedValue);
                       }}
                     />

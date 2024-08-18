@@ -25,10 +25,38 @@ export const columns: ColumnDef<BabyboxContact>[] = [
   {
     accessorKey: "email",
     header: () => <div className="">Email</div>,
+    cell: ({ row }) => {
+      const email = row.original.email;
+      return (
+        <div>
+          {email ? (
+            <a href={"mailto:" + email} className="text-blue-900 underline">
+              {email}
+            </a>
+          ) : (
+            <span>Nevyplněno</span>
+          )}
+        </div>
+      );
+    },
   },
   {
     accessorKey: "phone",
     header: () => <div className="">Telefon</div>,
+    cell: ({ row }) => {
+      const number = row.original.phone;
+      return (
+        <div>
+          {number ? (
+            <a href={"tel:" + number} className="text-blue-900 underline">
+              {number}
+            </a>
+          ) : (
+            <span>Nevyplněno</span>
+          )}
+        </div>
+      );
+    },
   },
   {
     accessorKey: "note",

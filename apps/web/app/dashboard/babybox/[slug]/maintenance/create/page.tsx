@@ -1,9 +1,11 @@
 "use client";
 
+import BreadcrumbsDashboard from "@/components/misc/breadcrumbs-dashboard";
 import MaintenanceTable from "@/components/tables/maintenance-table";
 import { BabyboxMaintenance } from "@/types/maintenance.types";
 import { useAuth } from "@/components/contexts/auth-context";
 import MaintenanceAdd from "@/components/maintenance-add";
+import PageHeading from "@/components/misc/page-heading";
 import { fetcherWithToken } from "@/helpers/api-helper";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
@@ -55,8 +57,10 @@ export default function Maintenances({
   }
 
   return (
-    <div className="mb-10 mt-2 w-full px-4 lg:px-[16%]">
+    <div className="mb-10 mt-6 w-full px-4 lg:px-[16%]">
       <div>
+        <BreadcrumbsDashboard dashboard slug={slug} />
+        <PageHeading heading="Přidat servis" slug={slug} />
         <MaintenanceAdd
           onAdd={handleAddMaintenance}
           users={userData?.data}
@@ -64,7 +68,7 @@ export default function Maintenances({
         />
       </div>
       <div className="mt-4 flex w-full flex-col gap-4">
-        <h2 className="text-3xl font-bold">Servisy</h2>
+        <PageHeading heading="Seznam servisů" slug={slug} />
         {maintenancesIsLoading ? (
           <div className="mx-auto flex flex-col justify-center gap-4">
             <Skeleton className="h-8 w-11/12" />

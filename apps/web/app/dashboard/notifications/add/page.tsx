@@ -3,6 +3,7 @@
 import NotificationTemplateForm from "@/components/notification-template-form";
 import { NotificationTemplate } from "@/types/notification.types";
 import { useAuth } from "@/components/contexts/auth-context";
+import PageHeading from "@/components/misc/page-heading";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
@@ -55,9 +56,9 @@ export default function NotificationsPage() {
     return template;
   }
   return (
-    <div className="mb-10 mt-2 w-full px-4 lg:px-[16%]">
+    <div className="mb-10 mt-4 w-full px-4 lg:px-[16%]">
       <div className="mt-4 flex w-full flex-row items-center justify-between gap-4">
-        <h2 className="text-3xl font-bold">Nová notifikační šablona</h2>
+        <PageHeading heading="Přidat notifikační šablonu" />
         <Link href="/dashboard/notifications">
           <Button
             className="flex flex-row items-center justify-between gap-1"

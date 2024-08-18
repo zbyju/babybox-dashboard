@@ -1,10 +1,12 @@
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import BreadcrumbsDashboard from "@/components/misc/breadcrumbs-dashboard";
 import { fetcherWithToken, issuesFetcher } from "@/helpers/api-helper";
 import IssuesQuickTable from "@/components/tables/issues-quick-table";
 import { useAuth } from "@/components/contexts/auth-context";
 import IssuesTable from "@/components/tables/issues-table";
+import PageHeading from "@/components/misc/page-heading";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BabyboxIssue } from "@/types/issue.types";
 import { toast } from "sonner";
@@ -55,8 +57,9 @@ export default function Issues({ params }: { params: { slug: string } }) {
 
   return (
     <div className="mb-10 mt-2 w-full px-4 lg:px-[16%]">
-      <div className="mt-8 flex w-full flex-col gap-2">
-        <h2 className="text-3xl font-bold">Reportované chyby</h2>
+      <div className="mt-6 flex w-full flex-col">
+        <BreadcrumbsDashboard dashboard slug={params.slug} />
+        <PageHeading heading="Seznam chyb" slug={params.slug} />
         {isLoading ? (
           <div className="mx-auto flex flex-col justify-center gap-4">
             <Skeleton className="h-8 w-11/12" />

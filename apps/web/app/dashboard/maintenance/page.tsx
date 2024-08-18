@@ -1,9 +1,11 @@
 "use client";
 
+import BabyboxesMaintenanceTable from "@/components/tables/babyboxes-maintenance-table";
 import MaintenanceTable from "@/components/tables/maintenance-table";
 import { BabyboxMaintenance } from "@/types/maintenance.types";
 import { useAuth } from "@/components/contexts/auth-context";
 import MaintenanceAdd from "@/components/maintenance-add";
+import PageHeading from "@/components/misc/page-heading";
 import { fetcherWithToken } from "@/helpers/api-helper";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
@@ -50,12 +52,13 @@ export default function Maintenances() {
   }
 
   return (
-    <div className="mb-10 mt-2 w-full px-4 lg:px-[16%]">
+    <div className="mb-10 mt-4 w-full px-4 lg:px-[16%]">
       <div>
+        <PageHeading heading="Přidat servis" wrapperClassName="mb-1" />
         <MaintenanceAdd onAdd={handleAddMaintenance} users={userData?.data} />
       </div>
-      <div className="mt-4 flex w-full flex-col gap-4">
-        <h2 className="text-3xl font-bold">Servisy</h2>
+      <div className="mt-4 flex w-full flex-col">
+        <PageHeading heading="Seznam všech servisů" />
         {maintenancesIsLoading ? (
           <div className="mx-auto flex flex-col justify-center gap-4">
             <Skeleton className="h-8 w-11/12" />
@@ -70,6 +73,11 @@ export default function Maintenances() {
             onDelete={handleDeleteMaintenance}
           />
         )}
+      </div>
+
+      <div className="mt-8 flex w-full flex-col">
+        <PageHeading heading="Babyboxy a jejich servisy" />
+        <BabyboxesMaintenanceTable />
       </div>
     </div>
   );

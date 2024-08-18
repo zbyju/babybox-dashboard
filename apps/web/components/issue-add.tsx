@@ -21,7 +21,6 @@ import { getSubtypes, types } from "@/helpers/issue-helper";
 import IssueStateSelect from "./forms/issue-state-select";
 import { DateTimePicker } from "./ui/date-time-picker";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Babybox } from "./tables/babyboxes-table";
 import { useAuth } from "./contexts/auth-context";
 import Autocomplete from "./ui/autocomplete";
 import { useContext, useState } from "react";
@@ -43,7 +42,7 @@ export interface Props {
 }
 
 export default function IssueAdd({ issue, onAdd, users }: Props) {
-  const babyboxes = useContext(BabyboxesContext) as Babybox[];
+  const { babyboxes } = useContext(BabyboxesContext);
   const babyboxServiceURL = process.env.NEXT_PUBLIC_URL_BABYBOX_SERVICE;
   const { token, user } = useAuth();
 
@@ -124,7 +123,6 @@ export default function IssueAdd({ issue, onAdd, users }: Props) {
 
   return (
     <div>
-      <h4 className="mb-3 mt-6 text-3xl font-semibold">Reportovat chybu</h4>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="flex flex-col gap-4">

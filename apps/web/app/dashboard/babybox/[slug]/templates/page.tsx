@@ -1,16 +1,15 @@
 "use client";
 
-import { useAuth } from "@/components/contexts/auth-context";
-import { BabyboxesContext } from "@/components/contexts/babyboxes-context";
 import NotificationTemplateTable from "@/components/tables/notification-template-table";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
+import BreadcrumbsDashboard from "@/components/misc/breadcrumbs-dashboard";
+import { useAuth } from "@/components/contexts/auth-context";
+import PageHeading from "@/components/misc/page-heading";
 import { fetcherWithToken } from "@/helpers/api-helper";
-import { BabyboxBase } from "@/types/babybox.types";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ChevronLeft, Plus } from "lucide-react";
-import Link from "next/link";
-import { useContext } from "react";
+import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import Link from "next/link";
 import useSWR from "swr";
 
 export default function NotificationsPage({
@@ -21,8 +20,6 @@ export default function NotificationsPage({
   const { token } = useAuth();
   const notificationServiceURL =
     process.env.NEXT_PUBLIC_URL_NOTIFICATION_SERVICE;
-  const babyboxes = useContext(BabyboxesContext) as BabyboxBase[];
-  const babybox = babyboxes.find((x) => x.slug === params.slug);
 
   const { data, isLoading, mutate } = useSWR(
     [`${notificationServiceURL}/v1/templates/${params.slug}`, token],
@@ -54,12 +51,11 @@ export default function NotificationsPage({
     <div className="mb-10 mt-2 w-full px-4 lg:px-[16%]">
       <div className="mt-4 flex w-full flex-row items-center justify-between gap-4">
         <div>
-          <h2 className="text-3xl font-bold">Notifikační šablony</h2>
-          {babybox && (
-            <h3 className="text-2xl font-semibold text-muted-foreground">
-              Babybox {babybox?.name}
-            </h3>
-          )}
+          <BreadcrumbsDashboard dashboard slug={params.slug} />
+          <PageHeading
+            heading="Seznam notifikačních šablon"
+            slug={params.slug}
+          />
         </div>
         <div className="flex flex-row flex-wrap gap-2">
           <Link href="/dashboard/notifications/add">

@@ -8,11 +8,13 @@ import {
   LogOut,
   MessageSquareWarning,
   User,
+  UserRound,
 } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { ModeToggle } from "./buttons/darkmode-toggle";
 import { useAuth } from "./contexts/auth-context";
 import { BabyboxCombo } from "./babybox-combo";
+import UserAvatar from "./misc/user-avatar";
 import { Button } from "./ui/button";
 import Link from "next/link";
 
@@ -39,8 +41,19 @@ export default function Navbar() {
     { href: "/dashboard/help", name: "Nápověda", icon: <HelpCircle /> },
   ];
 
+  const accountLinks = isAuthenticated
+    ? [
+        {
+          href: "/dashboard/users/profile",
+          name: "Profil",
+          icon: <UserRound />,
+        },
+        { href: "/auth/logout", name: "Odhlásit se", icon: <LogOut /> },
+      ]
+    : [{ href: "/auth/login", name: "Přihlásit se", icon: <LogIn /> }];
+
   const linkClass =
-    "flex flex-row items-center gap-1 text-accent-foreground hover:text-primary transition-all duration-500";
+    "flex flex-row items-center gap-2 text-accent-foreground hover:text-primary transition-all duration-500";
 
   return (
     <>
@@ -79,25 +92,33 @@ export default function Navbar() {
             <ModeToggle />
           </div>
           <div className="flex flex-row items-center justify-between gap-4">
-            {!isAuthenticated && (
-              <Link href="/auth/login" className={linkClass}>
-                <LogIn />
-                Přihlásit se
-              </Link>
-            )}
-            {isAuthenticated && (
-              <Link href="/auth/logout" className={linkClass}>
-                <LogOut />
-                Odhlásit se
-              </Link>
-            )}
+            <Popover>
+              <PopoverTrigger className={linkClass}>
+                <UserAvatar />
+                Účet
+              </PopoverTrigger>
+              <PopoverContent className="w-auto">
+                <div className="mx-auto flex flex-col items-center justify-start gap-4">
+                  {accountLinks.map((l) => (
+                    <Link
+                      className={linkClass + " self-start"}
+                      key={l.href}
+                      href={l.href}
+                    >
+                      {l.icon}
+                      {l.name}
+                    </Link>
+                  ))}
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
         </div>
       </nav>
 
       <nav className="mobile-nav visible fixed bottom-0 z-50 w-screen border-collapse border-t border-slate-400 bg-slate-100 dark:border-blue-950 dark:bg-slate-960 lg:hidden">
-        <div className="flex flex-row items-center justify-start gap-2 px-4 py-2">
-          <div className="flex flex-grow flex-row justify-start gap-2">
+        <div className="flex flex-row items-center justify-start gap-3 px-4 py-2">
+          <div className="flex flex-grow flex-row justify-start gap-3">
             {links.map((l) => (
               <Link className={linkClass} key={l.href} href={l.href}>
                 <Button size="icon" variant="ghost">
@@ -106,7 +127,7 @@ export default function Navbar() {
               </Link>
             ))}
             <Popover>
-              <PopoverTrigger className={linkClass}>
+              <PopoverTrigger className={linkClass + " ml-2"}>
                 <CircleEllipsis />
               </PopoverTrigger>
               <PopoverContent className="w-auto">
@@ -129,16 +150,25 @@ export default function Navbar() {
             <ModeToggle />
           </div>
           <div className="flex flex-row items-center justify-between gap-2">
-            {!isAuthenticated && (
-              <Link href="/auth/login" className={linkClass}>
-                <LogIn />
-              </Link>
-            )}
-            {isAuthenticated && (
-              <Link href="/auth/logout" className={linkClass}>
-                <LogOut />
-              </Link>
-            )}
+            <Popover>
+              <PopoverTrigger className={linkClass}>
+                <UserAvatar />
+              </PopoverTrigger>
+              <PopoverContent className="w-auto">
+                <div className="mx-auto flex flex-col items-center justify-start gap-4">
+                  {accountLinks.map((l) => (
+                    <Link
+                      className={linkClass + " self-start"}
+                      key={l.href}
+                      href={l.href}
+                    >
+                      {l.icon}
+                      {l.name}
+                    </Link>
+                  ))}
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
         </div>
       </nav>

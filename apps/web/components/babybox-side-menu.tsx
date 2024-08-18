@@ -18,7 +18,6 @@ import {
 } from "lucide-react";
 import { BabyboxesContext } from "./contexts/babyboxes-context";
 import type { BabyboxBase } from "@/types/babybox.types";
-import { Babybox } from "./tables/babyboxes-table";
 import { Separator } from "./ui/separator";
 import { useContext } from "react";
 import Link from "next/link";
@@ -28,7 +27,7 @@ interface Props {
 }
 
 export default function BabyboxSideMenu(props: Props) {
-  const babyboxes = useContext(BabyboxesContext) as Babybox[];
+  const { babyboxes } = useContext(BabyboxesContext);
   const currentIdx =
     babyboxes && babyboxes.length > 0
       ? babyboxes.findIndex((b) => b.slug === props.babybox.slug)

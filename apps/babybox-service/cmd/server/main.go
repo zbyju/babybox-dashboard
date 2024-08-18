@@ -9,6 +9,7 @@ import (
 	"github.com/zbyju/babybox-dashboard/apps/babybox-service/internal/api"
 	v1 "github.com/zbyju/babybox-dashboard/apps/babybox-service/internal/api/v1"
 	"github.com/zbyju/babybox-dashboard/apps/babybox-service/internal/db"
+	"github.com/zbyju/babybox-dashboard/apps/babybox-service/internal/domain"
 	"github.com/zbyju/babybox-dashboard/apps/babybox-service/internal/rabbitmq"
 )
 
@@ -31,9 +32,9 @@ func main() {
 	var mqService *rabbitmq.Client
 
 	for i := 0; i < maxRetries; i++ {
-		dbService, err = db.InitConnection(&e.Logger, location)
+		mqService, err = rabbitmq.NewClient()
 		if err != nil {
-			e.Logger.Errorf("Failed to initialize DB service: %s", err)
+			e.Logger.Errorf("Failed to initialize MQ service: %s", err)
 			if i < maxRetries-1 {
 				e.Logger.Infof("Retrying in %v...", retryDelay)
 				time.Sleep(retryDelay)
@@ -41,9 +42,10 @@ func main() {
 			}
 		}
 
-		mqService, err = rabbitmq.NewClient()
+		var publisher domain.MessagePublisher = mqService
+		dbService, err = db.InitConnection(&e.Logger, location, &publisher)
 		if err != nil {
-			e.Logger.Errorf("Failed to initialize MQ service: %s", err)
+			e.Logger.Errorf("Failed to initialize DB service: %s", err)
 			if i < maxRetries-1 {
 				e.Logger.Infof("Retrying in %v...", retryDelay)
 				time.Sleep(retryDelay)

@@ -47,11 +47,11 @@ export default function TextualSnapshotStats(props: Props) {
       {snapshotsFirst.length > 0 ? (
         <>
           <span>Zobrazeno {snapshotsFirst.length} záznamů.</span>
-          <span className="inline-flex flex-row flex-wrap items-center gap-1">
+          <span className="inline-flex flex-row items-center gap-1">
             {oldIcon}
             Poslední záznam je {lastSnapshotGapStr} starý.
           </span>
-          <span className="inline-flex flex-row flex-wrap items-center gap-1">
+          <span className="inline-flex flex-row items-center gap-1">
             {gapIcon}
             Průměrná doba mezi příchodem dat je {averageGap?.toFixed(2) ??
               0}{" "}

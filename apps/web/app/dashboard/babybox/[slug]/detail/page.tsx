@@ -2,10 +2,13 @@
 
 import ContactInformationTable from "@/components/tables/contact-information-table";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import BreadcrumbsDashboard from "@/components/misc/breadcrumbs-dashboard";
+import MaintenanceInformation from "@/components/maintenance-information";
 import NetworkConfiguration from "@/components/network-configuration";
 import LocationInformation from "@/components/location-information";
 import { AlertCircle, ArrowLeft, FilePenLine } from "lucide-react";
 import { useAuth } from "@/components/contexts/auth-context";
+import PageHeading from "@/components/misc/page-heading";
 import { fetcherWithToken } from "@/helpers/api-helper";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -35,15 +38,9 @@ export default function Home({ params }: { params: { slug: string } }) {
         </Alert>
       ) : (
         <>
+          <BreadcrumbsDashboard dashboard slug={params.slug} />
           <div className="flex flex-row flex-wrap justify-between gap-4">
-            <h2 className="ml-1 text-3xl font-semibold">
-              <span className="font-bold text-pink-600">Babybox </span>
-              {babyboxIsLoading ? (
-                <Skeleton className="h-4 w-[120px]" />
-              ) : (
-                <span className="capitalize">{babyboxData.data.name}</span>
-              )}
-            </h2>
+            <PageHeading heading="Informace" slug={params.slug} />
             <div className="flex flex-row flex-wrap gap-4">
               <Link href={"/dashboard/babybox/" + params.slug + "/edit"}>
                 <Button className="inline-flex flex-row items-center gap-2">
@@ -64,6 +61,8 @@ export default function Home({ params }: { params: { slug: string } }) {
           </div>
 
           <div className="mt-6 flex flex-row flex-wrap gap-6">
+            <MaintenanceInformation slug={params.slug} />
+
             {babyboxIsLoading ? (
               <Skeleton className="h-[400px] w-[250px]" />
             ) : (

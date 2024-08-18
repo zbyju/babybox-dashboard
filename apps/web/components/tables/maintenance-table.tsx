@@ -12,14 +12,15 @@ import {
   AlertDialogTrigger,
 } from "../ui/alert-dialog";
 import { translateMaintenanceState } from "@/utils/translations/maintenance";
+import { BabyboxesContext } from "../contexts/babyboxes-context";
 import { BabyboxMaintenance } from "@/types/maintenance.types";
 import { issuesFetcher } from "@/fetchers/issue.fetcher";
 import { useAuth } from "../contexts/auth-context";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "../ui/data-table";
-import { babyboxes } from "@/data/babyboxes";
 import { Trash2 } from "lucide-react";
 import { Button } from "../ui/button";
+import { useContext } from "react";
 import { format } from "date-fns";
 import Link from "next/link";
 import useSWR from "swr";
@@ -51,6 +52,7 @@ const Cell = ({ row }: { row: { original: BabyboxMaintenance } }) => {
 };
 
 export default function MaintenanceTable(props: Props) {
+  const { getBabyboxBySlug } = useContext(BabyboxesContext);
   const columns: ColumnDef<BabyboxMaintenance>[] = [
     {
       accessorKey: "title",
@@ -67,7 +69,7 @@ export default function MaintenanceTable(props: Props) {
           <Link href={`/dashboard/maintenance/${row.original.id}`}>
             <Button
               variant="outline"
-              className={`whitespace-normal border-2 ${borderColor}`}
+              className={`h-auto whitespace-normal border-2 ${borderColor}`}
             >
               <span>{row.original.title}</span>
             </Button>
@@ -81,7 +83,7 @@ export default function MaintenanceTable(props: Props) {
       header: () => <div className="">Babybox</div>,
       cell: ({ row }) => {
         const slug = row.original.slug;
-        const babybox = babyboxes.find((x) => x.slug === slug);
+        const babybox = getBabyboxBySlug(slug || "");
         const name = babybox?.name || slug;
         return <div>{name}</div>;
       },
@@ -127,7 +129,7 @@ export default function MaintenanceTable(props: Props) {
     },
 
     {
-      accessorKey: "id",
+      accessorKey: "actions",
       header: () => <div className="text-center">Akce</div>,
       cell: ({ row }) => {
         const id = row.original.id;
@@ -170,12 +172,14 @@ export default function MaintenanceTable(props: Props) {
       },
     },
   ];
+
   return (
     <div>
       <DataTable
         columns={columns}
-        sorting={[]}
+        sorting={[{ id: "start", desc: true }]}
         data={props.maintenances}
+        showPagination
       ></DataTable>
     </div>
   );

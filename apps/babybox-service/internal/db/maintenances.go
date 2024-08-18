@@ -99,6 +99,8 @@ func (db *DBService) InsertMaintenance(maintenance domain.BabyboxMaintenance, is
 		return nil, err
 	}
 
+	db.MQPublisher.PublishMaintenanceCreated(maintenance)
+
 	return &maintenance, nil
 }
 
@@ -117,6 +119,8 @@ func (db *DBService) UpdateMaintenance(maintenance domain.BabyboxMaintenance) (*
 		return nil, err
 	}
 
+	db.MQPublisher.PublishMaintenanceUpdated(updatedMaintenance)
+
 	return &updatedMaintenance, nil
 }
 
@@ -131,10 +135,13 @@ func (db *DBService) DeleteMaintenance(id string, deleteIssues bool) error {
 	collection := db.Client.Database(db.DatabaseName).Collection("maintenances")
 
 	filter := bson.M{"_id": id}
-	_, err = collection.DeleteOne(context.TODO(), filter)
+	var deletedMaintenance domain.BabyboxMaintenance
+	err = collection.FindOneAndDelete(context.TODO(), filter).Decode(&deletedMaintenance)
 	if err != nil {
 		return err
 	}
+
+	db.MQPublisher.PublishMaintenanceUpdated(deletedMaintenance)
 
 	return nil
 }
@@ -165,6 +172,27 @@ func (db *DBService) FindMaintenancesBySlug(slug string) ([]domain.BabyboxMainte
 	collection := db.Client.Database(db.DatabaseName).Collection("maintenances")
 
 	filter := bson.M{"slug": slug}
+	cursor, err := collection.Find(context.TODO(), filter)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(context.TODO())
+
+	var results []domain.BabyboxMaintenance
+	if err = cursor.All(context.TODO(), &results); err != nil {
+		return nil, err
+	}
+
+	if results == nil {
+		return []domain.BabyboxMaintenance{}, nil
+	}
+	return results, nil
+}
+
+func (db *DBService) FindMaintenancesByUsername(user string) ([]domain.BabyboxMaintenance, error) {
+	collection := db.Client.Database(db.DatabaseName).Collection("maintenances")
+	
+	filter := bson.M{"assignee": user}
 	cursor, err := collection.Find(context.TODO(), filter)
 	if err != nil {
 		return nil, err

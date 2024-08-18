@@ -1,7 +1,7 @@
 "use client";
 
-import { ArrowDownRight, ArrowUpRight, Minus } from "lucide-react";
 import { Snapshot, SnapshotVariableStat } from "@/types/snapshot.types";
+import { ArrowDownRight, ArrowUpRight, Minus } from "lucide-react";
 import { ColumnDef, Row, Table } from "@tanstack/react-table";
 import { calculatePercentageChange } from "@/utils/stats";
 import LineChart from "../charts/line-chart";
@@ -94,7 +94,7 @@ const minavgmaxColumns = [
         );
 
       return (
-        <div className="flex flex-row flex-wrap items-center gap-0">
+        <div className="flex flex-row items-center gap-0">
           {str as string} {arrow || ""}
         </div>
       );

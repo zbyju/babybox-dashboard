@@ -21,6 +21,7 @@ import {
   BabyboxMaintenance,
   BabyboxMaintenanceSchema,
 } from "@/types/maintenance.types";
+import MaintenanceIssuesAdd from "./forms/maintenance-issues-add";
 import { fetcherWithToken } from "@/helpers/api-helper";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "./contexts/auth-context";
@@ -199,6 +200,8 @@ export function MaintenanceEdit({ maintenance, onChange }: Props) {
                 </FormItem>
               )}
             />
+
+            <MaintenanceIssuesAdd slug={maintenance.slug} />
 
             <FormField
               control={form.control}

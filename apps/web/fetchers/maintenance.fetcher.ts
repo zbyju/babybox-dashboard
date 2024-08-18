@@ -98,14 +98,20 @@ export async function maintenancesFetcher(
   token: string,
   slug: string | unknown,
 ) {
+  return maintenancesFetcherSuffix(token, "slug/" + slug)
+}
+
+export async function maintenancesFetcherSuffix(
+  token: string,
+  suffix: string | unknown,
+) {
   if (!token) {
     throw new Error("Token is required");
   }
 
   try {
-    const url = slug
-      ? `${babyboxServiceURL}/v1/maintenances/slug/${slug}`
-      : `${babyboxServiceURL}/v1/maintenances`;
+    const url =
+      `${babyboxServiceURL}/v1/maintenances/${suffix}`;
     const response = await axios.get(url, {
       headers: {
         Authorization: `Bearer ${token}`,

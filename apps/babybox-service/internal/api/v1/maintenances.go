@@ -89,6 +89,17 @@ func (app *Application) GetMaintenancesBySlug(c echo.Context) error {
 	return c.JSON(http.StatusOK, ReturnOk(maintenances))
 }
 
+func (app *Application) GetMaintenancesByUsername(c echo.Context) error {
+	username := c.Param("username")
+
+	maintenances, err := app.DBService.FindMaintenancesByUsername(username)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, ReturnErr(err))
+	}
+
+	return c.JSON(http.StatusOK, ReturnOk(maintenances))
+}
+
 func (app *Application) GetMaintenanceByID(c echo.Context) error {
 	id := c.Param("id")
 
