@@ -27,6 +27,8 @@ func (db *DBService) InsertIssue(issue domain.BabyboxIssue) (*domain.BabyboxIssu
 		return nil, err
 	}
 
+	db.MQPublisher.PublishIssueCreated(issue)
+
 	return &issue, nil
 }
 
@@ -57,6 +59,7 @@ func (db *DBService) UpdateIssue(issue domain.BabyboxIssue) (*domain.BabyboxIssu
 		return nil, fmt.Errorf("error updating issue: %w", err)
 	}
 
+	db.MQPublisher.PublishIssueUpdated(updatedIssue)
 	return &updatedIssue, nil
 }
 
@@ -65,11 +68,13 @@ func (db *DBService) DeleteIssue(id string) error {
 	collection := db.Client.Database(db.DatabaseName).Collection("issues")
 
 	filter := bson.M{"_id": id}
-	_, err := collection.DeleteOne(context.TODO(), filter)
+	var deletedIssue domain.BabyboxIssue
+	err := collection.FindOneAndDelete(context.TODO(), filter).Decode(&deletedIssue)
 	if err != nil {
 		return err
 	}
 
+	db.MQPublisher.PublishIssueDeleted(deletedIssue)
 	return nil
 }
 
