@@ -1,8 +1,10 @@
 "use client";
 
 import { BabyboxesContext } from "@/components/contexts/babyboxes-context";
+import BreadcrumbsDashboard from "@/components/misc/breadcrumbs-dashboard";
 import { useAuth } from "@/components/contexts/auth-context";
 import IssuesTable from "@/components/tables/issues-table";
+import PageHeading from "@/components/misc/page-heading";
 import { issuesFetcher } from "@/fetchers/issue.fetcher";
 import { fetcherWithToken } from "@/helpers/api-helper";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -18,8 +20,8 @@ export default function Issues({
 }: {
   params: { slug: string };
 }) {
-  const babyboxes = useContext(BabyboxesContext) as BabyboxBase[];
-  const babybox = babyboxes.find((x) => x.slug === slug);
+  const { getBabyboxBySlug } = useContext(BabyboxesContext);
+  const babybox = getBabyboxBySlug(slug);
 
   const babyboxServiceURL = process.env.NEXT_PUBLIC_URL_BABYBOX_SERVICE;
   const { token } = useAuth();
@@ -28,7 +30,7 @@ export default function Issues({
     isLoading: issuesLoading,
     mutate: mutateIssues,
   } = useSWR(["issues/slug/" + slug, token], ([_, token]) =>
-    issuesFetcher(token, slug),
+    issuesFetcher(token, "/slug/" + slug),
   );
 
   const userServiceURL = process.env.NEXT_PUBLIC_URL_USER_SERVICE;
@@ -69,8 +71,10 @@ export default function Issues({
   }
 
   return (
-    <div className="mb-10 mt-2 w-full px-4 lg:px-[16%]">
+    <div className="mb-10 mt-6 w-full px-4 lg:px-[16%]">
       <div>
+        <BreadcrumbsDashboard dashboard slug={slug} />
+        <PageHeading heading="Reportovat Chybu" slug={slug} />
         <IssueAdd
           issue={{ slug: slug }}
           onAdd={handleAddIssue}
@@ -78,9 +82,7 @@ export default function Issues({
         />
       </div>
       <div className="mt-8 flex w-full flex-col gap-2">
-        <h2 className="text-3xl font-bold">
-          Reportované chyby - Babybox {babybox?.name || slug}
-        </h2>
+        <PageHeading heading="Reportované chyby" slug={slug} />
         {issuesLoading ? (
           <div className="mx-auto flex flex-col justify-center gap-4">
             <Skeleton className="h-8 w-11/12" />

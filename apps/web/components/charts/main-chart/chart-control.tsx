@@ -28,7 +28,7 @@ function getParams(link: string): string {
 }
 
 export default function ChartControl(props: Props) {
-  const babyboxes = useContext(BabyboxesContext) as Babybox[];
+  const { babyboxes } = useContext(BabyboxesContext);
   const currentIdx =
     babyboxes && babyboxes.length > 0
       ? babyboxes.findIndex((b) => b.slug === props.slug)

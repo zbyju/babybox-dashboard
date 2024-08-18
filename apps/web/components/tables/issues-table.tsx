@@ -31,6 +31,7 @@ import {
 import { BabyboxesContext } from "../contexts/babyboxes-context";
 import { translateIssueState } from "@/utils/translations/issue";
 import IssueStateSelect from "../forms/issue-state-select";
+import ToggleSortingButton from "./toggle-sorting-button";
 import IssuesTableFilters from "./issues-table-filters";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { BabyboxBase } from "@/types/babybox.types";
@@ -123,7 +124,7 @@ export default function IssuesTable(props: Props) {
   const columns: ColumnDef<LocalBabyboxIssue>[] = [
     {
       accessorKey: "title",
-      header: () => <div className="">Název</div>,
+      header: ({ column }) => <div className="">Název</div>,
       cell: ({ row }) => {
         const status = row.original.state_history.at(0)?.state || "unknown";
         const borderColor =
@@ -137,14 +138,16 @@ export default function IssuesTable(props: Props) {
                   ? "border-green-600"
                   : "";
         return (
-          <Link href={`/dashboard/issue/${row.original.id}`}>
-            <Button
-              variant="outline"
-              className={`whitespace-normal border-2 ${borderColor}`}
-            >
-              <span>{row.original.title}</span>
-            </Button>
-          </Link>
+          <div className="flex flex-row items-center gap-1">
+            <Link href={`/dashboard/issue/${row.original.id}`}>
+              <Button
+                variant="outline"
+                className={`block h-auto whitespace-normal border-2 ${borderColor}`}
+              >
+                <span>{row.original.title}</span>
+              </Button>
+            </Link>
+          </div>
         );
       },
     },
@@ -211,7 +214,6 @@ export default function IssuesTable(props: Props) {
       accessorKey: "severity",
       header: () => <div className="text-center">Severity</div>,
       cell: ({ row }) => {
-        console.log();
         const severity = row.original.severity || "Neuvedena";
         return (
           <div className="flex flex-col items-center justify-center gap-1">
@@ -252,16 +254,7 @@ export default function IssuesTable(props: Props) {
         return (
           <div className="flex flex-row items-center gap-1">
             <span className="font-semibold">Vytvořeno</span>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-4 w-4"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              <ArrowUpDown />
-            </Button>
+            <ToggleSortingButton column={column} />
           </div>
         );
       },
@@ -315,7 +308,7 @@ export default function IssuesTable(props: Props) {
     },
   ];
 
-  const babyboxes = useContext(BabyboxesContext) as BabyboxBase[];
+  const { babyboxes } = useContext(BabyboxesContext);
 
   const issues: LocalBabyboxIssue[] = (props.issues || []).map((i) => ({
     ...i,

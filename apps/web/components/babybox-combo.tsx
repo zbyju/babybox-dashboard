@@ -22,7 +22,7 @@ import Link from "next/link";
 
 export function BabyboxCombo() {
   const [open, setOpen] = useState(false);
-  const babyboxes = useContext(BabyboxesContext) as Babybox[];
+  const { babyboxes } = useContext(BabyboxesContext);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>

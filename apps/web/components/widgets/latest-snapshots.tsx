@@ -68,7 +68,7 @@ const columnVars = [
       );
 
     return (
-      <div className="flex flex-row flex-wrap items-center gap-0">
+      <div className="flex flex-row items-center gap-0">
         {str as string} {arrow || ""}
       </div>
     );

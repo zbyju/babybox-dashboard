@@ -56,8 +56,8 @@ export default function NotificationTemplateForm(props: Props) {
   );
   const [email, setEmail] = useState<string>("");
 
-  const babyboxes = useContext(BabyboxesContext) as Babybox[];
-  const selected = babyboxes.find((bb) => bb.slug === template.scope);
+  const { babyboxes, getBabyboxBySlug } = useContext(BabyboxesContext);
+  const selected = getBabyboxBySlug(template.scope);
 
   function minmaxValueBasedOnVariable(variable: string): {
     min: number;
@@ -118,7 +118,7 @@ export default function NotificationTemplateForm(props: Props) {
   ];
 
   return (
-    <div className="mt-6 flex flex-col gap-4">
+    <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
         <Label className="text-xl">Notifikace pro...</Label>
         <div className="flex flex-row flex-wrap items-center gap-2">

@@ -37,7 +37,7 @@ export interface Props {
 }
 
 export default function MaintenanceAdd({ onAdd, users, maintenance }: Props) {
-  const babyboxes = useContext(BabyboxesContext) as Babybox[];
+  const { babyboxes } = useContext(BabyboxesContext);
   const { token } = useAuth();
 
   const [maintenanceIssues, setMaintenanceIssues] = useState<string[]>([]);
@@ -86,7 +86,6 @@ export default function MaintenanceAdd({ onAdd, users, maintenance }: Props) {
 
   return (
     <div>
-      <h4 className="mb-3 mt-6 text-3xl font-semibold">Vytvořit servis</h4>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="flex flex-col gap-4">
@@ -149,7 +148,7 @@ export default function MaintenanceAdd({ onAdd, users, maintenance }: Props) {
                 name="slug"
                 render={({ field }) => (
                   <FormItem className={cItem}>
-                    <FormLabel className={cLabel}>Babybox</FormLabel>
+                    <FormLabel className={cLabel}>Babybox*</FormLabel>
                     <FormControl>
                       <Combobox
                         values={babyboxes.map((bb) => ({

@@ -1,39 +1,36 @@
 "use client";
 
-import { useAuth } from "@/components/contexts/auth-context";
-import { BabyboxesContext } from "@/components/contexts/babyboxes-context";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import BatteryMeasurements from "@/components/widgets/battery-measurements";
+import { BabyboxesContext } from "@/components/contexts/babyboxes-context";
+import BreadcrumbsDashboard from "@/components/misc/breadcrumbs-dashboard";
+import { useAuth } from "@/components/contexts/auth-context";
+import PageHeading from "@/components/misc/page-heading";
 import { fetcherWithToken } from "@/helpers/api-helper";
+import { Skeleton } from "@/components/ui/skeleton";
 import { BabyboxBase } from "@/types/babybox.types";
+import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
-import Link from "next/link";
 import { useContext } from "react";
+import Link from "next/link";
 import useSWR from "swr";
 
 export default function BatteryPage({ params }: { params: { slug: string } }) {
   const { token } = useAuth();
   const batteryAnalyzerURL = process.env.NEXT_PUBLIC_URL_BATTERY_ANALYZER;
-  const babyboxes = useContext(BabyboxesContext) as BabyboxBase[];
-  const babybox = babyboxes.find((x) => x.slug === params.slug);
+  const { getBabyboxBySlug } = useContext(BabyboxesContext);
+  const babybox = getBabyboxBySlug(params.slug);
 
   const { data, isLoading } = useSWR(
     [`${batteryAnalyzerURL}/v1/measurements/${params.slug}`, token],
     ([url, token]) => fetcherWithToken(url, token),
   );
 
-  console.log(data);
   return (
     <div className="mb-10 mt-2 w-full px-4 lg:px-[16%]">
       <div className="mt-4 flex w-full flex-row items-center justify-between gap-4">
         <div>
-          <h2 className="text-3xl font-bold">Měření baterie</h2>
-          {babybox && (
-            <h3 className="text-2xl font-semibold text-muted-foreground">
-              Babybox {babybox?.name}
-            </h3>
-          )}
+          <BreadcrumbsDashboard dashboard slug={params.slug} />
+          <PageHeading heading="Měření baterie" slug={params.slug} />
         </div>
         <Link href={"/dashboard/babybox/" + params.slug}>
           <Button
