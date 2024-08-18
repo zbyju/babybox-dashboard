@@ -38,6 +38,7 @@ const config = {
     "green",
     "red",
     "purple",
+    "pink"
   ]),
   darkMode: ["class"],
   content: [
