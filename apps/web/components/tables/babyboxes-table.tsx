@@ -7,6 +7,7 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 import { fetcherMultipleWithToken } from "@/helpers/api-helper";
+import ToggleSortingButton from "./toggle-sorting-button";
 import { ColumnDef, Row } from "@tanstack/react-table";
 import { differenceInMinutes, format } from "date-fns";
 import { BabyboxBase } from "@/types/babybox.types";
@@ -50,14 +51,7 @@ export const columns: ColumnDef<Babybox>[] = [
       return (
         <div className="flex flex-row items-center gap-1">
           <span className="font-semibold">Babybox</span>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-4 w-4"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            <ArrowUpDown />
-          </Button>
+          <ToggleSortingButton column={column} />
         </div>
       );
     },

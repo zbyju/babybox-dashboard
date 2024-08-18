@@ -13,6 +13,7 @@ import {
 } from "../ui/tooltip";
 import { Ban, CheckCheck, Hammer, PackageOpen } from "lucide-react";
 import { BabyboxIssue, IssueState } from "@/types/issue.types";
+import ToggleSortingButton from "./toggle-sorting-button";
 import { useAuth } from "../contexts/auth-context";
 import { updateIssue } from "@/helpers/api-helper";
 import { ColumnDef } from "@tanstack/react-table";
@@ -89,7 +90,7 @@ export default function IssuesQuickTable({
                   borderColor
                 }
               >
-                <span>{row.original.title} </span>
+                <span>{row.original.title}</span>
               </Button>
             </div>
           </Link>
@@ -117,7 +118,12 @@ export default function IssuesQuickTable({
 
     {
       accessorKey: "priority",
-      header: () => <div className="text-center">Priorita/Severita</div>,
+      header: ({ column }) => (
+        <div className="flex flex-row items-center justify-center gap-1">
+          Priorita/Severita
+          <ToggleSortingButton column={column} />
+        </div>
+      ),
       cell: ({ row }) => {
         const priority = row.original.priority || "Neuvedena";
         const severity = row.original.severity || "Neuvedena";
@@ -242,6 +248,7 @@ export default function IssuesQuickTable({
         columns={columns}
         sorting={[{ id: "priority", desc: true }]}
         data={issues}
+        showPagination
       />
     </div>
   );
