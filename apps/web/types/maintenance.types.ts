@@ -9,7 +9,7 @@ export const BabyboxMaintenanceSchema = z.object({
   id: z.string().optional(),
   title: z.string().min(1, requiredLabel),
   assignee: z.string().optional(),
-  slug: z.string().optional(),
+  slug: z.string(),
   note: z.string().optional(),
   distance: z.coerce.number().optional(),
   start: z.coerce.date({
