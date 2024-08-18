@@ -1,12 +1,9 @@
 "use client";
 
-import BreadcrumbsDashboard from "@/components/misc/breadcrumbs-dashboard";
 import { fetcherWithToken, issuesFetcher } from "@/helpers/api-helper";
 import { useAuth } from "@/components/contexts/auth-context";
 import IssuesTable from "@/components/tables/issues-table";
 import PageHeading from "@/components/misc/page-heading";
-import Breadcrumbs from "@/components/misc/breadcrumbs";
-import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BabyboxIssue } from "@/types/issue.types";
 import IssueAdd from "@/components/issue-add";

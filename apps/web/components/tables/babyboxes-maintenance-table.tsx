@@ -1,4 +1,3 @@
-import BabyboxMaintenances from "@/app/dashboard/babybox/[slug]/maintenance/page";
 import { BabyboxesContext } from "../contexts/babyboxes-context";
 import { fetcherMultipleWithToken } from "@/helpers/api-helper";
 import { BabyboxMaintenance } from "@/types/maintenance.types";
@@ -22,9 +21,8 @@ export default function BabyboxesMaintenanceTable({}: Props) {
   const urls = babyboxes.map(
     (b) => `${babyboxServiceURL}/v1/maintenances/slug/${b.slug}`,
   );
-  const { data, isLoading, mutate } = useSWR(
-    urls.length ? [urls, token] : null,
-    ([urls, token]) => fetcherMultipleWithToken(urls, token),
+  const { data } = useSWR(urls.length ? [urls, token] : null, ([urls, token]) =>
+    fetcherMultipleWithToken(urls, token),
   );
 
   const latestDoneMaintenances: BabyboxMaintenance[] =

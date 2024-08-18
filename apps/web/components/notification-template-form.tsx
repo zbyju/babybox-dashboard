@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/tooltip";
 import { BabyboxesContext } from "@/components/contexts/babyboxes-context";
 import { NotificationTemplate } from "@/types/notification.types";
-import { Babybox } from "@/components/tables/babyboxes-table";
 import { DataTable } from "../components/ui/data-table";
 import { Textarea } from "@/components/ui/textarea";
 import { ColumnDef } from "@tanstack/react-table";

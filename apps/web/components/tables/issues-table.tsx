@@ -34,13 +34,12 @@ import IssueStateSelect from "../forms/issue-state-select";
 import ToggleSortingButton from "./toggle-sorting-button";
 import IssuesTableFilters from "./issues-table-filters";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { BabyboxBase } from "@/types/babybox.types";
 import { normalizeString } from "@/utils/normalize";
-import { ArrowUpDown, Trash2 } from "lucide-react";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "../ui/data-table";
 import { useContext, useMemo } from "react";
 import { useForm } from "react-hook-form";
+import { Trash2 } from "lucide-react";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { format } from "date-fns";
@@ -124,7 +123,7 @@ export default function IssuesTable(props: Props) {
   const columns: ColumnDef<LocalBabyboxIssue>[] = [
     {
       accessorKey: "title",
-      header: ({ column }) => <div className="">Název</div>,
+      header: () => <div className="">Název</div>,
       cell: ({ row }) => {
         const status = row.original.state_history.at(0)?.state || "unknown";
         const borderColor =

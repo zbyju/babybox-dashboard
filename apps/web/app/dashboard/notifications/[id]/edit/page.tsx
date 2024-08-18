@@ -6,7 +6,6 @@ import { NotificationTemplate } from "@/types/notification.types";
 import { useAuth } from "@/components/contexts/auth-context";
 import PageHeading from "@/components/misc/page-heading";
 import Breadcrumbs from "@/components/misc/breadcrumbs";
-import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { fetcherWithToken } from "@/helpers/api-helper";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";

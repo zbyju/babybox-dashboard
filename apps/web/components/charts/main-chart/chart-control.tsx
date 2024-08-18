@@ -1,7 +1,6 @@
 import { BabyboxesContext } from "@/components/contexts/babyboxes-context";
 import ChartSettings, { ChartSettingsObject } from "./chart-settings";
 import ChartSources, { ChartSourcesObject } from "./chart-sources";
-import { Babybox } from "@/components/tables/babyboxes-table";
 import TimeFilter, { DateRange } from "./time-filter";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";

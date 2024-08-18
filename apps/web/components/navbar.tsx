@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { ModeToggle } from "./buttons/darkmode-toggle";
-import { Avatar, AvatarFallback } from "./ui/avatar";
 import { useAuth } from "./contexts/auth-context";
 import { BabyboxCombo } from "./babybox-combo";
 import UserAvatar from "./misc/user-avatar";
@@ -20,7 +19,7 @@ import { Button } from "./ui/button";
 import Link from "next/link";
 
 export default function Navbar() {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   const links = [
     { href: "/dashboard/babybox", name: "Domů", icon: <Home /> },

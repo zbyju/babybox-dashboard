@@ -3,7 +3,6 @@
 import { BabyboxesContext } from "@/components/contexts/babyboxes-context";
 import BabyboxesTable from "@/components/tables/babyboxes-table";
 import PageHeading from "@/components/misc/page-heading";
-import { BabyboxBase } from "@/types/babybox.types";
 import { useContext } from "react";
 
 export default function Home() {

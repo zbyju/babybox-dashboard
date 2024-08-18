@@ -1,23 +1,10 @@
-import {
-  AlertDialog,
-  AlertDialogTrigger,
-  AlertDialogContent,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogCancel,
-  AlertDialogAction,
-} from "@radix-ui/react-alert-dialog";
-import { translateMaintenanceState } from "@/utils/translations/maintenance";
-import { AlertDialogHeader, AlertDialogFooter } from "./ui/alert-dialog";
 import { maintenancesFetcher } from "@/fetchers/maintenance.fetcher";
 import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
-import { MapPin, Copy, Construction, Trash2 } from "lucide-react";
 import { BabyboxMaintenance } from "@/types/maintenance.types";
-import { Separator } from "@radix-ui/react-dropdown-menu";
 import { useAuth } from "./contexts/auth-context";
 import { ColumnDef } from "@tanstack/react-table";
-import OptionalRender from "./optional-render";
 import { DataTable } from "./ui/data-table";
+import { Construction } from "lucide-react";
 import { addYears, format } from "date-fns";
 import { Button } from "./ui/button";
 import Link from "next/link";

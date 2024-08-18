@@ -1,6 +1,5 @@
 "use client";
 
-import { PathParamsContext } from "next/dist/shared/lib/hooks-client-context.shared-runtime";
 import BreadcrumbsDashboard from "@/components/misc/breadcrumbs-dashboard";
 import MaintenanceTable from "@/components/tables/maintenance-table";
 import { BabyboxMaintenance } from "@/types/maintenance.types";

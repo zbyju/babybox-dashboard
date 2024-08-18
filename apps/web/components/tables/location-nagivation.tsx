@@ -1,19 +1,11 @@
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "../ui/command";
+import { Command, CommandGroup, CommandItem } from "../ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { BabyboxesContext } from "../contexts/babyboxes-context";
 import { BabyboxAddress } from "@/types/babybox.types";
 import { ChevronsUpDown } from "lucide-react";
-import { babyboxes } from "@/data/babyboxes";
 import { useContext, useState } from "react";
 import { Separator } from "../ui/separator";
 import { Button } from "../ui/button";
-import Link from "next/link";
 
 interface Props {
   slug: string;

@@ -21,7 +21,6 @@ import { getSubtypes, types } from "@/helpers/issue-helper";
 import IssueStateSelect from "./forms/issue-state-select";
 import { DateTimePicker } from "./ui/date-time-picker";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Babybox } from "./tables/babyboxes-table";
 import { useAuth } from "./contexts/auth-context";
 import Autocomplete from "./ui/autocomplete";
 import { useContext, useState } from "react";

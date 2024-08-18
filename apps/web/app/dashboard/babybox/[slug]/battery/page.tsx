@@ -1,24 +1,19 @@
 "use client";
 
 import BatteryMeasurements from "@/components/widgets/battery-measurements";
-import { BabyboxesContext } from "@/components/contexts/babyboxes-context";
 import BreadcrumbsDashboard from "@/components/misc/breadcrumbs-dashboard";
 import { useAuth } from "@/components/contexts/auth-context";
 import PageHeading from "@/components/misc/page-heading";
 import { fetcherWithToken } from "@/helpers/api-helper";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BabyboxBase } from "@/types/babybox.types";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
-import { useContext } from "react";
 import Link from "next/link";
 import useSWR from "swr";
 
 export default function BatteryPage({ params }: { params: { slug: string } }) {
   const { token } = useAuth();
   const batteryAnalyzerURL = process.env.NEXT_PUBLIC_URL_BATTERY_ANALYZER;
-  const { getBabyboxBySlug } = useContext(BabyboxesContext);
-  const babybox = getBabyboxBySlug(params.slug);
 
   const { data, isLoading } = useSWR(
     [`${batteryAnalyzerURL}/v1/measurements/${params.slug}`, token],

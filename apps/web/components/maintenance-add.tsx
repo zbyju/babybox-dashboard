@@ -17,7 +17,6 @@ import { BabyboxesContext } from "./contexts/babyboxes-context";
 import { useContext, useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { issuesFetcher } from "@/helpers/api-helper";
-import { Babybox } from "./tables/babyboxes-table";
 import { useAuth } from "./contexts/auth-context";
 import { DatePicker } from "./ui/date-picker";
 import { User } from "@/types/user.types";

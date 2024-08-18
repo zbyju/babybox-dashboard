@@ -15,7 +15,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { BabyboxesContext } from "./contexts/babyboxes-context";
-import { Babybox } from "./tables/babyboxes-table";
 import { Button } from "@/components/ui/button";
 import { useContext, useState } from "react";
 import Link from "next/link";

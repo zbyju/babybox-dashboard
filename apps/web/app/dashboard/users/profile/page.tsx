@@ -1,20 +1,14 @@
 "use client";
 
-import {
-  maintenancesFetcher,
-  maintenancesFetcherSuffix,
-} from "@/fetchers/maintenance.fetcher";
-import BabyboxesMaintenanceTable from "@/components/tables/babyboxes-maintenance-table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { maintenancesFetcherSuffix } from "@/fetchers/maintenance.fetcher";
 import IssuesQuickTable from "@/components/tables/issues-quick-table";
 import MaintenanceTable from "@/components/tables/maintenance-table";
 import { BabyboxMaintenance } from "@/types/maintenance.types";
 import { useAuth } from "@/components/contexts/auth-context";
 import IssuesTable from "@/components/tables/issues-table";
-import MaintenanceAdd from "@/components/maintenance-add";
 import PageHeading from "@/components/misc/page-heading";
 import { issuesFetcher } from "@/fetchers/issue.fetcher";
-import { fetcherWithToken } from "@/helpers/api-helper";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BabyboxIssue } from "@/types/issue.types";
 import { toast } from "sonner";

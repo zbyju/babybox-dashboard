@@ -3,6 +3,7 @@ import { ArrowUpDown } from "lucide-react";
 import { Button } from "../ui/button";
 
 interface Props {
+  /* eslint-disable  @typescript-eslint/no-explicit-any */
   column: Column<any, unknown>;
 }
 

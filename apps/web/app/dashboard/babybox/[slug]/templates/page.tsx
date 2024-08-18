@@ -1,16 +1,13 @@
 "use client";
 
 import NotificationTemplateTable from "@/components/tables/notification-template-table";
-import { BabyboxesContext } from "@/components/contexts/babyboxes-context";
 import BreadcrumbsDashboard from "@/components/misc/breadcrumbs-dashboard";
 import { useAuth } from "@/components/contexts/auth-context";
 import PageHeading from "@/components/misc/page-heading";
 import { fetcherWithToken } from "@/helpers/api-helper";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BabyboxBase } from "@/types/babybox.types";
 import { ChevronLeft, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useContext } from "react";
 import { toast } from "sonner";
 import Link from "next/link";
 import useSWR from "swr";
@@ -23,8 +20,6 @@ export default function NotificationsPage({
   const { token } = useAuth();
   const notificationServiceURL =
     process.env.NEXT_PUBLIC_URL_NOTIFICATION_SERVICE;
-  const { getBabyboxBySlug } = useContext(BabyboxesContext);
-  const babybox = getBabyboxBySlug(params.slug);
 
   const { data, isLoading, mutate } = useSWR(
     [`${notificationServiceURL}/v1/templates/${params.slug}`, token],

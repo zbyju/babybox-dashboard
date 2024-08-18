@@ -18,7 +18,6 @@ import {
 } from "lucide-react";
 import { BabyboxesContext } from "./contexts/babyboxes-context";
 import type { BabyboxBase } from "@/types/babybox.types";
-import { Babybox } from "./tables/babyboxes-table";
 import { Separator } from "./ui/separator";
 import { useContext } from "react";
 import Link from "next/link";

@@ -1,7 +1,6 @@
 "use client";
 
 import { BabyboxBase } from "@/types/babybox.types";
-import { babyboxes } from "@/data/babyboxes";
 import { createContext } from "react";
 
 export const BabyboxesContext = createContext({

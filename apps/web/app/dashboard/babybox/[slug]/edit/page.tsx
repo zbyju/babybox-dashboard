@@ -8,11 +8,11 @@ import { BabyboxContact, BabyboxDetail } from "@/types/babybox.types";
 import { useAuth } from "@/components/contexts/auth-context";
 import PageHeading from "@/components/misc/page-heading";
 import { fetcherWithToken } from "@/helpers/api-helper";
-import { ArrowLeft, Info, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ApiResponse } from "@/types/api.types";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ArrowLeft, Info } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import Link from "next/link";
@@ -33,8 +33,6 @@ export default function Home({ params }: { params: { slug: string } }) {
 
   if (error) return <div>Error!</div>;
   if (isLoading) return <div>Loading!</div>;
-
-  const babyboxName = data?.data?.name || params.slug;
 
   async function updateBabybox(babybox: BabyboxDetail) {
     try {

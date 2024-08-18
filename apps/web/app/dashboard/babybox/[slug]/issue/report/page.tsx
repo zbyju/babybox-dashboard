@@ -1,6 +1,5 @@
 "use client";
 
-import { BabyboxesContext } from "@/components/contexts/babyboxes-context";
 import BreadcrumbsDashboard from "@/components/misc/breadcrumbs-dashboard";
 import { useAuth } from "@/components/contexts/auth-context";
 import IssuesTable from "@/components/tables/issues-table";
@@ -8,10 +7,8 @@ import PageHeading from "@/components/misc/page-heading";
 import { issuesFetcher } from "@/fetchers/issue.fetcher";
 import { fetcherWithToken } from "@/helpers/api-helper";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BabyboxBase } from "@/types/babybox.types";
 import { BabyboxIssue } from "@/types/issue.types";
 import IssueAdd from "@/components/issue-add";
-import { useContext } from "react";
 import { toast } from "sonner";
 import useSWR from "swr";
 
@@ -20,9 +17,6 @@ export default function Issues({
 }: {
   params: { slug: string };
 }) {
-  const { getBabyboxBySlug } = useContext(BabyboxesContext);
-  const babybox = getBabyboxBySlug(slug);
-
   const babyboxServiceURL = process.env.NEXT_PUBLIC_URL_BABYBOX_SERVICE;
   const { token } = useAuth();
   const {
