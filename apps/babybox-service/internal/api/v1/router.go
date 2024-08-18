@@ -63,4 +63,5 @@ func RegisterRoutes(g *echo.Group, app *Application) {
 	g.GET("/maintenances", app.GetAllMaintenances)
 	g.GET("/maintenances/:id", app.GetMaintenanceByID)
 	g.GET("/maintenances/slug/:slug", app.GetMaintenancesBySlug)
+	g.GET("/maintenances/username/:username", app.GetMaintenancesByUsername)
 }
