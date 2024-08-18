@@ -1,8 +1,12 @@
 "use client";
 
 import NotificationTemplateForm from "@/components/notification-template-form";
+import BreadcrumbsDashboard from "@/components/misc/breadcrumbs-dashboard";
 import { NotificationTemplate } from "@/types/notification.types";
 import { useAuth } from "@/components/contexts/auth-context";
+import PageHeading from "@/components/misc/page-heading";
+import Breadcrumbs from "@/components/misc/breadcrumbs";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { fetcherWithToken } from "@/helpers/api-helper";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -70,9 +74,21 @@ export default function NotificationEdit({
   }
 
   return (
-    <div className="mb-10 mt-2 w-full px-4 lg:px-[16%]">
-      <div className="mt-4 flex w-full flex-row items-center justify-between gap-4">
-        <h2 className="text-3xl font-bold">Editování notifikační šablony</h2>
+    <div className="mb-10 mt-4 w-full px-4 lg:px-[16%]">
+      {data?.scope === "global" ? (
+        <Breadcrumbs
+          links={[
+            {
+              href: "/dashboard/notifications",
+              label: "Seznam notifikačních šablon",
+            },
+          ]}
+        />
+      ) : (
+        <BreadcrumbsDashboard />
+      )}
+      <div className="mt-4 flex w-full flex-row items-center justify-between">
+        <PageHeading heading="Editovat notifikační šablonu" />
         <Link href="/dashboard/notifications">
           <Button
             className="flex flex-row items-center justify-between gap-1"

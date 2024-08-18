@@ -4,33 +4,62 @@ import BabyboxSideMenu from "@/components/babybox-side-menu";
 
 import Widget from "@/components/ui/widget";
 
+import { addDays, addYears, differenceInCalendarDays, format } from "date-fns";
 import LatestNotifications from "@/components/widgets/latest-notifications";
 import TextualSnapshotStats from "@/components/misc/textual-snapshot-stats";
 import { BabyboxesContext } from "@/components/contexts/babyboxes-context";
+import BreadcrumbsDashboard from "@/components/misc/breadcrumbs-dashboard";
+import LocationNavigation from "@/components/tables/location-nagivation";
 import { fetcherWithToken, snapshotFetcher } from "@/helpers/api-helper";
 import VariableOverview from "@/components/widgets/variable-overview";
+import { maintenancesFetcher } from "@/fetchers/maintenance.fetcher";
 import LatestSnapshots from "@/components/widgets/latest-snapshots";
 import LatestEvents from "@/components/widgets/latest-events";
 import { useAuth } from "@/components/contexts/auth-context";
 import { SnapshotGroupStat } from "@/types/snapshot.types";
 import RefreshButton from "@/components/buttons/refresh";
-import { BabyboxBase } from "@/types/babybox.types.js";
+import { issuesFetcher } from "@/fetchers/issue.fetcher";
 import { calculateSnapshotStats } from "@/utils/stats";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useContext, useState } from "react";
 import { Event } from "@/types/event.types";
-import { addDays, format } from "date-fns";
 import useSWR from "swr";
 
 export default function BabyboxPage({ params }: { params: { slug: string } }) {
   const { token } = useAuth();
   const snapshotServiceURL = process.env.NEXT_PUBLIC_URL_SNAPSHOT_HANDLER;
+  const babyboxServiceURL = process.env.NEXT_PUBLIC_URL_BABYBOX_SERVICE;
   const notificationServiceURL =
     process.env.NEXT_PUBLIC_URL_NOTIFICATION_SERVICE;
-  const babyboxes = useContext(BabyboxesContext) as BabyboxBase[];
-  const babybox = babyboxes.find((x) => x.slug === params.slug);
+  const { getBabyboxBySlug } = useContext(BabyboxesContext);
+  const babybox = getBabyboxBySlug(params.slug);
   const [updated, setUpdated] = useState<Date>(new Date());
+
+  const { data: babyboxData } = useSWR(
+    [`${babyboxServiceURL}/v1/babyboxes/${params.slug}`, token],
+    ([url, token]) => fetcherWithToken(url, token),
+  );
+
+  const { data: issues } = useSWR(
+    ["issues/slug/" + params.slug, token],
+    ([_, token]) => issuesFetcher(token, "/slug/" + params.slug),
+  );
+
+  const { data: maintenances } = useSWR(
+    ["maintenaces/slug/" + params.slug, token],
+    ([_, token]) => maintenancesFetcher(token, params.slug),
+  );
+  const lastDoneMaintenance = maintenances
+    ?.filter((m) => m.state === "completed")
+    .sort((a, b) => b.start.getTime() - a.start.getTime())
+    .at(0);
+  const daysToNextMaintenance = lastDoneMaintenance
+    ? differenceInCalendarDays(
+        addYears(lastDoneMaintenance?.start, 2),
+        new Date(),
+      )
+    : 0;
 
   const {
     data: notificationsData,
@@ -201,15 +230,107 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
       <div className="lg:ml-main mb-1 mt-5 flex-grow">
         <div className="mx-auto flex w-11/12 flex-col">
           <div className="mb-4">
-            <h4 className="ml-1 text-4xl font-black leading-8">
-              Babybox {babybox?.name || ""}
+            <BreadcrumbsDashboard dashboard />
+            <h4 className="text-4xl font-black leading-8">
+              Babybox {babybox?.name || params.slug}
             </h4>
             <div className="mb-6 flex flex-row flex-wrap items-center gap-2">
-              <h4 className=" ml-1 text-lg leading-8 text-muted-foreground">
+              <h4 className="ml-1 text-lg leading-8 text-muted-foreground">
                 Data byly načtené v: {format(updated, "dd:mm:ss")}
               </h4>
               <RefreshButton onClick={refreshData} />
             </div>
+
+            <div className="mb-12 flex flex-row flex-wrap gap-4">
+              <div className="flex flex-col flex-wrap justify-between gap-4">
+                <LocationNavigation
+                  slug={params.slug}
+                  location={babyboxData?.data?.location}
+                />
+                <Widget title="Servisy">
+                  {lastDoneMaintenance && (
+                    <div className="flex flex-col">
+                      <span>
+                        Poslední servis:{" "}
+                        {format(lastDoneMaintenance.start, "MM/yy")}
+                      </span>
+                      <span>
+                        Další servis:{" "}
+                        <span
+                          className={
+                            daysToNextMaintenance < 365
+                              ? "text-orange-500 dark:text-orange-600"
+                              : daysToNextMaintenance < 60
+                                ? "text-red-600"
+                                : ""
+                          }
+                        >
+                          {format(
+                            addYears(lastDoneMaintenance.start, 2),
+                            "MM/yy",
+                          )}
+                        </span>
+                      </span>
+                    </div>
+                  )}
+                </Widget>
+              </div>
+
+              <Widget title="Počet servisů" subtitle="Otv. / Uko. / Celkem">
+                <div className="flex flex-col gap-1">
+                  <div>
+                    Otevřených:{" "}
+                    <span className="font-bold text-blue-600">
+                      {maintenances?.filter((m) => m.state === "open").length ||
+                        0}
+                    </span>
+                  </div>
+                  <div>
+                    Uzavřených:{" "}
+                    <span className="font-bold text-green-600">
+                      {maintenances?.filter((m) => m.state === "completed")
+                        .length || 0}
+                    </span>
+                  </div>
+                  <div>
+                    Celkem:{" "}
+                    <span className="font-bold ">
+                      {maintenances?.length || 0}
+                    </span>
+                  </div>
+                </div>
+              </Widget>
+
+              <Widget title="Počet chyb" subtitle="Otv. / Uko. / Celkem">
+                <div className="flex flex-col gap-1">
+                  <div>
+                    Otevřených:{" "}
+                    <span className="font-bold text-blue-600">
+                      {issues?.filter((m) =>
+                        ["open", "planned", "in_progress", "created"].includes(
+                          m.state_history.at(0)?.state || "",
+                        ),
+                      ).length || 0}
+                    </span>
+                  </div>
+                  <div>
+                    Uzavřených:{" "}
+                    <span className="font-bold text-green-600">
+                      {issues?.filter((m) =>
+                        ["closed", "solved"].includes(
+                          m.state_history.at(0)?.state || "",
+                        ),
+                      ).length || 0}
+                    </span>
+                  </div>
+                  <div>
+                    Celkem{" "}
+                    <span className="font-bold ">{issues?.length || 0}</span>
+                  </div>
+                </div>
+              </Widget>
+            </div>
+
             <h4 className="ml-1 text-3xl font-bold leading-6">Teploty</h4>
             <h5 className="mb-3 ml-1 text-xl text-muted-foreground">
               Minimum, Průměr, Maximum
@@ -226,13 +347,13 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
               Minimum, Průměr, Maximum
             </h5>
 
-            <div className="mb-4 flex flex-row flex-wrap justify-center justify-items-center gap-4 md:justify-start">
+            <div className="mb-12 flex flex-row flex-wrap justify-center justify-items-center gap-4 md:justify-start">
               {voltageVariableOverviews}
             </div>
           </div>
 
           <h4 className="mb-3 ml-1 text-3xl font-bold">Data</h4>
-          <div className="mb-4 flex flex-row flex-wrap justify-center justify-items-center gap-4 md:justify-start">
+          <div className="mb-12 flex flex-row flex-wrap justify-center justify-items-center gap-4 md:justify-start">
             <Widget title="Nejnovější data">
               {snapshotsDayIsLoading ? (
                 <div>Loading</div>

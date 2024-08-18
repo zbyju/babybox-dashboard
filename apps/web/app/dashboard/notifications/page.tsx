@@ -2,6 +2,7 @@
 
 import NotificationTemplateTable from "@/components/tables/notification-template-table";
 import { useAuth } from "@/components/contexts/auth-context";
+import PageHeading from "@/components/misc/page-heading";
 import { fetcherWithToken } from "@/helpers/api-helper";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -48,7 +49,7 @@ export default function NotificationsPage() {
   return (
     <div className="mb-10 mt-2 w-full px-4 lg:px-[16%]">
       <div className="mt-4 flex w-full flex-row items-center justify-between gap-4">
-        <h2 className="text-3xl font-bold">Notifikační šablony</h2>
+        <PageHeading heading="Seznam notifikačních šablon" />
         <Link href="/dashboard/notifications/add">
           <Button className="flex flex-row items-center justify-between gap-1">
             <Plus />

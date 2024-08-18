@@ -1,6 +1,7 @@
 "use client";
 
 import { translateMaintenanceState } from "@/utils/translations/maintenance";
+import BreadcrumbsDashboard from "@/components/misc/breadcrumbs-dashboard";
 import { colorizeMaintenanceState } from "@/utils/colorize/maintenances";
 import IssuesQuickTable from "@/components/tables/issues-quick-table";
 import { maintenanceFetcher } from "@/fetchers/maintenance.fetcher";
@@ -31,10 +32,6 @@ export default function Issue({ params }: { params: { id: string } }) {
   const { data: issues, mutate } = useSWR(
     ["issues/maintenance/" + params.id, token],
     ([_, token]) => issuesFetcher(token, "/maintenance/" + params.id),
-  );
-
-  (issues || []).forEach((i) =>
-    console.log(i.state_history.at(0)?.state || "unknown"),
   );
 
   const doneIssues = (issues || []).filter((i) =>
@@ -85,90 +82,102 @@ export default function Issue({ params }: { params: { id: string } }) {
         ) : error || !maintenance ? (
           <div>Nastal error při získávání dat.</div>
         ) : (
-          <div className="flex flex-row gap-2 lg:flex-nowrap">
-            <div className="flex-grow">
-              <div className="rounded-xl border border-border">
-                <div className="flex flex-col gap-4 p-6">
-                  <h4 className="text-4xl font-bold">{maintenance.title}</h4>
-                  <h5 className="flex flex-row flex-wrap items-center gap-2 text-lg font-medium text-muted-foreground">
-                    <Badge
-                      className="px-3 py-1 text-base"
-                      style={{
-                        backgroundColor: colorizeMaintenanceState(
-                          maintenance.state,
-                        ),
-                      }}
-                    >
-                      {translateMaintenanceState(maintenance.state)}
-                    </Badge>
-                    <span>
-                      Servis začal{" "}
-                      {format(maintenance.start, "dd. MMMM yyyy HH:mm", {
-                        locale: cs,
-                      })}
-                      {maintenance.end && (
-                        <span>
-                          {" "}
-                          a skončil{" "}
-                          {format(maintenance.end, "dd. MMMM yyyy HH:mm", {
-                            locale: cs,
-                          })}
-                        </span>
-                      )}
-                    </span>
-                  </h5>
-                  <Separator />
-                  <div>
-                    <h5 className="text-2xl font-medium">Popis chyby</h5>
-                    <p className="text-base font-normal">
-                      {maintenance.note || "Popis nebyl vyplněn."}
-                    </p>
-                  </div>
-                  <Separator />
-                  <div className="flex flex-row flex-wrap items-center gap-6">
-                    <div>
-                      {maintenance.assignee ? (
-                        <div className="text-muted-foreground">
-                          Vyřešení přiděleno:{" "}
-                          <span className="text-foreground">
-                            {maintenance.assignee}
+          <>
+            <BreadcrumbsDashboard
+              dashboard
+              slug={maintenance.slug}
+              links={[
+                {
+                  href: `/dashboard/babybox/${maintenance.slug}/maintenance`,
+                  label: "Seznam servisů",
+                },
+              ]}
+            />
+            <div className="flex flex-row gap-2 lg:flex-nowrap">
+              <div className="flex-grow">
+                <div className="rounded-xl border border-border">
+                  <div className="flex flex-col gap-4 p-6">
+                    <h4 className="text-4xl font-bold">{maintenance.title}</h4>
+                    <h5 className="flex flex-row flex-wrap items-center gap-2 text-lg font-medium text-muted-foreground">
+                      <Badge
+                        className="px-3 py-1 text-base"
+                        style={{
+                          backgroundColor: colorizeMaintenanceState(
+                            maintenance.state,
+                          ),
+                        }}
+                      >
+                        {translateMaintenanceState(maintenance.state)}
+                      </Badge>
+                      <span>
+                        Servis začal{" "}
+                        {format(maintenance.start, "dd. MMMM yyyy HH:mm", {
+                          locale: cs,
+                        })}
+                        {maintenance.end && (
+                          <span>
+                            {" "}
+                            a skončil{" "}
+                            {format(maintenance.end, "dd. MMMM yyyy HH:mm", {
+                              locale: cs,
+                            })}
                           </span>
-                        </div>
-                      ) : (
-                        <span className="text-muted-foreground">
-                          Servis nebyl nikomu přidělen.
-                        </span>
-                      )}
+                        )}
+                      </span>
+                    </h5>
+                    <Separator />
+                    <div>
+                      <h5 className="text-2xl font-medium">Popis chyby</h5>
+                      <p className="text-base font-normal">
+                        {maintenance.note || "Popis nebyl vyplněn."}
+                      </p>
                     </div>
-                    <div>
-                      {maintenance.distance ? (
-                        <div className="text-muted-foreground">
-                          Ujetých kilometrů:{" "}
-                          <span className="text-foreground">
-                            {maintenance.distance}
+                    <Separator />
+                    <div className="flex flex-row flex-wrap items-center gap-6">
+                      <div>
+                        {maintenance.assignee ? (
+                          <div className="text-muted-foreground">
+                            Vyřešení přiděleno:{" "}
+                            <span className="text-foreground">
+                              {maintenance.assignee}
+                            </span>
+                          </div>
+                        ) : (
+                          <span className="text-muted-foreground">
+                            Servis nebyl nikomu přidělen.
                           </span>
-                        </div>
-                      ) : (
-                        <span className="text-muted-foreground">
-                          Počet kilometrů nevyplněn.
-                        </span>
-                      )}
+                        )}
+                      </div>
+                      <div>
+                        {maintenance.distance ? (
+                          <div className="text-muted-foreground">
+                            Ujetých kilometrů:{" "}
+                            <span className="text-foreground">
+                              {maintenance.distance}
+                            </span>
+                          </div>
+                        ) : (
+                          <span className="text-muted-foreground">
+                            Počet kilometrů nevyplněn.
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
+              {maintenance.state !== "completed" && (
+                <div>
+                  <MaintenanceEdit
+                    maintenance={maintenance}
+                    onChange={(maintenance) => {
+                      mutateMaintenance(maintenance);
+                    }}
+                  />
+                </div>
+              )}
             </div>
-            {maintenance.state !== "completed" && (
-              <div>
-                <MaintenanceEdit
-                  maintenance={maintenance}
-                  onChange={(maintenance) => {
-                    mutateMaintenance(maintenance);
-                  }}
-                />
-              </div>
-            )}
-          </div>
+          </>
         )}
         {maintenance?.state === "completed" ? (
           <div>

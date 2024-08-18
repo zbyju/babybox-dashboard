@@ -3,8 +3,10 @@
 import ContactInformationTableEdit from "@/components/tables/contact-information-table-edit";
 import NetworkConfigurationEdit from "@/components/network-configuration-edit";
 import LocationInformationEdit from "@/components/location-information-edit";
+import BreadcrumbsDashboard from "@/components/misc/breadcrumbs-dashboard";
 import { BabyboxContact, BabyboxDetail } from "@/types/babybox.types";
 import { useAuth } from "@/components/contexts/auth-context";
+import PageHeading from "@/components/misc/page-heading";
 import { fetcherWithToken } from "@/helpers/api-helper";
 import { ArrowLeft, Info, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -57,12 +59,9 @@ export default function Home({ params }: { params: { slug: string } }) {
 
   return (
     <div className="mt-4 px-[5%] lg:px-[16%]">
+      <BreadcrumbsDashboard dashboard slug={params.slug} />
       <div className="flex flex-row flex-wrap justify-between gap-4">
-        <h2 className="ml-1 inline-flex flex-row items-center gap-3 text-3xl font-semibold">
-          <Pencil />
-          <span className="font-bold text-pink-600">Babybox</span>
-          <span className="capitalize">{babyboxName}</span>
-        </h2>
+        <PageHeading heading="Editovat Informace" slug={params.slug} />
         <div className="flex flex-row flex-wrap gap-4">
           <Link href={"/dashboard/babybox/" + params.slug + "/detail"}>
             <Button className="inline-flex flex-row items-center gap-2">
