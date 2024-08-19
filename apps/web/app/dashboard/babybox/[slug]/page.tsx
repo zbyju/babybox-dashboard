@@ -248,31 +248,33 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
                   location={babyboxData?.data?.location}
                 />
                 <Widget title="Servisy">
-                  {lastDoneMaintenance && (
-                    <div className="flex flex-col">
-                      <span>
-                        Poslední servis:{" "}
-                        {format(lastDoneMaintenance.start, "MM/yy")}
+                  <div className="flex flex-col">
+                    <span>
+                      Poslední servis:{" "}
+                      {lastDoneMaintenance
+                        ? format(lastDoneMaintenance.start, "MM/yy")
+                        : "Žádný servis"}
+                    </span>
+                    <span>
+                      Další servis:{" "}
+                      <span
+                        className={
+                          daysToNextMaintenance < 365
+                            ? "text-orange-500 dark:text-orange-600"
+                            : daysToNextMaintenance < 60
+                              ? "text-red-600"
+                              : ""
+                        }
+                      >
+                        {lastDoneMaintenance
+                          ? format(
+                              addYears(lastDoneMaintenance.start, 2),
+                              "MM/yy",
+                            )
+                          : "Žádný servis"}
                       </span>
-                      <span>
-                        Další servis:{" "}
-                        <span
-                          className={
-                            daysToNextMaintenance < 365
-                              ? "text-orange-500 dark:text-orange-600"
-                              : daysToNextMaintenance < 60
-                                ? "text-red-600"
-                                : ""
-                          }
-                        >
-                          {format(
-                            addYears(lastDoneMaintenance.start, 2),
-                            "MM/yy",
-                          )}
-                        </span>
-                      </span>
-                    </div>
-                  )}
+                    </span>
+                  </div>
                 </Widget>
               </div>
 

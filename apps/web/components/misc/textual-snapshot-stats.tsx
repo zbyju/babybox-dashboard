@@ -43,7 +43,7 @@ export default function TextualSnapshotStats(props: Props) {
     );
 
   return (
-    <div className="flex flex-col leading-5">
+    <div className="flex flex-col">
       {snapshotsFirst.length > 0 ? (
         <>
           <span>Zobrazeno {snapshotsFirst.length} záznamů.</span>
