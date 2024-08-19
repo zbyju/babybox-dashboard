@@ -103,7 +103,7 @@ export function IssueEdit({ issue, onChange }: Props) {
     ([_, token]) => maintenancesFetcher(token, issue.slug),
   );
 
-  const cItem = "flex flex-col gap-y-1 space-y-0";
+  const cItem = "flex flex-col gap-y-1 space-y-0 lg:w-full";
   const cLabel = "ml-1 my-0 py-0";
 
   return (
@@ -112,12 +112,12 @@ export function IssueEdit({ issue, onChange }: Props) {
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="flex flex-col gap-4">
+          <div className="flex w-full flex-row flex-wrap justify-center gap-4 text-center md:justify-start md:text-left lg:flex-col">
             <FormField
               control={form.control}
               name="priority"
               render={({ field }) => (
-                <FormItem className={cItem + " w-full"}>
+                <FormItem className={cItem}>
                   <FormLabel className={cLabel}>Priorita*</FormLabel>
                   <FormControl>
                     <IssuePriorityAutocomplete
@@ -134,7 +134,7 @@ export function IssueEdit({ issue, onChange }: Props) {
               control={form.control}
               name="severity"
               render={({ field }) => (
-                <FormItem className={cItem + " w-full"}>
+                <FormItem className={cItem}>
                   <FormLabel className={cLabel}>Severita*</FormLabel>
                   <FormControl>
                     <IssueSeverityAutocomplete
@@ -151,7 +151,7 @@ export function IssueEdit({ issue, onChange }: Props) {
               control={form.control}
               name="assignee"
               render={({ field }) => (
-                <FormItem className={cItem + " w-full"}>
+                <FormItem className={cItem}>
                   <FormLabel className={cLabel}>Přiřadit</FormLabel>
                   <FormControl>
                     <Combobox
@@ -178,7 +178,7 @@ export function IssueEdit({ issue, onChange }: Props) {
               control={form.control}
               name="state_history"
               render={({ field }) => (
-                <FormItem className={cItem + " w-full"}>
+                <FormItem className={cItem}>
                   <FormLabel className={cLabel}>Status*</FormLabel>
                   <FormControl>
                     <IssueStateSelect
@@ -207,7 +207,7 @@ export function IssueEdit({ issue, onChange }: Props) {
               control={form.control}
               name="maintenance_id"
               render={({ field }) => (
-                <FormItem className={cItem + " w-full"}>
+                <FormItem className={cItem}>
                   <FormLabel className={cLabel}>Servis ID</FormLabel>
                   <FormControl>
                     <Combobox
@@ -238,7 +238,7 @@ export function IssueEdit({ issue, onChange }: Props) {
               control={form.control}
               name="issue.description"
               render={({ field }) => (
-                <FormItem className={cItem + " w-full"}>
+                <FormItem className={cItem}>
                   <FormLabel className={cLabel}>Popis</FormLabel>
                   <FormControl>
                     <Textarea {...field} className="w-[200px]" />
@@ -252,7 +252,7 @@ export function IssueEdit({ issue, onChange }: Props) {
               control={form.control}
               name="issue.context"
               render={({ field }) => (
-                <FormItem className={cItem + " w-full"}>
+                <FormItem className={cItem}>
                   <FormLabel className={cLabel}>Kontext</FormLabel>
                   <FormControl>
                     <Textarea {...field} className="w-[200px]" />

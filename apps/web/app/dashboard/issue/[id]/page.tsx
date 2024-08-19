@@ -261,11 +261,7 @@ export default function Issue({ params }: { params: { id: string } }) {
                         <div className="w-full rounded-xl border border-border">
                           <div className="p-4">
                             <div className="flex flex-row flex-wrap items-center gap-2">
-                              <Avatar className="mr-2">
-                                <AvatarFallback className="bg-slate-300">
-                                  {h.username.slice(0, 2) || "?"}
-                                </AvatarFallback>
-                              </Avatar>
+                              <UserAvatar username={h.username} />
                               {h.username}
                               <div className="text-muted-foreground">
                                 {format(h.timestamp, "dd. MMMM yyyy HH:mm", {

@@ -73,10 +73,8 @@ export default function Issues({ params }: { params: { slug: string } }) {
         ) : (
           <Tabs defaultValue="detailed">
             <TabsList>
-              <TabsTrigger value="detailed">Detailní seznam chyb</TabsTrigger>
-              <TabsTrigger value="quick">
-                Seznam chyb pro rychlou úpravu
-              </TabsTrigger>
+              <TabsTrigger value="detailed">Detailní seznam</TabsTrigger>
+              <TabsTrigger value="quick">Rychlé akce</TabsTrigger>
             </TabsList>
             <TabsContent value="detailed">
               <IssuesTable
