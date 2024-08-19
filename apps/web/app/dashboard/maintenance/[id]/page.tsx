@@ -1,5 +1,6 @@
 "use client";
 
+import MaintenanceIssuesAdd from "@/components/forms/maintenance-issues-add";
 import { translateMaintenanceState } from "@/utils/translations/maintenance";
 import BreadcrumbsDashboard from "@/components/misc/breadcrumbs-dashboard";
 import { colorizeMaintenanceState } from "@/utils/colorize/maintenances";
@@ -165,6 +166,13 @@ export default function Issue({ params }: { params: { id: string } }) {
                     </div>
                   </div>
                 </div>
+                {maintenance.id && (
+                  <MaintenanceIssuesAdd
+                    slug={maintenance.slug}
+                    maintenanceId={maintenance.id}
+                    mutate={mutate}
+                  />
+                )}
               </div>
               {maintenance.state !== "completed" && (
                 <div>

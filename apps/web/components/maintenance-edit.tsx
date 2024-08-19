@@ -21,10 +21,10 @@ import {
   BabyboxMaintenance,
   BabyboxMaintenanceSchema,
 } from "@/types/maintenance.types";
-import MaintenanceIssuesAdd from "./forms/maintenance-issues-add";
 import { fetcherWithToken } from "@/helpers/api-helper";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "./contexts/auth-context";
+import { ClipboardCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { User } from "@/types/user.types";
 import { useForm } from "react-hook-form";
@@ -201,8 +201,6 @@ export function MaintenanceEdit({ maintenance, onChange }: Props) {
               )}
             />
 
-            <MaintenanceIssuesAdd slug={maintenance.slug} />
-
             <FormField
               control={form.control}
               name="note"
@@ -252,7 +250,10 @@ export function MaintenanceEdit({ maintenance, onChange }: Props) {
 
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button className="inline-block">Uzavřít</Button>
+                <Button className="bg-green-600">
+                  <ClipboardCheck className="mr-1" />
+                  Uzavřít
+                </Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
