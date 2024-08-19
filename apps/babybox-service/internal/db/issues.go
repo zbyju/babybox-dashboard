@@ -47,6 +47,10 @@ func (db *DBService) UpdateIssue(issue domain.BabyboxIssue) (*domain.BabyboxIssu
 	if issue.Assignee == "" {
 		update["$unset"] = bson.M{"assignee": ""}
 	}
+	// If maintenanceid is empty string, add it to $unset
+	if issue.MaintenanceID == "" {
+		update["$unset"] = bson.M{"maintenance_id": ""}
+	}
 
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After).SetUpsert(false)
 
