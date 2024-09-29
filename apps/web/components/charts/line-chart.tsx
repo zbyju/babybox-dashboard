@@ -20,6 +20,7 @@ interface Props {
   showXaxisLabels?: boolean;
   showXaxisTicks?: boolean;
   strokeWidth?: number;
+  xAxisFormat?: string;
   strokeType?: "straight" | "smooth" | "monotoneCubic" | "stepline";
   forecastNumber?: number;
   min?: number;
@@ -55,6 +56,7 @@ export default function LineChart(props: Props) {
     showTooltip: true,
     showXaxisLabels: true,
     showXaxisTicks: true,
+    xAxisFormat: "d.M.yy HH:mm",
     min: undefined,
     max: undefined,
   };
@@ -114,9 +116,9 @@ export default function LineChart(props: Props) {
         type: config.xaxisType,
         labels: {
           show: config.showXaxisLabels,
-          format: "dd.MM HH:mm",
+          format: config.xAxisFormat,
           formatter: (val: string) =>
-            format(val, "d.M.yy HH:mm", { locale: cs }),
+            format(val, config.xAxisFormat, { locale: cs }),
         },
         axisBorder: {
           offsetX: -1,
