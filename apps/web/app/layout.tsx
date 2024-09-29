@@ -46,6 +46,10 @@ export default function RootLayout({
     >
       <head>
         <meta name="theme-color" content="#FFF" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+        />
         <link
           rel="apple-touch-icon"
           sizes="180x180"

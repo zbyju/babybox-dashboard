@@ -14,16 +14,16 @@ import { fetcherWithToken, snapshotFetcher } from "@/helpers/api-helper";
 import VariableOverview from "@/components/widgets/variable-overview";
 import { maintenancesFetcher } from "@/fetchers/maintenance.fetcher";
 import LatestSnapshots from "@/components/widgets/latest-snapshots";
+import type { SnapshotGroupStat } from "@/types/snapshot.types";
 import LatestEvents from "@/components/widgets/latest-events";
 import { useAuth } from "@/components/contexts/auth-context";
-import { SnapshotGroupStat } from "@/types/snapshot.types";
 import RefreshButton from "@/components/buttons/refresh";
 import { issuesFetcher } from "@/fetchers/issue.fetcher";
 import { calculateSnapshotStats } from "@/utils/stats";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
+import type { Event } from "@/types/event.types";
 import { useContext, useState } from "react";
-import { Event } from "@/types/event.types";
 import useSWR from "swr";
 
 export default function BabyboxPage({ params }: { params: { slug: string } }) {
@@ -236,7 +236,7 @@ export default function BabyboxPage({ params }: { params: { slug: string } }) {
             </h4>
             <div className="mb-6 flex flex-row flex-wrap items-center gap-2">
               <h4 className="ml-1 text-lg leading-8 text-muted-foreground">
-                Data byly načtené v: {format(updated, "dd:mm:ss")}
+                Data byly načtené v: {format(updated, "HH:mm:ss")}
               </h4>
               <RefreshButton onClick={refreshData} />
             </div>

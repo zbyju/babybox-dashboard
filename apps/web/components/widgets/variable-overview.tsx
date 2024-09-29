@@ -1,9 +1,9 @@
 "use client";
 
 import { Snapshot, SnapshotVariableStat } from "@/types/snapshot.types";
+import { calculatePercentageChange, practicalMax } from "@/utils/stats";
 import { ArrowDownRight, ArrowUpRight, Minus } from "lucide-react";
 import { ColumnDef, Row, Table } from "@tanstack/react-table";
-import { calculatePercentageChange } from "@/utils/stats";
 import LineChart from "../charts/line-chart";
 import { DataTable } from "../ui/data-table";
 
@@ -123,17 +123,22 @@ export default function VariableOverview({
   lastDay: SnapshotVariableStat;
   snapshots: Snapshot[];
 }) {
-  const latestSnapshots = snapshots.slice(0, 10);
-  const series = transformData(latestSnapshots, [source]);
+  const series = transformData(snapshots, [source]);
   const tableData = [
     { name: "Týden", ...lastWeek },
     { name: "3 dny", ...last3Days },
     { name: "Den", ...lastDay },
   ];
 
+  const min = Math.min(lastDay.min, 0);
+  const max = Math.max(
+    lastDay.max,
+    practicalMax(`${source.group}-${source.variable}`),
+  );
+
   return (
-    <div className="flex max-w-[360px] flex-col justify-center gap-0 px-1">
-      <div className="ml-[-18px] mt-[-22px]">
+    <div className="flex flex-col justify-center gap-0 px-1">
+      <div className="ml-[-18px] mt-[-22px] max-w-[360px]">
         <LineChart
           id={`${source.group}-${source.variable}-variable-overview`}
           annotations={{}}
@@ -142,11 +147,13 @@ export default function VariableOverview({
           showToolbar={false}
           showGrid={false}
           showLegend={false}
-          showTooltip={false}
+          showTooltip={true}
           showXaxisLabels={false}
-          showXaxisTicks={false}
-          strokeType="smooth"
-          strokeWidth={5}
+          showXaxisTicks={true}
+          strokeType="straight"
+          strokeWidth={3}
+          min={min}
+          max={max}
         />
       </div>
       <DataTable

@@ -7,13 +7,14 @@ import {
   CardHeader,
   CardTitle,
 } from "./ui/card";
-import { BabyboxAddress } from "@/types/babybox.types";
+import type { BabyboxAddress } from "@/types/babybox.types";
 import { MapPin } from "lucide-react";
 import { Button } from "./ui/button";
 import { Switch } from "./ui/switch";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { useState } from "react";
+import { toast } from "sonner";
 
 interface Props {
   address: BabyboxAddress | undefined;
@@ -28,6 +29,26 @@ export default function LocationInformationEdit(props: Props) {
       postcode: "",
     },
   );
+
+  function handleLoadLocation() {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setAddress({
+          ...address,
+          coordinates: {
+            latitude: pos.coords.latitude,
+            longitude: pos.coords.longitude,
+          },
+        });
+        toast.success("Poloha úspěšně načtena.");
+      },
+      (err) => {
+        console.error(err);
+        toast.error("Chyba při získávání polohy.");
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 },
+    );
+  }
 
   return (
     <Card className="min-w-[300px] max-w-[400px] flex-grow">
@@ -143,6 +164,14 @@ export default function LocationInformationEdit(props: Props) {
 
             {address.coordinates !== undefined ? (
               <>
+                <Button
+                  onClick={handleLoadLocation}
+                  size="sm"
+                  className="my-2"
+                  variant={"secondary"}
+                >
+                  Načíst moji polohu
+                </Button>
                 <Label
                   htmlFor="latitude"
                   className="leading-3 text-muted-foreground"
@@ -194,19 +223,19 @@ export default function LocationInformationEdit(props: Props) {
             onClick={() => {
               const addressToSave = { ...address };
               if (
-                address.coordinates?.latitude &&
-                typeof address.coordinates.latitude === "string"
+                addressToSave.coordinates?.latitude &&
+                typeof addressToSave.coordinates.latitude === "string"
               ) {
-                addressToSave.coordinates!.latitude = parseFloat(
-                  address.coordinates.latitude,
+                addressToSave.coordinates.latitude = Number.parseFloat(
+                  addressToSave.coordinates.latitude,
                 );
               }
               if (
-                address.coordinates?.longitude &&
-                typeof address.coordinates.longitude === "string"
+                addressToSave.coordinates?.longitude &&
+                typeof addressToSave.coordinates.longitude === "string"
               ) {
-                addressToSave.coordinates!.longitude = parseFloat(
-                  address.coordinates.longitude,
+                addressToSave.coordinates.longitude = Number.parseFloat(
+                  addressToSave.coordinates.longitude,
                 );
               }
               props.onClick(address);
