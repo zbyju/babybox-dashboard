@@ -1,4 +1,4 @@
-aio-pika==9.4.1
+aio-pika==9.4.3
 annotated-types==0.6.0
 APScheduler==3.10.4
 black==24.3.0
