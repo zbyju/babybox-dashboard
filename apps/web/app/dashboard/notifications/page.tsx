@@ -17,7 +17,7 @@ export default function NotificationsPage() {
     process.env.NEXT_PUBLIC_URL_NOTIFICATION_SERVICE;
 
   const { data, error, isLoading, mutate } = useSWR(
-    [`${notificationServiceURL}/v1/templates`, token],
+    [`${notificationServiceURL}/v1/templates/`, token],
     ([url, token]) => fetcherWithToken(url, token),
   );
 
