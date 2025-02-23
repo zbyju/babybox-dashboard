@@ -1,11 +1,10 @@
 module github.com/zbyju/babybox-dashboard/apps/babybox-service
 
-go 1.22.0
+go 1.23.0
 
-require (
-	github.com/teris-io/shortid v0.0.0-20220617161101-71ec9f2aa569 // indirect
-	golang.org/x/xerrors v0.0.0-20220411194840-2f41105eb62f // indirect
-)
+require github.com/teris-io/shortid v0.0.0-20220617161101-71ec9f2aa569
+
+require golang.org/x/xerrors v0.0.0-20220411194840-2f41105eb62f // indirect
 
 require (
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
