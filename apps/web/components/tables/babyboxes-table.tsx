@@ -239,31 +239,29 @@ export default function BabyboxesTable({
   const urls = babyboxes.map(
     (b) => `${snapshotServiceURL}/v1/snapshots/${b.slug}?n=1`,
   );
-  // const { data, isLoading, mutate } = useSWR(
-  //   urls.length ? [urls, token] : null,
-  //   ([urls, token]) => fetcherMultipleWithToken(urls, token),
-  // );
+  const { data, isLoading, mutate } = useSWR(
+    urls.length ? [urls, token] : null,
+    ([urls, token]) => fetcherMultipleWithToken(urls, token),
+  );
 
-  const isLoading = false;
-  const data: any[] = [];
+  const defaultData = {
+    timestamp: "00:00 01.01.2020",
+    voltage: {
+      in: 0,
+      battery: 0,
+    },
+    temperature: {
+      inside: 0,
+      outside: 0,
+      casing: 0,
+      top: 0,
+      bottom: 0,
+    },
+  };
 
   const babyboxesWithData: Babybox[] = babyboxes.map((bb) => {
     if (!data) {
       const status = isLoading ? "loading" : "error";
-      const defaultData = {
-        timestamp: "00:00 01.01.2020",
-        voltage: {
-          in: 0,
-          battery: 0,
-        },
-        temperature: {
-          inside: 0,
-          outside: 0,
-          casing: 0,
-          top: 0,
-          bottom: 0,
-        },
-      };
       return { ...bb, fetchStatus: status, lastData: defaultData };
     }
     const found = data.find(
@@ -273,16 +271,16 @@ export default function BabyboxesTable({
         "slug" in x.data[0] &&
         x.data[0].slug === bb.slug,
     );
-    const status = found === undefined ? "error" : "ok";
+    const status = !found ? "error" : "ok";
     return {
       ...bb,
       fetchStatus: status,
-      lastData: found.data[0],
+      lastData: found?.data.at(0) ?? defaultData,
     };
   });
 
   function handleRefresh() {
-    // mutate();
+    mutate();
   }
 
   function onRowClick(row: Row<Babybox>) {
