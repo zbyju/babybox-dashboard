@@ -239,10 +239,13 @@ export default function BabyboxesTable({
   const urls = babyboxes.map(
     (b) => `${snapshotServiceURL}/v1/snapshots/${b.slug}?n=1`,
   );
-  const { data, isLoading, mutate } = useSWR(
-    urls.length ? [urls, token] : null,
-    ([urls, token]) => fetcherMultipleWithToken(urls, token),
-  );
+  // const { data, isLoading, mutate } = useSWR(
+  //   urls.length ? [urls, token] : null,
+  //   ([urls, token]) => fetcherMultipleWithToken(urls, token),
+  // );
+
+  const isLoading = false;
+  const data: any[] = [];
 
   const babyboxesWithData: Babybox[] = babyboxes.map((bb) => {
     if (!data) {
@@ -279,7 +282,7 @@ export default function BabyboxesTable({
   });
 
   function handleRefresh() {
-    mutate();
+    // mutate();
   }
 
   function onRowClick(row: Row<Babybox>) {
