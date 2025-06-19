@@ -35,7 +35,10 @@ export const fetcherMultipleWithToken = async (
   );
 
   return results
-    .filter((result) => result.status === 'fulfilled')
+    .filter(
+      (result): result is PromiseFulfilledResult<any> =>
+        result.status === "fulfilled",
+    )
     .map((result) => result.value);
 };
 
