@@ -24,15 +24,19 @@ export const fetcherMultipleWithToken = async (
   urls: string[],
   token: string,
 ) => {
-  return await Promise.all(
+  const results = await Promise.allSettled(
     urls.map((url) =>
       fetch(url, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      }).then(async (res) => await res.json()),
-    ),
+      }).then((res) => res.json())
+    )
   );
+
+  return results
+    .filter((result): result is PromiseFulfilledResult<unknown> => result.status === "fulfilled")
+    .map((result) => result.value);
 };
 
 export const snapshotFetcher = async (
