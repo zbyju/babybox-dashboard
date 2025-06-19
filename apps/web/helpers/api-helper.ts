@@ -30,12 +30,12 @@ export const fetcherMultipleWithToken = async (
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      }).then((res) => res.json())
-    )
+      }).then(async (res) => await res.json()),
+    ),
   );
 
   return results
-    .filter((result): result is PromiseFulfilledResult<unknown> => result.status === "fulfilled")
+    .filter((result) => result.status === 'fulfilled')
     .map((result) => result.value);
 };
 
