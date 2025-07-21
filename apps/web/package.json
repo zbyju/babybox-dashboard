@@ -88,7 +88,7 @@
     "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
     "tsconfig-paths-jest": "^0.0.1",
-    "typescript": "^5.3.3",
+    "typescript": "^5.7.3",
     "typescript-eslint": "^7.0.2"
   }
 }
