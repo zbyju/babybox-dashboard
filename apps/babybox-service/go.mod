@@ -8,7 +8,7 @@ require golang.org/x/xerrors v0.0.0-20220411194840-2f41105eb62f // indirect
 
 require (
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
-	github.com/golang-jwt/jwt/v5 v5.2.1
+	github.com/golang-jwt/jwt/v5 v5.2.3
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/klauspost/compress v1.16.7 // indirect
 	github.com/labstack/echo-jwt/v4 v4.2.0
