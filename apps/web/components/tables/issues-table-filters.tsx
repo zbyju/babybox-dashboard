@@ -20,7 +20,7 @@ import { z } from "zod";
 
 interface Props {
   issues: BabyboxIssue[];
-  form: UseFormReturn<IssueFilters, unknown, undefined>;
+  form: UseFormReturn<IssueFilters, unknown, IssueFilters>;
   onSubmit: (values: z.infer<typeof IssueFiltersSchema>) => unknown;
 }
 
