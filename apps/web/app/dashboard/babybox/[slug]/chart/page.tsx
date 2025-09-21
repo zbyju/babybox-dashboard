@@ -2,23 +2,14 @@
 
 import ChartPageWrapper from "./chart-page-wrapper";
 import { addDays, format } from "date-fns";
+import { NextPage } from "next";
 
-function searchParamTimeToString(
-  sp: string | string[] | undefined,
-  defaultTime: string,
-): string {
-  if (sp === undefined) return defaultTime;
-  if (typeof sp === "string") return sp;
-  return sp[0];
-}
-
-export default function Home({
-  params,
-  searchParams,
-}: {
+interface PageProps {
   params: { slug: string };
   searchParams: { [key: string]: string | string[] | undefined };
-}) {
+}
+
+const Home: NextPage<PageProps> = ({ params, searchParams }) => {
   const from: string = searchParamTimeToString(
     searchParams?.from,
     format(addDays(new Date(), -6), "yyyy-MM-dd"),
@@ -29,8 +20,19 @@ export default function Home({
   );
 
   return (
-    <div className="">
+    <div>
       <ChartPageWrapper slug={params.slug} from={from} to={to} />
     </div>
   );
+};
+
+function searchParamTimeToString(
+  sp: string | string[] | undefined,
+  defaultTime: string,
+): string {
+  if (sp === undefined) return defaultTime;
+  if (typeof sp === "string") return sp;
+  return sp[0];
 }
+
+export default Home;
