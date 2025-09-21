@@ -1,9 +1,15 @@
 import BatteryPageClient from "@/components/page-components/battery/client-page";
 
-interface PageProps {
-  params: { slug: string };
+interface PageParams {
+  slug: string;
 }
 
-export default function BatteryPage({ params }: PageProps) {
-  return <BatteryPageClient slug={params.slug} />;
+interface PageProps {
+  params: Promise<PageParams>;
+}
+
+export default async function BatteryPage({ params }: PageProps) {
+  const { slug } = await params;
+
+  return <BatteryPageClient slug={slug} />;
 }
