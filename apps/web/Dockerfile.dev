@@ -1,34 +1,35 @@
 FROM ubuntu:22.04
 
-# Update package lists and install necessary dependencies
-RUN apt-get update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y \
-        curl \
-        gnupg \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+# Set non-interactive mode
+ENV DEBIAN_FRONTEND=noninteractive
 
-# Install Node.js and npm
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y nodejs \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+# Update and install dependencies
+RUN apt-get update && apt-get install -y \
+  curl \
+  gnupg \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
+
+# Install Node.js 24
+RUN curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \
+  && apt-get install -y nodejs \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
+
 # Set working directory
 WORKDIR /app
 
-# Copy dependencies
-COPY package.json ./
+# Copy only package files first
+COPY package*.json ./
 
-# Install dependencies 
-RUN npm cache clean --force
-RUN npm install --include=optional
+# Install dependencies inside the container
+RUN npm install --include=optional --legacy-peer-deps
 
-# Expose the port for development server
-EXPOSE 3000
-
-# Copy the code
+# Copy the rest of the code (excluding node_modules via .dockerignore)
 COPY . .
 
-# Start the development server with watch mode and volume mapping
-CMD ["npm", "run", "dev"]
+# Expose dev server port
+EXPOSE 3000
 
+# Start dev server
+CMD ["npm", "run", "dev"]

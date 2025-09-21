@@ -1,7 +1,14 @@
-"use client";
-
 import ChartPageWrapper from "./chart-page-wrapper";
 import { addDays, format } from "date-fns";
+
+interface PageParams {
+  slug: string;
+}
+
+interface PageProps {
+  params: Promise<PageParams>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
 
 function searchParamTimeToString(
   sp: string | string[] | undefined,
@@ -12,25 +19,18 @@ function searchParamTimeToString(
   return sp[0];
 }
 
-export default function Home({
-  params,
-  searchParams,
-}: {
-  params: { slug: string };
-  searchParams: { [key: string]: string | string[] | undefined };
-}) {
+export default async function ChartPage({ params, searchParams }: PageProps) {
+  const { slug } = await params;
+  const resolvedSearchParams = await searchParams;
+
   const from: string = searchParamTimeToString(
-    searchParams?.from,
+    resolvedSearchParams?.from,
     format(addDays(new Date(), -6), "yyyy-MM-dd"),
   );
   const to: string = searchParamTimeToString(
-    searchParams?.to,
+    resolvedSearchParams?.to,
     format(new Date(), "yyyy-MM-dd"),
   );
 
-  return (
-    <div className="">
-      <ChartPageWrapper slug={params.slug} from={from} to={to} />
-    </div>
-  );
+  return <ChartPageWrapper slug={slug} from={from} to={to} />;
 }

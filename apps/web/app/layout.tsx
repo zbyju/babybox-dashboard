@@ -24,19 +24,19 @@ export const metadata: Metadata = {
   },
 };
 
-function getTheme() {
-  const cookieStore = cookies();
+async function getTheme() {
+  const cookieStore = await cookies();
   const themeCookie = cookieStore.get("theme");
   const theme = themeCookie ? themeCookie.value : "dark";
   return theme;
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const theme = getTheme() as string;
+  const theme = (await getTheme()) as string;
 
   return (
     <html
