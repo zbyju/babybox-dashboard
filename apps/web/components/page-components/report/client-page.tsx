@@ -12,7 +12,6 @@ import IssueAdd from "@/components/issue-add";
 import { toast } from "sonner";
 import useSWR from "swr";
 
-// Define props for the Client Component
 interface ReportPageClientProps {
   slug: string;
 }

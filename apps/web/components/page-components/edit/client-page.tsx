@@ -18,7 +18,6 @@ import { toast } from "sonner";
 import Link from "next/link";
 import useSWR from "swr";
 
-// Define props for the Client Component
 interface BabyboxEditPageClientProps {
   slug: string;
 }

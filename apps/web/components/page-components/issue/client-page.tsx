@@ -12,7 +12,6 @@ import { BabyboxIssue } from "@/types/issue.types";
 import { toast } from "sonner";
 import useSWR from "swr";
 
-// Define props for the Client Component
 interface IssuesPageClientProps {
   slug: string;
 }
