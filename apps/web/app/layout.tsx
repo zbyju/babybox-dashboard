@@ -10,6 +10,7 @@ import { Toaster } from "sonner";
 const fontSans = FontSans({
   subsets: ["latin", "latin-ext"],
   variable: "--font-sans",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -70,7 +71,7 @@ export default function RootLayout({
         />
       </head>
 
-      <body className={fontSans.className}>
+      <body className={`${fontSans.className}`}>
         <div className="mb-12 w-screen max-w-full overflow-x-hidden">
           <AuthProvider>
             <ThemeProvider
