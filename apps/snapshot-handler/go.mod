@@ -1,6 +1,6 @@
 module github.com/zbyju/babybox-dashboard/apps/snapshot-handler
 
-go 1.23.0
+go 1.25.1
 
 require (
 	github.com/golang-jwt/jwt/v5 v5.2.1

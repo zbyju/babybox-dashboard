@@ -1,4 +1,4 @@
-FROM node:18-alpine
+FROM node:24-alpine
 
 # Set working directory
 WORKDIR /app
@@ -7,7 +7,7 @@ WORKDIR /app
 COPY package* ./
 
 # Install dependencies 
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 # Copy the code
 COPY . .

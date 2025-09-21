@@ -1,6 +1,6 @@
 module github.com/zbyju/babybox-dashboard/apps/babybox-service
 
-go 1.23.0
+go 1.25.1
 
 require github.com/teris-io/shortid v0.0.0-20220617161101-71ec9f2aa569
 
