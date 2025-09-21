@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -12,7 +12,6 @@
     "test": "jest"
   },
   "dependencies": {
-    "@clerk/nextjs": "^4.31.8",
     "@hookform/resolvers": "^3.10.0",
     "@radix-ui/react-accordion": "^1.2.12",
     "@radix-ui/react-alert-dialog": "^1.1.15",
@@ -40,14 +39,14 @@
     "jwt-decode": "^4.0.0",
     "lodash": "^4.17.21",
     "lucide-react": "^0.330.0",
-    "next": "14.2.4",
+    "next": "15.5.3",
     "next-pwa": "^5.6.0",
     "next-themes": "^0.2.1",
     "postcss-import": "^16.1.1",
-    "react": "^18.3.1",
+    "react": "19.1.1",
     "react-apexcharts": "^1.7.0",
     "react-day-picker": "^8.10.1",
-    "react-dom": "^18.3.1",
+    "react-dom": "19.1.1",
     "react-hook-form": "^7.63.0",
     "sonner": "^1.7.4",
     "swr": "^2.3.6",
@@ -65,14 +64,14 @@
     "@types/lodash": "^4.17.20",
     "@types/next-pwa": "^5.6.9",
     "@types/node": "^20.19.17",
-    "@types/react": "^18.3.24",
-    "@types/react-dom": "^18.3.7",
+    "@types/react": "19.1.13",
+    "@types/react-dom": "19.1.9",
     "@types/uuid": "^9.0.8",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
     "@typescript-eslint/parser": "^7.18.0",
     "autoprefixer": "^10.4.21",
     "eslint": "^8.57.1",
-    "eslint-config-next": "14.2.4",
+    "eslint-config-next": "15.5.3",
     "eslint-config-prettier": "^9.1.2",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-prettier": "^5.5.4",
@@ -91,5 +90,9 @@
     "tsconfig-paths-jest": "^0.0.1",
     "typescript": "^5.9.2",
     "typescript-eslint": "^7.18.0"
+  },
+  "overrides": {
+    "@types/react": "19.1.13",
+    "@types/react-dom": "19.1.9"
   }
 }
