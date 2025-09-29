@@ -16,11 +16,11 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "20"
+          node-version: "22"
 
       - name: Install npm dependencies for Web App
         working-directory: apps/web
-        run: npm install
+        run: npm install --legacy-peer-deps
 
       - name: Run Tests for Web App
         working-directory: apps/web
@@ -29,7 +29,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
-          go-version: "1.22"
+          go-version: "1.25"
 
       - name: Run Tests for Snapshot Handler
         working-directory: apps/snapshot-handler
