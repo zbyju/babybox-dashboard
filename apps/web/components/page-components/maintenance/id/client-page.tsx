@@ -101,7 +101,7 @@ export default function MaintenancePageClient({
               ]}
             />
             <div className="flex flex-row gap-2 lg:flex-nowrap">
-              <div className="flex-grow">
+              <div className="grow">
                 <div className="rounded-xl border border-border">
                   <div className="flex flex-col gap-4 p-6">
                     <h4 className="text-4xl font-bold">{maintenance.title}</h4>

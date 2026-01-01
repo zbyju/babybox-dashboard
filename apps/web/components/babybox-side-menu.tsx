@@ -158,7 +158,7 @@ export default function BabyboxSideMenu(props: Props) {
           {navigationLinks.map((link) => (
             <Link
               key={link.text}
-              className="flex flex-grow items-center gap-2 rounded px-8 py-1 text-sm transition-all duration-500 hover:bg-secondary hover:text-secondary-foreground"
+              className="flex grow items-center gap-2 rounded px-8 py-1 text-sm transition-all duration-500 hover:bg-secondary hover:text-secondary-foreground"
               href={link.href}
             >
               {link.icon}

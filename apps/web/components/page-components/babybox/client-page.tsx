@@ -229,7 +229,7 @@ export default function BabyboxPageClient({ slug }: BabyboxPageClientProps) {
       ) : (
         <BabyboxSideMenu babybox={babybox} />
       )}
-      <div className="lg:ml-main mb-1 mt-5 flex-grow">
+      <div className="lg:ml-main mb-1 mt-5 grow">
         <div className="mx-auto flex w-11/12 flex-col">
           <div className="mb-4">
             <BreadcrumbsDashboard dashboard />

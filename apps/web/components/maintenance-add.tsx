@@ -266,7 +266,7 @@ export default function MaintenanceAdd({ onAdd, users, maintenance }: Props) {
                 control={form.control}
                 name="note"
                 render={({ field }) => (
-                  <FormItem className="flex flex-grow flex-col gap-y-1 space-y-0">
+                  <FormItem className="flex grow flex-col gap-y-1 space-y-0">
                     <FormLabel>Poznámka</FormLabel>
                     <FormControl>
                       <Textarea className="h-[120px]" {...field} />

@@ -340,7 +340,7 @@ export default function IssueAdd({ issue, onAdd, users }: Props) {
                 control={form.control}
                 name="issue.description"
                 render={({ field }) => (
-                  <FormItem className="flex flex-grow flex-col gap-y-1 space-y-0">
+                  <FormItem className="flex grow flex-col gap-y-1 space-y-0">
                     <FormLabel className="mt-[4px]">Popis chyby</FormLabel>
                     <FormControl>
                       <Textarea className="h-[120px]" {...field} />
@@ -353,7 +353,7 @@ export default function IssueAdd({ issue, onAdd, users }: Props) {
                 control={form.control}
                 name="issue.context"
                 render={({ field }) => (
-                  <FormItem className="flex flex-grow flex-col gap-y-1 space-y-0">
+                  <FormItem className="flex grow flex-col gap-y-1 space-y-0">
                     <FormLabel className="mt-[4px]">Kontext chyby</FormLabel>
                     <FormControl>
                       <Textarea className="h-[120px]" {...field} />

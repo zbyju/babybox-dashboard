@@ -15,9 +15,9 @@ export default function Breadcrumbs({ links }: Props) {
     <Breadcrumb className="mb-2">
       <BreadcrumbList>
         {(links || []).map((l) => (
-          <div key={l.href}>
+          <div key={l.href} className="align-center flex">
             <BreadcrumbSeparator />
-            <BreadcrumbItem key={l.href}>
+            <BreadcrumbItem key={l.href} className="my-auto">
               <BreadcrumbLink href={l.href}>{l.label}</BreadcrumbLink>
             </BreadcrumbItem>
           </div>

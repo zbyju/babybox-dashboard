@@ -46,7 +46,7 @@ export default function NetworkConfigurationEdit(props: Props) {
     );
 
   return (
-    <Card className="min-w-[300px] max-w-[400px] flex-grow">
+    <Card className="min-w-[300px] max-w-[400px] grow">
       <CardHeader>
         <CardTitle>
           <span className="flex flex-row items-center gap-1">

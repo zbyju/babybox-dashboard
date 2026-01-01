@@ -1,3 +1,9 @@
 node_modules
 npm-debug.log
 dist
+.next
+.git
+.DS_Store
+.env.local
+.env.development
+.pnpm-store
