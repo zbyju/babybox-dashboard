@@ -5,8 +5,8 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
-    "start": "next start --turbopack",
-    "lint": "next lint --turbopack",
+    "start": "next start",
+    "lint": "next lint",
     "eslint": "eslint --fix .",
     "format": "prettier --write .",
     "test": "jest"
