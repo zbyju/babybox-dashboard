@@ -46,7 +46,7 @@ export const updateBabyboxIssue = async (
   } catch (error) {
     if (error instanceof z.ZodError) {
       throw new Error(
-        `Validation error: ${error.errors.map((e) => e.message).join(", ")}`,
+        `Validation error: ${error.issues.map((e) => e.message).join(", ")}`,
       );
     } else if (error instanceof AxiosError) {
       throw new Error(`API request failed: ${error.message}`);
@@ -86,7 +86,7 @@ export async function issuesFetcher(token: string, suffix: string = "") {
     const parsedIssues = BabyboxIssuesSchema.safeParse(data);
     if (!parsedIssues.success) {
       throw new Error(
-        `Invalid issues format: ${JSON.stringify(parsedIssues.error.errors)}`,
+        `Invalid issues format: ${JSON.stringify(parsedIssues.error.issues)}`,
       );
     }
 

@@ -173,7 +173,7 @@ export async function issuesFetcher(token: string, slug?: string) {
     const parsedIssues = BabyboxIssuesSchema.safeParse(data);
     if (!parsedIssues.success) {
       throw new Error(
-        `Invalid issues format: ${JSON.stringify(parsedIssues.error.errors)}`,
+        `Invalid issues format: ${JSON.stringify(parsedIssues.error.issues)}`,
       );
     }
 
@@ -212,7 +212,7 @@ export async function issueFetcher(token: string, id: string) {
     const parsedIssue = BabyboxIssueSchema.safeParse(data);
     if (!parsedIssue.success) {
       throw new Error(
-        `Invalid issues format: ${JSON.stringify(parsedIssue.error.errors)}`,
+        `Invalid issues format: ${JSON.stringify(parsedIssue.error.issues)}`,
       );
     }
 

@@ -83,7 +83,7 @@ export async function maintenanceFetcher(token: string, id: string) {
     const parsedMaintenance = BabyboxMaintenanceSchema.safeParse(data);
     if (!parsedMaintenance.success) {
       throw new Error(
-        `Invalid maintenance format: ${JSON.stringify(parsedMaintenance.error.errors)}`,
+        `Invalid maintenance format: ${JSON.stringify(parsedMaintenance.error.issues)}`,
       );
     }
 
@@ -133,7 +133,7 @@ export async function maintenancesFetcherSuffix(
     const parsedMaintenances = BabyboxMaintenancesSchema.safeParse(data);
     if (!parsedMaintenances.success) {
       throw new Error(
-        `Invalid maintenances format: ${JSON.stringify(parsedMaintenances.error.errors)}`,
+        `Invalid maintenances format: ${JSON.stringify(parsedMaintenances.error.issues)}`,
       );
     }
 

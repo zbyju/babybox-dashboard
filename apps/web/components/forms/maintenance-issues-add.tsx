@@ -67,12 +67,12 @@ export default function MaintenanceIssuesAdd({
               i.maintenance_id === undefined &&
               i.slug === slug &&
               !["closed", "solved"].includes(
-                i.state_history.at(0)?.state || "",
+                (i.state_history || []).at(0)?.state || "",
               ),
           )
           .sort((a, b) => {
-            const as = a.state_history.at(0)?.state;
-            const bs = b.state_history.at(0)?.state;
+            const as = (a.state_history || []).at(0)?.state;
+            const bs = (b.state_history || []).at(0)?.state;
 
             return as === "open" && bs === "open"
               ? a.title.localeCompare(b.title)

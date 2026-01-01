@@ -13,8 +13,8 @@ import {
   BabyboxIssueSchema,
   IssueState,
 } from "@/types/issue.types";
-import IssuePriorityAutocomplete from "./forms/issue-priority-autocomplete";
 import IssueSeverityAutocomplete from "./forms/issue-severity-autocomplete";
+import IssuePriorityAutocomplete from "./forms/issue-priority-autocomplete";
 import { maintenancesFetcher } from "@/fetchers/maintenance.fetcher";
 import { BabyboxesContext } from "./contexts/babyboxes-context";
 import { getSubtypes, types } from "@/helpers/issue-helper";
@@ -52,7 +52,7 @@ export default function IssueAdd({ issue, onAdd, users }: Props) {
   const form = useForm<z.infer<typeof BabyboxIssueSchema>>({
     resolver: zodResolver(BabyboxIssueSchema),
     defaultValues: {
-      ...issue,
+      slug: "",
       title: "",
       priority: "",
       severity: "",
@@ -62,6 +62,8 @@ export default function IssueAdd({ issue, onAdd, users }: Props) {
         description: "",
         context: "",
       },
+      state_history: [],
+      comments: [],
     },
   });
 

@@ -13,7 +13,7 @@ export const BabyboxMaintenanceSchema = z.object({
   note: z.string().optional(),
   distance: z.coerce.number().optional(),
   start: z.coerce.date({
-    required_error: requiredLabel,
+    error: requiredLabel,
   }),
   end: z.coerce.date().optional(),
   state: BabyboxMaintenanceStateSchema,
