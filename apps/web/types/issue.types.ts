@@ -23,7 +23,7 @@ export const BabyboxIssueDescriptionSchema = z.object({
 export const BabyboxIssueStateUpdateSchema = z.object({
   state: IssueStateSchema,
   timestamp: z.coerce.date({
-    required_error: requiredLabel,
+    error: requiredLabel,
   }),
   username: z.string().optional(),
 });
@@ -31,7 +31,7 @@ export const BabyboxIssueStateUpdateSchema = z.object({
 export const BabyboxIssueCommentSchema = z.object({
   text: z.string().min(1, requiredLabel),
   timestamp: z.coerce.date({
-    required_error: requiredLabel,
+    error: requiredLabel,
   }),
   username: z.string().optional(),
 });
@@ -39,7 +39,7 @@ export const BabyboxIssueCommentSchema = z.object({
 export const BabyboxIssueSchema = z.object({
   id: z.string().optional(),
   maintenance_id: z.string().optional(),
-  slug: z.string({ required_error: requiredLabel }).min(1, requiredLabel),
+  slug: z.string({ error: requiredLabel }).min(1, requiredLabel),
   title: z.string().min(1, requiredLabel),
   priority: z.string().optional(),
   severity: z.string().optional(),
@@ -56,10 +56,10 @@ export type BabyboxIssue = z.infer<typeof BabyboxIssueSchema>;
 export const IssueFiltersSchema = z.object({
   title: z.string().default("").optional(),
   slug: z.string().default("").optional(),
-  status: z.array(z.string()).optional(),
-  priority: z.array(z.string()).optional(),
-  severity: z.array(z.string()).optional(),
-  type: z.array(z.string()).optional(),
+  status: z.array(z.string()).default([]),
+  priority: z.array(z.string()).default([]),
+  severity: z.array(z.string()).default([]),
+  type: z.array(z.string()).default([]),
   maintenanceFilter: z.enum(["assigned", "not_assigned", "all"]).default("all"),
   time: z
     .object({

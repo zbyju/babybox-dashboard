@@ -33,6 +33,10 @@ export default function IssueStateSelect({
 
     if (
       issue === undefined ||
+      issue.state_history === undefined ||
+      issue.state_history.length === 0 ||
+      issue.state_history === undefined ||
+      issue.state_history.length === 0 ||
       issue.state_history[0].state === value ||
       user === undefined
     )
