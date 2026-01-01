@@ -25,7 +25,7 @@ export default function Widget({
           </h3>
           <h4 className="text-lg text-muted-foreground">{subtitle || ""}</h4>
         </div>
-        <div className="flex-grow overflow-hidden">{children}</div>
+        <div className="grow overflow-hidden">{children}</div>
       </div>
     </div>
   );

@@ -16,7 +16,7 @@ export default function Home() {
   }, [isAuthenticated, isLoaded, router]);
 
   return (
-    <div className="flex h-[100vh] w-screen flex-col items-center justify-center gap-2 text-center">
+    <div className="flex h-screen w-screen flex-col items-center justify-center gap-2 text-center">
       <h1 className="text-5xl font-black">Babybox Dashboard</h1>
       <p>
         Nejste přihlášen! Přihlašte se prosím{" "}

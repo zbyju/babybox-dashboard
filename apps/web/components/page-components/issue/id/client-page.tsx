@@ -106,7 +106,7 @@ export default function IssuePageClient({ id }: IssuePageClientProps) {
               ]}
             />
             <div className="flex flex-row flex-wrap gap-6 lg:flex-nowrap">
-              <div className="lg:flex-grow">
+              <div className="lg:grow">
                 <div className="rounded-xl border border-border">
                   <div className="flex flex-col gap-4 p-6">
                     <h4 className="text-4xl font-bold">{issue.title}</h4>
@@ -231,11 +231,11 @@ export default function IssuePageClient({ id }: IssuePageClientProps) {
                         <div className="flex flex-row">
                           <div className="flex flex-col justify-center">
                             <div
-                              className={`ml-[18px] w-[4px] flex-grow ${h.username.toLowerCase() === "system" ? "bg-pink-200 dark:bg-pink-900" : "bg-blue-200 dark:bg-blue-950"}`}
+                              className={`ml-[18px] w-[4px] grow ${h.username.toLowerCase() === "system" ? "bg-pink-200 dark:bg-pink-900" : "bg-blue-200 dark:bg-blue-950"}`}
                             ></div>
                             <UserAvatar username={h.username} />
                             <div
-                              className={`ml-[18px] w-[4px] flex-grow ${h.username.toLowerCase() === "system" ? "bg-pink-200 dark:bg-pink-900" : "bg-blue-200 dark:bg-blue-950"}`}
+                              className={`ml-[18px] w-[4px] grow ${h.username.toLowerCase() === "system" ? "bg-pink-200 dark:bg-pink-900" : "bg-blue-200 dark:bg-blue-950"}`}
                             ></div>
                           </div>
                           <div className="ml-4 py-4">

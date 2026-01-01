@@ -21,7 +21,7 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
   if (isAuthenticated === false && isLoaded) {
     return (
-      <div className="flex h-[100vh] w-screen flex-col items-center justify-center gap-2 text-center">
+      <div className="flex h-screen w-screen flex-col items-center justify-center gap-2 text-center">
         <div className="mb-4 flex flex-col items-center justify-center text-center">
           <span className="text-6xl font-black text-destructive">401</span>
           <span className="text-xl font-semibold text-destructive">
@@ -42,7 +42,7 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
   if (isAuthenticated === false && !isLoaded) {
     return (
-      <div className="flex h-[100vh] w-screen items-center justify-center text-center">
+      <div className="flex h-screen w-screen items-center justify-center text-center">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width={70}
