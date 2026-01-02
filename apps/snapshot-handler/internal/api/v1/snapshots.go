@@ -3,6 +3,7 @@ package v1
 import (
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -137,6 +138,54 @@ func (app *Application) GetAllSnapshotsBySlugHandler(c echo.Context) error {
 
 	filled := utils.FillGaps(snapshots, slug, fromTime, toTime)
 	return c.JSON(http.StatusOK, ReturnOk(filled))
+}
+
+func (app *Application) GetNearSnapshots(c echo.Context) error {
+	// 1. Handle "limit" (n)
+	limitStr := c.QueryParam("limit")
+	limit := 1 // Default
+	if limitStr != "" {
+		var err error
+		limit, err = strconv.Atoi(limitStr)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusBadRequest, "limit must be an integer")
+		}
+	}
+
+	// Validation: error for <= 0 or > 5000
+	if limit <= 0 || limit > 5000 {
+		return echo.NewHTTPError(http.StatusBadRequest, "limit must be between 1 and 5000")
+	}
+
+	// 2. Handle "timestamp"
+	tsStr := c.QueryParam("timestamp")
+	targetTime := time.Now() // Default
+	if tsStr != "" {
+		var err error
+		// Using RFC3339 as standard (e.g., 2023-10-27T10:00:00Z)
+		targetTime, err = time.Parse(time.RFC3339, tsStr)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusBadRequest, "invalid timestamp format. use RFC3339")
+		}
+	}
+
+	// 3. Handle "slugs"
+	var slugList []string
+	slugsRaw := c.QueryParam("slugs")
+	if slugsRaw != "" {
+		// Splits by comma (e.g., "slug1,slug2" -> ["slug1", "slug2"])
+		slugList = strings.Split(slugsRaw, ",")
+	}
+
+	// 4. Call the DB Service
+	snapshots, err := app.DBService.GetSnapshotsNearTime(c.Request().Context(), slugList, targetTime, limit)
+	if err != nil {
+		app.Logger.Printf("Database error: %v", err)
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch snapshots")
+	}
+
+	// 5. Return JSON response
+	return c.JSON(http.StatusOK, snapshots)
 }
 
 func (app *Application) GetSnapshotSummaryBySlugHandler(c echo.Context) error {
