@@ -1,11 +1,15 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
+import MyQueryClientProvider from "@/components/contexts/query-client-provider";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "@/components/contexts/theme-provider";
 import AuthProvider from "@/components/contexts/auth-context";
 import { Noto_Sans as FontSans } from "next/font/google";
 import { cookies } from "next/headers";
 import { Toaster } from "sonner";
+
+const queryClient = new QueryClient();
 
 const fontSans = FontSans({
   subsets: ["latin", "latin-ext"],
@@ -73,17 +77,19 @@ export default async function RootLayout({
 
       <body className={`${fontSans.className}`}>
         <div className="mb-12 w-screen max-w-full overflow-x-hidden">
-          <AuthProvider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              storageKey="theme"
-              enableSystem
-            >
-              {children}
-              <Toaster richColors />
-            </ThemeProvider>
-          </AuthProvider>
+          <MyQueryClientProvider>
+            <AuthProvider>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="system"
+                storageKey="theme"
+                enableSystem
+              >
+                {children}
+                <Toaster richColors />
+              </ThemeProvider>
+            </AuthProvider>
+          </MyQueryClientProvider>
         </div>
       </body>
     </html>

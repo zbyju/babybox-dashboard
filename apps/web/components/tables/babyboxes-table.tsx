@@ -6,18 +6,16 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
-import { fetcherMultipleWithToken } from "@/helpers/api-helper";
 import ToggleSortingButton from "./toggle-sorting-button";
+import { useNearSnapshots } from "@/hooks/snapshot.hooks";
 import { ColumnDef, Row } from "@tanstack/react-table";
 import { differenceInMinutes, format } from "date-fns";
 import { BabyboxBase } from "@/types/babybox.types";
-import { useAuth } from "../contexts/auth-context";
 import { DataTable } from "../ui/data-table";
 import { useRouter } from "next/navigation";
 import { Skeleton } from "../ui/skeleton";
 import { toSlug } from "@/utils/slug";
 import { Badge } from "../ui/badge";
-import useSWR from "swr";
 
 export type Babybox = {
   slug: string;
@@ -26,15 +24,15 @@ export type Babybox = {
   lastData: {
     timestamp: string;
     voltage: {
-      in: number;
-      battery: number;
+      in: number | null;
+      battery: number | null;
     };
     temperature: {
-      inside: number;
-      outside: number;
-      casing: number;
-      top: number;
-      bottom: number;
+      inside: number | null;
+      outside: number | null;
+      casing: number | null;
+      top: number | null;
+      bottom: number | null;
     };
   };
 };
@@ -234,15 +232,11 @@ export default function BabyboxesTable({
 }) {
   const router = useRouter();
 
-  const { token } = useAuth();
-  const snapshotServiceURL = process.env.NEXT_PUBLIC_URL_SNAPSHOT_HANDLER;
-  const urls = babyboxes.map(
-    (b) => `${snapshotServiceURL}/v1/snapshots/${b.slug}?n=1`,
-  );
-  const { data, isLoading, mutate } = useSWR(
-    urls.length ? [urls, token] : null,
-    ([urls, token]) => fetcherMultipleWithToken(urls, token),
-  );
+  const { data, isLoading, isFetching, isError, error, refetch } =
+    useNearSnapshots({
+      slugs: babyboxes.map((b) => b.slug),
+      limit: 1,
+    });
 
   const defaultData = {
     timestamp: "00:00 01.01.2020",
@@ -259,29 +253,33 @@ export default function BabyboxesTable({
     },
   };
 
+  if (isLoading || isFetching)
+    return <div>Loading snaphots (data) from babyboxes</div>;
+
+  if (isError)
+    return (
+      <div>
+        Error loading snaphots (data) from babyboxes: {JSON.stringify(error)}
+      </div>
+    );
+
+  const handleRefresh = () => {
+    refetch();
+  };
+
   const babyboxesWithData: Babybox[] = babyboxes.map((bb) => {
     if (!data) {
       const status = isLoading ? "loading" : "error";
       return { ...bb, fetchStatus: status, lastData: defaultData };
     }
-    const found = data.find(
-      (x) =>
-        "data" in x &&
-        x.data.length > 0 &&
-        "slug" in x.data[0] &&
-        x.data[0].slug === bb.slug,
-    );
+    const found = data.find((x) => x.slug === bb.slug);
     const status = !found ? "error" : "ok";
     return {
       ...bb,
       fetchStatus: status,
-      lastData: found?.data.at(0) ?? defaultData,
+      lastData: found ?? defaultData,
     };
   });
-
-  function handleRefresh() {
-    mutate();
-  }
 
   function onRowClick(row: Row<Babybox>) {
     router.push("/dashboard/babybox/" + row.getValue("slug"));
