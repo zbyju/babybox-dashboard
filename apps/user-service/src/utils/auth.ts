@@ -7,7 +7,7 @@ import { None, type Option, Some } from "./errors";
 
 export function signJWT(user: UserSanitized) {
   const payload = { username: user.username, email: user.email };
-  const options = { expiresIn: "7d" };
+  const options = { expiresIn: 60 * 60 * 24 * 365 }; // TODO: handle this properly (for now: 1 year expiry)
 
   const secret = process.env.JWT_SECRET || "";
   const token = jwt.sign(payload, secret, options);
