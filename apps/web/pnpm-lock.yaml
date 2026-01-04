@@ -144,6 +144,9 @@ importers:
       '@fsouza/prettierd':
         specifier: ^0.26.2
         version: 0.26.2(typescript@5.9.3)
+      '@next/eslint-plugin-next':
+        specifier: ^16.1.1
+        version: 16.1.1
       '@testing-library/jest-dom':
         specifier: ^6.9.1
         version: 6.9.1
@@ -189,6 +192,9 @@ importers:
       eslint-plugin-react:
         specifier: ^7.37.5
         version: 7.37.5(eslint@9.39.2(jiti@2.6.1))
+      eslint-plugin-react-hooks:
+        specifier: ^7.0.1
+        version: 7.0.1(eslint@9.39.2(jiti@2.6.1))
       eslint_d:
         specifier: ^14.3.0
         version: 14.3.0(jiti@2.6.1)
