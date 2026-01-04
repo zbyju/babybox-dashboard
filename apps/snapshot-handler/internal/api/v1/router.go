@@ -44,6 +44,7 @@ func RegisterRoutes(g *echo.Group, app *Application) {
 	g.GET("/snapshots", app.GetAllSnapshotsHandler)
 	g.GET("/snapshots/:slug/weekday", app.GetWeekdayAverageBySlugHandler)
 	g.GET("/snapshots/:slug/summary", app.GetSnapshotSummaryBySlugHandler)
+	g.GET("/snapshots/near", app.GetNearSnapshots)
 	g.GET("/snapshots/:slug", app.GetAllSnapshotsBySlugHandler)
 
 	g.GET("/events", app.GetAllEventsHandler)

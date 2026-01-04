@@ -35,3 +35,8 @@ type WeekdayTemperature struct {
 	Weekday         int
 	MeanTemperature float64
 }
+
+type SlugSnapshots struct {
+	Slug      string     `json:"slug"`
+	Snapshots []Snapshot `json:"snapshots"`
+}
