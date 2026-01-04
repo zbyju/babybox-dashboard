@@ -82,7 +82,7 @@ export const columns: ColumnDef<Babybox>[] = [
     header: () => <div className="text-right">Vnitřní [°C]</div>,
     cell: ({ getValue, row }) => {
       if (row.original.fetchStatus === "error")
-        return <div className="text-right">X</div>;
+        return <div className="text-right">-</div>;
       if (row.original.fetchStatus === "loading") return <CellSkeleton />;
       const val = getValue();
       const str = typeof val === "number" ? val.toFixed(2) : val;
@@ -94,7 +94,7 @@ export const columns: ColumnDef<Babybox>[] = [
     header: () => <div className="text-right">Venkovní [°C]</div>,
     cell: ({ getValue, row }) => {
       if (row.original.fetchStatus === "error")
-        return <div className="text-right">X</div>;
+        return <div className="text-right">-</div>;
       if (row.original.fetchStatus === "loading") return <CellSkeleton />;
       const val = getValue();
       const str = typeof val === "number" ? val.toFixed(2) : val;
@@ -106,7 +106,7 @@ export const columns: ColumnDef<Babybox>[] = [
     header: () => <div className="text-right">Vstup [V]</div>,
     cell: ({ getValue, row }) => {
       if (row.original.fetchStatus === "error")
-        return <div className="text-right">X</div>;
+        return <div className="text-right">-</div>;
       if (row.original.fetchStatus === "loading") return <CellSkeleton />;
       const val = getValue();
       const str = typeof val === "number" ? val.toFixed(2) : val;
@@ -118,7 +118,7 @@ export const columns: ColumnDef<Babybox>[] = [
     header: () => <div className="text-right">Baterie [V]</div>,
     cell: ({ getValue, row }) => {
       if (row.original.fetchStatus === "error")
-        return <div className="text-right">X</div>;
+        return <div className="text-right">-</div>;
       if (row.original.fetchStatus === "loading") return <CellSkeleton />;
       const val = getValue();
       const str = typeof val === "number" ? val.toFixed(2) : val;
@@ -130,7 +130,7 @@ export const columns: ColumnDef<Babybox>[] = [
     header: () => <div className="text-right">Čas dat</div>,
     cell: ({ row }) => {
       if (row.original.fetchStatus === "error")
-        return <div className="text-right">X</div>;
+        return <div className="text-right">-</div>;
       if (row.original.fetchStatus === "loading") return <CellSkeleton />;
       const timestamp = format(
         row.getValue("lastData_timestamp"),
