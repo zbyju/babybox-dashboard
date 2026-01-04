@@ -1,8 +1,7 @@
 import { queryOptions, useQuery, UseQueryResult } from "@tanstack/react-query";
-import { fetchNearSnapshots, FetchSnapshotsParams } from "@/api/snapshots";
+import { fetchNearSnapshots, FetchSnapshotsParams } from "@/api/snapshots.api";
 import { useAuth } from "@/components/contexts/auth-context";
 import { getMsUntilNextHeartbeat } from "@/utils/heartbeat";
-import { Snapshot2 } from "@/types/snapshot.types";
 
 interface UseNearSnapshotsProps {
   slugs?: string[];
@@ -24,7 +23,7 @@ export const snapshotOptions = (params: FetchSnapshotsParams) => {
     // Only run the query if we have a valid token
     enabled: !!params.token,
     staleTime: getMsUntilNextHeartbeat(),
-    refetchInterval: (query) => {
+    refetchInterval: (_query) => {
       // If the query is successful, wait until the next heartbeat to check again
       return getMsUntilNextHeartbeat();
     },
@@ -42,7 +41,7 @@ export function useNearSnapshots({
   // We use the reusable snapshotOptions we defined earlier
   return useQuery({
     ...snapshotOptions({
-      token,
+      token: isLoaded ? token : null,
       slugs,
       timestamp,
       limit,

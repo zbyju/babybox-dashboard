@@ -16,8 +16,13 @@ export const SnapshotSchema = z.object({
     battery: z.number().nullable(),
   }),
 });
-
 export type Snapshot2 = z.infer<typeof SnapshotSchema>;
+
+export const SnapshotsWithSlug = z.object({
+  slug: z.string(),
+  snapshots: z.array(SnapshotSchema),
+});
+export type SnapshotsWithSlug = z.infer<typeof SnapshotsWithSlug>;
 
 // LEGACY
 export interface Snapshot {

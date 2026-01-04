@@ -273,11 +273,11 @@ export default function BabyboxesTable({
       return { ...bb, fetchStatus: status, lastData: defaultData };
     }
     const found = data.find((x) => x.slug === bb.slug);
-    const status = !found ? "error" : "ok";
+    const status = found && found.snapshots.length > 0 ? "ok" : "error";
     return {
       ...bb,
       fetchStatus: status,
-      lastData: found ?? defaultData,
+      lastData: found?.snapshots[0] ?? defaultData,
     };
   });
 
