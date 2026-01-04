@@ -37,6 +37,8 @@ export type Babybox = {
   };
 };
 
+const CellSkeleton = () => <Skeleton className="ml-auto h-4 w-1/2" />;
+
 export const columns: ColumnDef<Babybox>[] = [
   {
     accessorKey: "slug",
@@ -81,8 +83,7 @@ export const columns: ColumnDef<Babybox>[] = [
     cell: ({ getValue, row }) => {
       if (row.original.fetchStatus === "error")
         return <div className="text-right">X</div>;
-      if (row.original.fetchStatus === "loading")
-        return <Skeleton className="h-4 w-[20px]" />;
+      if (row.original.fetchStatus === "loading") return <CellSkeleton />;
       const val = getValue();
       const str = typeof val === "number" ? val.toFixed(2) : val;
       return <div className="text-right">{str as string}</div>;
@@ -94,8 +95,7 @@ export const columns: ColumnDef<Babybox>[] = [
     cell: ({ getValue, row }) => {
       if (row.original.fetchStatus === "error")
         return <div className="text-right">X</div>;
-      if (row.original.fetchStatus === "loading")
-        return <Skeleton className="h-4 w-[20px]" />;
+      if (row.original.fetchStatus === "loading") return <CellSkeleton />;
       const val = getValue();
       const str = typeof val === "number" ? val.toFixed(2) : val;
       return <div className="text-right">{str as string}</div>;
@@ -107,8 +107,7 @@ export const columns: ColumnDef<Babybox>[] = [
     cell: ({ getValue, row }) => {
       if (row.original.fetchStatus === "error")
         return <div className="text-right">X</div>;
-      if (row.original.fetchStatus === "loading")
-        return <Skeleton className="h-4 w-[20px]" />;
+      if (row.original.fetchStatus === "loading") return <CellSkeleton />;
       const val = getValue();
       const str = typeof val === "number" ? val.toFixed(2) : val;
       return <div className="text-right">{str as string}</div>;
@@ -120,8 +119,7 @@ export const columns: ColumnDef<Babybox>[] = [
     cell: ({ getValue, row }) => {
       if (row.original.fetchStatus === "error")
         return <div className="text-right">X</div>;
-      if (row.original.fetchStatus === "loading")
-        return <Skeleton className="h-4 w-[20px]" />;
+      if (row.original.fetchStatus === "loading") return <CellSkeleton />;
       const val = getValue();
       const str = typeof val === "number" ? val.toFixed(2) : val;
       return <div className="text-right">{str as string}</div>;
@@ -133,8 +131,7 @@ export const columns: ColumnDef<Babybox>[] = [
     cell: ({ row }) => {
       if (row.original.fetchStatus === "error")
         return <div className="text-right">X</div>;
-      if (row.original.fetchStatus === "loading")
-        return <Skeleton className="h-4 w-[20px]" />;
+      if (row.original.fetchStatus === "loading") return <CellSkeleton />;
       const timestamp = format(
         row.getValue("lastData_timestamp"),
         "HH:mm dd.MM.yyyy",
@@ -146,13 +143,13 @@ export const columns: ColumnDef<Babybox>[] = [
     accessorKey: "lastData.status",
     header: () => <div className="text-center">Status</div>,
     cell: ({ row }) => {
-      if (row.original.fetchStatus === "error")
-        return <div className="text-right">X</div>;
-      if (row.original.fetchStatus === "loading")
-        return <Skeleton className="h-4 w-[20px]" />;
+      if (row.original.fetchStatus === "loading") return <CellSkeleton />;
       const d = row.getValue("lastData_timestamp") as Date;
       const now = new Date();
-      if (differenceInMinutes(now, d) >= 12) {
+      if (
+        differenceInMinutes(now, d) >= 12 ||
+        row.original.fetchStatus === "error"
+      ) {
         return (
           <div className="text-center">
             <TooltipProvider delayDuration={300}>
@@ -232,11 +229,10 @@ export default function BabyboxesTable({
 }) {
   const router = useRouter();
 
-  const { data, isLoading, isFetching, isError, error, refetch } =
-    useNearSnapshots({
-      slugs: babyboxes.map((b) => b.slug),
-      limit: 1,
-    });
+  const { data, isLoading, isFetching, refetch } = useNearSnapshots({
+    slugs: babyboxes.map((b) => b.slug),
+    limit: 1,
+  });
 
   const defaultData = {
     timestamp: "00:00 01.01.2020",
@@ -253,23 +249,13 @@ export default function BabyboxesTable({
     },
   };
 
-  if (isLoading || isFetching)
-    return <div>Loading snaphots (data) from babyboxes</div>;
-
-  if (isError)
-    return (
-      <div>
-        Error loading snaphots (data) from babyboxes: {JSON.stringify(error)}
-      </div>
-    );
-
   const handleRefresh = () => {
     refetch();
   };
 
   const babyboxesWithData: Babybox[] = babyboxes.map((bb) => {
     if (!data) {
-      const status = isLoading ? "loading" : "error";
+      const status = isLoading || isFetching ? "loading" : "error";
       return { ...bb, fetchStatus: status, lastData: defaultData };
     }
     const found = data.find((x) => x.slug === bb.slug);
