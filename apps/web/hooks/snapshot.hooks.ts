@@ -34,11 +34,10 @@ export const snapshotOptions = (params: FetchSnapshotsParams) => {
 export function useNearSnapshots({
   slugs,
   timestamp,
-  limit = 1, // Default limit as per requirements
+  limit = 1,
 }: UseNearSnapshotsProps = {}) {
   const { token, isLoaded } = useAuth();
 
-  // We use the reusable snapshotOptions we defined earlier
   return useQuery({
     ...snapshotOptions({
       token: isLoaded ? token : null,
