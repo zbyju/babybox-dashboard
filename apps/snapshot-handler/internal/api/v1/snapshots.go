@@ -148,13 +148,13 @@ func (app *Application) GetNearSnapshots(c echo.Context) error {
 		var err error
 		limit, err = strconv.Atoi(limitStr)
 		if err != nil {
-			return echo.NewHTTPError(http.StatusBadRequest, "limit must be an integer")
+			return echo.NewHTTPError(http.StatusBadRequest, ReturnErr("limit must be an integer"))
 		}
 	}
 
-	// Validation: error for <= 0 or > 5000
+	// Validation: limit constraints
 	if limit <= 0 || limit > 5000 {
-		return echo.NewHTTPError(http.StatusBadRequest, "limit must be between 1 and 5000")
+		return echo.NewHTTPError(http.StatusBadRequest, ReturnErr("limit must be between 1 and 5000"))
 	}
 
 	// 2. Handle "timestamp"
@@ -162,10 +162,10 @@ func (app *Application) GetNearSnapshots(c echo.Context) error {
 	targetTime := time.Now() // Default
 	if tsStr != "" {
 		var err error
-		// Using RFC3339 as standard (e.g., 2023-10-27T10:00:00Z)
+		// Using RFC3339 standard
 		targetTime, err = time.Parse(time.RFC3339, tsStr)
 		if err != nil {
-			return echo.NewHTTPError(http.StatusBadRequest, "invalid timestamp format. use RFC3339")
+			return echo.NewHTTPError(http.StatusBadRequest, ReturnErr("invalid timestamp format. use RFC3339"))
 		}
 	}
 
@@ -173,19 +173,58 @@ func (app *Application) GetNearSnapshots(c echo.Context) error {
 	var slugList []string
 	slugsRaw := c.QueryParam("slugs")
 	if slugsRaw != "" {
-		// Splits by comma (e.g., "slug1,slug2" -> ["slug1", "slug2"])
 		slugList = strings.Split(slugsRaw, ",")
 	}
 
-	// 4. Call the DB Service
+	// 4. Fetch from Database
+	// GetSnapshotsNearTime returns a flat slice of snapshots grouped by Influx
 	snapshots, err := app.DBService.GetSnapshotsNearTime(c.Request().Context(), slugList, targetTime, limit)
 	if err != nil {
 		app.Logger.Printf("Database error: %v", err)
-		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch snapshots")
+		return echo.NewHTTPError(http.StatusInternalServerError, ReturnErr("Failed to fetch snapshots"))
 	}
 
-	// 5. Return JSON response
-	return c.JSON(http.StatusOK, snapshots)
+	// 5. Grouping Logic
+	// Initialize the response as an empty slice to ensure JSON returns [] instead of null
+	response := make([]domain.SlugSnapshots, 0)
+
+	// Create a lookup map for the results found
+	grouped := make(map[string][]domain.Snapshot)
+	for _, s := range snapshots {
+		grouped[s.Slug] = append(grouped[s.Slug], s)
+	}
+
+	app.Logger.Printf("Grouped %d snapshots by slug", len(grouped))
+
+	if len(slugList) > 0 {
+		// If specific slugs were requested, ensure EVERY requested slug
+		// is present in the final array, even if its snapshots array is empty.
+		for _, slug := range slugList {
+			trimmedSlug := strings.TrimSpace(slug)
+			items := grouped[trimmedSlug]
+			if items == nil {
+				items = []domain.Snapshot{} // Force empty array [] in JSON
+			}
+			response = append(response, domain.SlugSnapshots{
+				Slug:      trimmedSlug,
+				Snapshots: items,
+			})
+		}
+	} else {
+		// If no slugs were provided (query all),
+		// we just return whatever unique slugs were found in the DB results.
+		for slug, items := range grouped {
+			response = append(response, domain.SlugSnapshots{
+				Slug:      slug,
+				Snapshots: items,
+			})
+		}
+	}
+
+	app.Logger.Printf("Returning %d snapshots grouped by slug", len(response))
+
+	// 6. Return the structured JSON
+	return c.JSON(http.StatusOK, ReturnOk(response))
 }
 
 func (app *Application) GetSnapshotSummaryBySlugHandler(c echo.Context) error {

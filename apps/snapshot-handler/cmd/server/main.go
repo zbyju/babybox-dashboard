@@ -30,7 +30,7 @@ func main() {
 	var dbService *db.DBService
 	var mqService *rabbitmq.Client
 
-	for i := 0; i < maxRetries; i++ {
+	for i := range maxRetries {
 		dbService, err = db.InitConnection(&e.Logger, location)
 		if err != nil {
 			e.Logger.Errorf("Failed to initialize DB service: %s", err)
