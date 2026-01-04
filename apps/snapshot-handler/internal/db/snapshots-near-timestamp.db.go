@@ -4,127 +4,157 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"sort"
 	"time"
 
 	"github.com/zbyju/babybox-dashboard/apps/snapshot-handler/internal/domain"
 )
 
-// getInitialDuration calculates the optimistic time window.
+// --- Shared Helpers ---
+
 func getInitialDuration(limit int) time.Duration {
 	return (time.Duration(limit) * 10 * time.Minute) + (25 * time.Minute)
 }
 
-// getNextDuration calculates the exponential backoff step.
 func getNextDuration(current time.Duration) time.Duration {
-	return current * 10
+	return current * 4
 }
 
-// GetSnapshotsNearTimestamp determines the strategy based on input.
+func minTime(a, b time.Time) time.Time {
+	if a.Before(b) {
+		return a
+	}
+	return b
+}
+
+// --- Main Service Logic ---
+
 func (service *DBService) GetSnapshotsNearTimestamp(
 	slugs []string,
 	targetTime time.Time,
 	limit int,
 ) ([]domain.Snapshot, error) {
 
-	service.logger.Infof("GetSnapshotsNearTimestamp | Target: %s | Limit: %d | Slugs provided: %d", targetTime, limit, len(slugs))
-
-	// Path 1: Fetch All (Optimized)
+	// 1. Resolve Slugs
+	// If no slugs provided, we must fetch the master list to calculate upper bounds.
 	if len(slugs) == 0 {
-		service.logger.Debug("Slug list empty -> Path 1 (Fetch All Optimized)")
-		return service.fetchAllWithBackoff(targetTime, limit)
-	}
-
-	// Path 2: Fetch Specific Slugs (Direct Backoff)
-	service.logger.Debug("Specific slugs provided -> Path 2 (Direct Backoff)")
-	return service.fetchSpecificSlugsWithBackoff(slugs, targetTime, limit, getInitialDuration(limit))
-}
-
-// fetchAllWithBackoff handles the "get everything" case.
-func (service *DBService) fetchAllWithBackoff(
-	targetTime time.Time,
-	limit int,
-) ([]domain.Snapshot, error) {
-
-	// 1. Get the master list of slugs
-	allSlugs, err := service.GetAllSlugs()
-	if err != nil {
-		service.logger.Errorf("Failed to fetch master slug list: %v", err)
-		return nil, fmt.Errorf("failed to get all slugs: %w", err)
-	}
-	service.logger.Debugf("Master list retrieved: %d total slugs known", len(allSlugs))
-
-	// 2. Try the "Happy Path": Query ALL data in the calculated initial window
-	initialWindow := getInitialDuration(limit)
-	start := targetTime.Add(-initialWindow)
-
-	service.logger.Debugf("Attempting optimistic fetch (Happy Path) | Window: %s", initialWindow)
-
-	// Passing nil for slugs means "no filter" -> highly efficient scan
-	initialResults, err := service.fetchSnapshots(nil, start, targetTime, limit)
-	if err != nil {
-		service.logger.Errorf("Optimistic fetch failed: %v", err)
-		return nil, err
-	}
-	service.logger.Infof("Optimistic fetch completed | Found: %d total snapshots", len(initialResults))
-
-	// 3. Process results to separate "Complete" vs "Incomplete" slugs
-	groupedResults := groupSnapshotsBySlug(initialResults)
-
-	var finalSnapshots []domain.Snapshot
-	var missingSlugs []string
-
-	for _, slug := range allSlugs {
-		data := groupedResults[slug]
-		count := len(data)
-
-		if count >= limit {
-			// Case A: We found enough data. Keep it.
-			finalSnapshots = append(finalSnapshots, data...)
-		} else {
-			// Case B: Not enough data (or 0).
-			// We DO NOT add the partial data to finalSnapshots.
-			// We add the slug to missingSlugs so the backoff handler can fetch the full set.
-			missingSlugs = append(missingSlugs, slug)
+		var err error
+		slugs, err = service.GetAllSlugs()
+		if err != nil {
+			return nil, fmt.Errorf("failed to fetch all slugs: %w", err)
 		}
+		service.logger.Debugf("Resolved %d total slugs from DB", len(slugs))
 	}
 
-	// 4. Check completeness
-	if len(missingSlugs) == 0 {
-		service.logger.Info("All slugs satisfied by optimistic fetch. Returning results.")
-		return initialResults, nil // Or finalSnapshots, they are identical here
-	}
+	service.logger.Infof("GetSnapshotsNearTimestamp | Target: %s | Slugs: %d", targetTime, len(slugs))
 
-	// Log details about what is missing
-	service.logger.Warnf("Optimistic fetch insufficient. %d slugs are missing data (found < %d snapshots).", len(missingSlugs), limit)
-	if len(missingSlugs) <= 10 {
-		service.logger.Debugf("Missing slugs: %v", missingSlugs)
-	} else {
-		service.logger.Debugf("Missing slugs (first 10): %v ...", missingSlugs[:10])
-	}
-
-	// 5. Hand off ONLY the missing slugs to the backoff handler.
-	// The backoff handler will return the COMPLETE list for these slugs.
-	backoffResults, err := service.fetchSpecificSlugsWithBackoff(missingSlugs, targetTime, limit, getNextDuration(initialWindow))
+	// 2. Create Map: Slug -> UpperBound
+	// UpperBound = min(targetTime, lastSeenTime)
+	upperBoundMap, err := service.getSlugUpperBounds(slugs, targetTime)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to determine slug upper bounds: %w", err)
 	}
 
-	// 6. Combine valid initial results with the fixed backoff results
-	total := len(finalSnapshots) + len(backoffResults)
-	service.logger.Infof("Fetch complete (Optimistic + Backoff) | Total Snapshots: %d", total)
+	// 3. Create Batches
+	// Group slugs that are temporally close (within 24h) to minimize queries.
+	batches := service.createBatches(upperBoundMap)
+	service.logger.Infof("Created %d query batches from %d slugs", len(batches), len(slugs))
 
-	return append(finalSnapshots, backoffResults...), nil
+	// 4. Execute Batches
+	var finalResults []domain.Snapshot
+
+	for i, batch := range batches {
+		service.logger.Debugf("Batch %d/%d | Anchor Time: %s | Slugs: %d", i+1, len(batches), batch.AnchorTime, len(batch.Slugs))
+
+		results, err := service.fetchSpecificSlugsWithBackoff(batch.Slugs, batch.AnchorTime, limit)
+		if err != nil {
+			return nil, err
+		}
+		finalResults = append(finalResults, results...)
+	}
+
+	return finalResults, nil
 }
 
-// fetchSpecificSlugsWithBackoff implements the exponential backoff strategy.
+// Batch represents a group of slugs that will be queried together
+type Batch struct {
+	AnchorTime time.Time // The max upper bound for this group
+	Slugs      []string
+}
+
+// createBatches groups slugs so that their upper bounds are within 1 day of the group's max.
+func (service *DBService) createBatches(upperBounds map[string]time.Time) []Batch {
+	// 1. Invert map to group by exact timestamp first
+	timeToSlugs := make(map[time.Time][]string)
+	var uniqueTimes []time.Time
+
+	for slug, bound := range upperBounds {
+		if _, exists := timeToSlugs[bound]; !exists {
+			uniqueTimes = append(uniqueTimes, bound)
+		}
+		timeToSlugs[bound] = append(timeToSlugs[bound], slug)
+	}
+
+	// 2. Sort times descending (Newest -> Oldest)
+	sort.Slice(uniqueTimes, func(i, j int) bool {
+		return uniqueTimes[i].After(uniqueTimes[j])
+	})
+
+	// 3. Greedy Clustering (1 Day Window)
+	var batches []Batch
+
+	// We iterate through sorted times.
+	// processedIndices keeps track of times we've already bundled into a batch.
+	processed := make([]bool, len(uniqueTimes))
+
+	for i := 0; i < len(uniqueTimes); i++ {
+		if processed[i] {
+			continue
+		}
+
+		// Start a new batch with this time as the Anchor (Max)
+		anchor := uniqueTimes[i]
+		currentBatchSlugs := make([]string, 0)
+
+		// Add slugs from the anchor time
+		currentBatchSlugs = append(currentBatchSlugs, timeToSlugs[anchor]...)
+		processed[i] = true
+
+		// Look ahead for other times that fit within [anchor - 24h, anchor]
+		cutoff := anchor.Add(-24 * time.Hour)
+
+		for j := i + 1; j < len(uniqueTimes); j++ {
+			if processed[j] {
+				continue
+			}
+
+			t := uniqueTimes[j]
+			// Since times are sorted descending, if t is before cutoff,
+			// all subsequent times are also before cutoff (too old for this batch).
+			if t.Before(cutoff) {
+				break
+			}
+
+			// It fits in the batch!
+			currentBatchSlugs = append(currentBatchSlugs, timeToSlugs[t]...)
+			processed[j] = true
+		}
+
+		batches = append(batches, Batch{
+			AnchorTime: anchor,
+			Slugs:      currentBatchSlugs,
+		})
+	}
+
+	return batches
+}
+
+// fetchSpecificSlugsWithBackoff executes the iterative query strategy for a specific batch.
 func (service *DBService) fetchSpecificSlugsWithBackoff(
 	slugs []string,
-	targetTime time.Time,
+	anchorTime time.Time,
 	limit int,
-	initialDuration time.Duration,
 ) ([]domain.Snapshot, error) {
-
-	service.logger.Infof("Starting Backoff Loop | Slugs to process: %d", len(slugs))
 
 	resultsMap := make(map[string][]domain.Snapshot)
 	missingSlugs := make(map[string]bool)
@@ -132,114 +162,133 @@ func (service *DBService) fetchSpecificSlugsWithBackoff(
 		missingSlugs[s] = true
 	}
 
-	// Initialize window
-	currentWindow := initialDuration
+	// Logic: Start window is calculated normally.
+	// We expand backwards from AnchorTime.
+	currentWindow := getInitialDuration(limit)
 	maxWindow := 365 * 24 * time.Hour
 	iteration := 1
 
 	for {
-		// 1. Prepare list for this iteration
-		var currentBatch []string
+		// 1. Identify missing for this iteration
+		var batchSlugs []string
 		for s := range missingSlugs {
-			currentBatch = append(currentBatch, s)
+			batchSlugs = append(batchSlugs, s)
 		}
-
-		if len(currentBatch) == 0 {
-			service.logger.Info("Backoff Loop Exit: All missing slugs satisfied.")
+		if len(batchSlugs) == 0 {
 			break
 		}
 
-		service.logger.Infof("--- [Backoff Iteration %d] ---", iteration)
-		service.logger.Infof("Current Window: %s", currentWindow)
-		service.logger.Infof("Searching for %d slugs: %v", len(currentBatch), currentBatch)
-
 		// 2. Query
-		start := targetTime.Add(-currentWindow)
-		fetched, err := service.fetchSnapshots(currentBatch, start, targetTime, limit)
+		start := anchorTime.Add(-currentWindow)
+
+		service.logger.Debugf("   [Iter %d] Window: %s | Range: %s -> %s", iteration, currentWindow, start, anchorTime)
+
+		fetched, err := service.fetchSnapshots(batchSlugs, start, anchorTime, limit)
 		if err != nil {
-			service.logger.Errorf("[Iter %d] Query failed: %v", iteration, err)
 			return nil, err
 		}
 
-		service.logger.Debugf("[Iter %d] Query returned %d raw snapshots", iteration, len(fetched))
-
 		// 3. Process
 		grouped := groupSnapshotsBySlug(fetched)
-		satisfiedInThisLoop := 0
-		var newlySatisfied []string
 
 		for slug := range missingSlugs {
 			if data, ok := grouped[slug]; ok {
-				// Always update with the latest (wider) search result
 				resultsMap[slug] = data
-
-				// Log the status for this slug
 				if len(data) >= limit {
 					delete(missingSlugs, slug)
-					satisfiedInThisLoop++
-					newlySatisfied = append(newlySatisfied, slug)
-					service.logger.Debugf("  -> Slug '%s': SATISFIED (Found %d/%d)", slug, len(data), limit)
-				} else {
-					service.logger.Debugf("  -> Slug '%s': STILL MISSING (Found %d/%d)", slug, len(data), limit)
 				}
-			} else {
-				service.logger.Debugf("  -> Slug '%s': NO DATA FOUND in this window", slug)
 			}
 		}
 
-		service.logger.Infof("[Iter %d] Summary: %d slugs satisfied now (%v). %d still missing.",
-			iteration, satisfiedInThisLoop, newlySatisfied, len(missingSlugs))
-
-		// 4. Check Exit Conditions
+		// 4. Exit Conditions
 		if len(missingSlugs) == 0 {
 			break
 		}
 		if currentWindow >= maxWindow {
-			service.logger.Warnf("Backoff Limit Reached: Stopped at window %s with %d slugs still missing: %v",
-				currentWindow, len(missingSlugs), missingSlugs)
+			service.logger.Warnf("   [Iter %d] Max window reached. Aborting for %d slugs.", iteration, len(missingSlugs))
 			break
 		}
 
-		// 5. Expand Window
+		// 5. Expand
 		nextWindow := getNextDuration(currentWindow)
-		currentWindow = min(nextWindow, maxWindow)
 
+		// Optimization: If next window > 100 years (sanity check), cap it
+		if nextWindow > maxWindow {
+			nextWindow = maxWindow
+		}
+		currentWindow = nextWindow
 		iteration++
 	}
 
-	// Flatten results
 	var final []domain.Snapshot
 	for _, snaps := range resultsMap {
 		final = append(final, snaps...)
 	}
-
-	service.logger.Infof("Backoff finished. Returning %d total snapshots found in backoff phase.", len(final))
 	return final, nil
 }
 
-// fetchSnapshots is the low-level Flux query builder.
+// getSlugUpperBounds fetches 'last seen' and returns min(target, lastSeen).
+func (service *DBService) getSlugUpperBounds(slugs []string, targetTime time.Time) (map[string]time.Time, error) {
+	if len(slugs) == 0 {
+		return nil, nil
+	}
+
+	// 1. Fetch Last Seen Times
+	slugsJSON, _ := json.Marshal(slugs)
+	// We look back 1 year for metadata.
+	query := fmt.Sprintf(`
+		from(bucket: "%s")
+			|> range(start: -1y, stop: %s)
+			|> filter(fn: (r) => r["_measurement"] == "%s")
+			|> filter(fn: (r) => contains(value: r["slug"], set: %s))
+			|> group(columns: ["slug"])
+			|> last()
+	`,
+		service.bucket,
+		targetTime.Format(time.RFC3339),
+		measurementNameThermal,
+		string(slugsJSON),
+	)
+
+	result, err := service.queryAPI.Query(context.TODO(), query)
+	if err != nil {
+		return nil, err
+	}
+
+	lastSeenMap := make(map[string]time.Time)
+	for result.Next() {
+		slug, ok := result.Record().ValueByKey("slug").(string)
+		if ok {
+			lastSeenMap[slug] = result.Record().Time()
+		}
+	}
+
+	// 2. Map Construction
+	bounds := make(map[string]time.Time)
+	for _, slug := range slugs {
+		if lastSeen, ok := lastSeenMap[slug]; ok {
+			// Key Logic: The upper bound is the EARLIER of Target or LastSeen
+			bounds[slug] = minTime(targetTime, lastSeen)
+		} else {
+			// Never seen? Default to target. Backoff will fail naturally.
+			bounds[slug] = targetTime
+		}
+	}
+
+	return bounds, nil
+}
+
+// fetchSnapshots (Standard implementation)
 func (service *DBService) fetchSnapshots(
 	slugs []string,
 	start, stop time.Time,
 	limit int,
 ) ([]domain.Snapshot, error) {
 
-	service.logger.Debugf("fetchSnapshots called | Range: %s -> %s | Slugs Filter: %d items",
-		start.Format(time.RFC3339), stop.Format(time.RFC3339), len(slugs))
-
 	var slugFilter string
 	if len(slugs) > 0 {
-		// Use JSON formatting to create a Flux-compatible array string: ["A","B","C"]
-		// This handles escaping and delimiters automatically.
-		slugsJSON, err := json.Marshal(slugs)
-		if err != nil {
-			return nil, fmt.Errorf("failed to marshal slugs for query: %w", err)
-		}
-
-		// Use the `contains` function which is cleaner than regex for lists
+		slugsJSON, _ := json.Marshal(slugs)
 		slugFilter = fmt.Sprintf(`|> filter(fn: (r) => contains(value: r["slug"], set: %s))`, string(slugsJSON))
-	} else {
-		service.logger.Debug("No slugs provided -> Fetching ALL (No filter)")
 	}
 
 	query := fmt.Sprintf(`
@@ -261,18 +310,10 @@ func (service *DBService) fetchSnapshots(
 
 	result, err := service.queryAPI.Query(context.TODO(), query)
 	if err != nil {
-		service.logger.Errorf("InfluxDB Query Error: %v", err)
 		return nil, fmt.Errorf("influx query failed: %w", err)
 	}
 
-	snapshots, err := service.ConvertResultsToSnapshots(result)
-	if err != nil {
-		service.logger.Errorf("Result conversion failed: %v", err)
-		return nil, err
-	}
-
-	service.logger.Debugf("fetchSnapshots success | Parsed %d snapshots", len(snapshots))
-	return snapshots, nil
+	return service.ConvertResultsToSnapshots(result)
 }
 
 func groupSnapshotsBySlug(snaps []domain.Snapshot) map[string][]domain.Snapshot {
