@@ -178,7 +178,7 @@ func (app *Application) GetNearSnapshots(c echo.Context) error {
 
 	// 4. Fetch from Database
 	// GetSnapshotsNearTime returns a flat slice of snapshots grouped by Influx
-	snapshots, err := app.DBService.GetSnapshotsNearTime(c.Request().Context(), slugList, targetTime, limit)
+	snapshots, err := app.DBService.GetSnapshotsNearTimestamp(slugList, targetTime, limit)
 	if err != nil {
 		app.Logger.Printf("Database error: %v", err)
 		return echo.NewHTTPError(http.StatusInternalServerError, ReturnErr("Failed to fetch snapshots"))
