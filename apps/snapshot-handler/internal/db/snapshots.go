@@ -269,7 +269,7 @@ func (service *DBService) GetSnapshotsNearTime(
 			|> limit(n: %d)
 	`,
 		service.bucket,
-		targetTime.Add(-24*time.Hour).Format(time.RFC3339),
+		targetTime.AddDate(-1, 0, 0).Format(time.RFC3339),
 		targetTime.Format(time.RFC3339),
 		measurementNameThermal,
 		slugFilter,
