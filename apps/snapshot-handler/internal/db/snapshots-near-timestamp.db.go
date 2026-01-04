@@ -16,7 +16,7 @@ func getInitialDuration(limit int) time.Duration {
 
 // getNextDuration calculates the exponential backoff step.
 func getNextDuration(current time.Duration) time.Duration {
-	return current * 4
+	return current * 10
 }
 
 // GetSnapshotsNearTimestamp determines the strategy based on input.
